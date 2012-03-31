@@ -1,0 +1,10 @@
+%module fission
+%include "../engine/Context.i"
+%include "../engine/Engine.i"
+%include "../engine/GLDisplay.i"
+%include "../engine/ImageReader.i"
+%include "../engine/ImageWriter.i"
+%include "../engine/Name.i"
+%include "../engine/Node.i"
+%include "../engine/Parameter.i"
+%include "../engine/Status.i"
