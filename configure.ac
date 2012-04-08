@@ -16,7 +16,7 @@ AM_INIT_AUTOMAKE
 #AC_SEARCH_LIBS(XNVCtrl, XNVCtrl)
 
 #PKG_CHECK_MODULES(OpenCV, opencv)
-
+ifdef([AM_PATH_CPPUNIT], [AM_PATH_CPPUNIT([1.11.0])], [])
 # Checks for programs.
 AC_PROG_CXX
 AC_PROG_MAKE_SET
@@ -32,19 +32,19 @@ SWIG_PYTHON
 
 
 
-AC_ARG_WITH([boost-include-path],
-  [AS_HELP_STRING([--with-boost-include-path],
-    [location of the boost libraries])],
-  [BOOST_CFLAGS="-I$withval"],
-  [BOOST_CFLAGS='-I/home/cyril/Installs/boost_1_45_0/'])
-AC_SUBST([BOOST_CFLAGS])
-
-AC_ARG_WITH([boost-lib-path],
-  [AS_HELP_STRING([--with-boost-lib-path],
-    [location of the boost libs])],
-  [BOOST_LIBS="-L$withvali"],
-  [BOOST_LIBS='-L/usr/local/lib/ -lboost_thread -lboost_program_options -lboost_system'])
-AC_SUBST([BOOST_LIBS])
+#AC_ARG_WITH([boost-include-path],
+#  [AS_HELP_STRING([--with-boost-include-path],
+#    [location of the boost libraries])],
+#  [BOOST_CFLAGS="-I$withval"],
+#  [BOOST_CFLAGS='-I/home/cyril/Installs/boost_1_45_0/'])
+#AC_SUBST([BOOST_CFLAGS])
+#
+#AC_ARG_WITH([boost-lib-path],
+#  [AS_HELP_STRING([--with-boost-lib-path],
+#    [location of the boost libs])],
+#  [BOOST_LIBS="-L$withvali"],
+#  [BOOST_LIBS='-L/usr/local/lib/ -lboost_thread -lboost_program_options -lboost_system'])
+#AC_SUBST([BOOST_LIBS])
 
 #AC_ARG_WITH([tbb-lib-path],
 #  [AS_HELP_STRING([--with-tbb-include-path],
@@ -60,6 +60,8 @@ AC_CONFIG_FILES([
 	src/Makefile
 	src/engine/Makefile
 	src/bindings/python/Makefile
+    tests/Makefile
+    tests/engine/Makefile
 	])
 
 # Checks for libraries.

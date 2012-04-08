@@ -7,6 +7,7 @@ $(top_srcdir)/src/engine/ImageReader.i \
 $(top_srcdir)/src/engine/ImageWriter.i \
 $(top_srcdir)/src/engine/Name.i \
 $(top_srcdir)/src/engine/Node.i \
+$(top_srcdir)/src/engine/NodeGraph.i \
 $(top_srcdir)/src/engine/Parameter.i \
 $(top_srcdir)/src/engine/Status.i
 

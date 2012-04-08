@@ -1,5 +1,5 @@
-#ifndef __PARAMETER_H__
-#define __PARAMETER_H__
+#ifndef PARAMETER_H
+#define PARAMETER_H
 
 #include <string>
 
@@ -17,4 +17,4 @@ protected:
 };
 
 
-#endif//__PARAMETER_H__
+#endif//PARAMETER_H

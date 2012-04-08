@@ -6,5 +6,6 @@
 %include "../engine/ImageWriter.i"
 %include "../engine/Name.i"
 %include "../engine/Node.i"
+%include "../engine/NodeGraph.i"
 %include "../engine/Parameter.i"
 %include "../engine/Status.i"

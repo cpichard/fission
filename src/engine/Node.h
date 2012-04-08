@@ -2,7 +2,7 @@
 #define NODE_H
 
 #include <list>
-#include <string>
+#include "Types.h"
 
 #include "Parameter.h"
 #include "Context.h"
@@ -10,42 +10,65 @@
 #include "Plug.h"
 #include "List.h"
 
-// Interface class for a computing node
+// Interface class for a computing Node
+// a Node is a plug with parameters and functions
+// It provides utility methods for inherited classes
 
-class Node
+typedef int NodeId;
+typedef int LinkId;
+
+// NOTE : may be it can be a GraphVertex<Node*>
+class Node : public Plug
 {
-    // Friend classes
+    // Friend classes and functions
     friend class Engine;
-    friend bool connect(Node &src, Node &dst);
+    friend class NodeGraph;
+    friend LinkId connect(Node &src, PlugId p, Node &dst, PlugId g);
     friend bool disconnect(Node &src, Node &dst);
     template <typename TN> friend std::string Name(TN &p);
+    template <typename TN> friend const char * const TypeName(const TN &p);
+    template <typename TN> friend const char * const TypeName();
 
 public:
-    Node(const std::string &name)
-    : m_name(name){};
-    virtual ~Node(){};
+    Node(const std::string &name);
+    virtual ~Node();
 
+    virtual const char * typeName() const {return Node::s_typeName;} 
 protected:
+    // Functions used by child nodes to register their inputs, results and parameters
+    PlugId addInput(const std::string &name, TypeId);
+    PlugId addOutput(const std::string &name, TypeId);
+    PlugId addParameter(const std::string &name, TypeId);
+
+    bool removeInput(PlugId plugId);
+    bool removeOutput(PlugId plugId);
+    bool removeParameter(PlugId plugId);
+
+    // a table with function pointers
+    //FunctionTable   m_functionTable;
+
     // TODO : find a way to add functions without using rtti and
-    virtual void * getResult()=0;
-    virtual Status execute(Context &)=0;
+    // virtual void * getResult()=0;
+    // virtual Status execute(Context &)=0;
     // TODO 
     // Get tasks
     //
-private:
-    std::string m_name;         // Name of the node
 
-    // Inputs and outputs of this node
-    PlugPtrList m_inputs;   // Inputs
-    PlugPtrList m_outputs;  // Outputs
+private:
+    //std::string m_name;         // Name of the node
+    size_t      m_id;           // Id of the node
     
-    // Parameter of the node
+    // Parameters of the node. They are not registered as plugs.
     ParameterPtrList   m_params;
+
+    
+    static const char * const s_typeName;
+
 };
 
 
 // API on the nodes
-bool connect(Node &src, String &plugName, Node &dst, String &plugName);
+LinkId connect(Node &src, PlugId plugIdSrc, Node &dst, PlugId plugIdDst);
 bool disconnect(Node &src, Node &dst);
 
 // TODO vaarg

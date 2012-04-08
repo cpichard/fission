@@ -13,7 +13,4 @@ public:
     ImageReader(const std::string &name);
     virtual ~ImageReader();
 
-protected:
-    virtual void * getResult();
-    virtual Status execute(Context &);
 };

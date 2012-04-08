@@ -1,13 +1,17 @@
-from fission import fission as f
+import fission as f
 
 # 
-reader=f.ImageReader("test1")
-print reader
-writer=f.ImageWriter("test2")
+
+graph = f.NodeGraph("compo1")
+#reader=graph.createNode("ImageReader", "test1")
+#reader=graph.nodes.ImageReader("test1")
+#print reader
+
+writer=graph.ImageWriter("test2")
 print writer
 
 # Connect reader and writer
-print f.connect(reader, writer)
+#print graph.connect(reader.out(0), writer.in(0))
 
 # Test names
 print f.nodename(reader)  # ensure you have a node

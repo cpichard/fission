@@ -27,7 +27,7 @@ protected:
     virtual Status execute(Context &)=0;
 };
 
-bool connect(Node &src, Node &dst);
+bool connect(Node &src, PlugId, Node &dst, PlugId);
 bool disconnect(Node &src, Node &dst);
 
 // TODO vaarg
