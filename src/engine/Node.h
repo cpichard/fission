@@ -33,16 +33,21 @@ public:
     Node(const std::string &name);
     virtual ~Node();
 
+    // TOD : move in private ?
     virtual const char * typeName() const {return Node::s_typeName;} 
+
+    Plug & input(int i){return *m_incoming[i];};
+    Plug & output(int i){return *m_outgoing[i];};
+
 protected:
     // Functions used by child nodes to register their inputs, results and parameters
-    PlugId addInput(const std::string &name, TypeId);
-    PlugId addOutput(const std::string &name, TypeId);
-    PlugId addParameter(const std::string &name, TypeId);
+    Plug & addInput(const std::string &name, TypeId);
+    Plug & addOutput(const std::string &name, TypeId);
+    bool addParameter(const std::string &name, TypeId);
 
-    bool removeInput(PlugId plugId);
-    bool removeOutput(PlugId plugId);
-    bool removeParameter(PlugId plugId);
+    bool removeInput(Plug & plug);
+    bool removeOutput(Plug & plug);
+    bool removeParameter(Plug & plug);
 
     // a table with function pointers
     //FunctionTable   m_functionTable;

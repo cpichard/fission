@@ -11,13 +11,11 @@ template<typename T>
 friend const char * const TypeName();
 
 public:
-    TestValue(const std::string &name)
-    : Node(name)
-    {}
+    TestValue(const std::string &name);
     
-    virtual ~TestValue(){}
+    virtual ~TestValue();
 
-    virtual const char * typeName() const {return TestValue::s_typeName;} 
+    const char * typeName() const {return TestValue::s_typeName;} 
 
 private:
     static const char * const s_typeName;

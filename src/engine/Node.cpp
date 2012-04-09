@@ -9,17 +9,39 @@ const char * const Node::s_typeName = "Node";
 Node::Node(const std::string &name)
 : Plug(name)
 , m_id(0)
-{}
-
-Node::~Node(){};
-
-PlugId Node::addInput(const std::string &name, TypeId t)
 {
-    // Create new plug
-    Plug *input = new Plug(name);
+    m_incoming.reserve(16);
+    m_outgoing.reserve(16);
+}
+
+Node::~Node()
+{
+}
+
+Plug & Node::addInput(const std::string &name, TypeId t)
+{
+    // The node graph should create the plug
+    // as we need an complete array for traversal
+    Plug *plug = new Plug(name);
+    plug->m_owner = this; 
+    // m_owner->registerPlug(plug)
     
     // Connect it to this plug
-    //m_incoming.push_bask(input);    
+    m_incoming.push_back(plug);    
+
+    // Return PlugId ??
+    return *plug;
+}
+
+Plug & Node::addOutput(const std::string &name, TypeId t)
+{
+    Plug *plug = new Plug(name);
+    
+    // Connect it to this plug
+    m_outgoing.push_back(plug);    
+
+    // Return PlugId ??
+    return *plug;
 }
 
 

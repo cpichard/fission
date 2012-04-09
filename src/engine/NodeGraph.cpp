@@ -1,11 +1,15 @@
 #include <NodeGraph.h>
 #include <TestValue.h>
 #include <iostream>
+
+
 NodeGraph::NodeGraph(const std::string &name)
 : Node(name)
-, m_lastIndex(0)
+, m_lastNodeIndex(0)
+, m_lastLinkIndex(0)
 {
     m_nodes.reserve(100);    
+    m_links.reserve(100);    
 }
 
 NodeGraph::~NodeGraph()
@@ -24,12 +28,23 @@ Node &NodeGraph::createNode(const std::string &nodeType, const std::string &node
     {
         node = new Node(nodeName);    
     }
-    m_lastIndex++;
-    m_nodes[m_lastIndex] = node;
+    m_lastNodeIndex++;
+    m_nodes[m_lastNodeIndex] = node;
     node->m_owner = this;
-    node->m_id = m_lastIndex;
+    node->m_id = m_lastNodeIndex;
     
     return *node; 
 }
+
+LinkId NodeGraph::connect( Plug &src, Plug &dst /*Connection type*/)
+{
+    // Create a new link
+        
+}
+
+
+
+
+
 
 

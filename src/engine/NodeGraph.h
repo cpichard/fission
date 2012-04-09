@@ -18,7 +18,7 @@ public:
     Node & createNode(const std::string &nodeType, const std::string &nodeName);
     // bool disposeNode (NodeId id){}
 
-    LinkId connect( PlugId src, PlugId dst /*Connection type*/);
+    LinkId connect( Plug & src, Plug & dst /*Connection type*/);
     bool disconnect(LinkId);
 
     // List of the node is in GraphVertex
@@ -27,8 +27,9 @@ public:
     //typedef Plug* ConnectionType;
     //typedef Node* ParentingType;
 private:
-    std::vector<Node*>                      m_nodes; // ie m_owned
-    std::vector< std::pair<PlugId,PlugId> >  m_links;
-    int m_lastIndex;
+    std::vector<Node*>                      m_nodes; // ie m_owned in graph vertex
+    std::vector< std::pair<Plug*,Plug*> >   m_links;
+    int m_lastNodeIndex;
+    int m_lastLinkIndex;
 };
 #endif//NODEGRAPH_H
