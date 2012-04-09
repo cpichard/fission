@@ -11,12 +11,19 @@ AC_CONFIG_SRCDIR(src)
 
 AM_INIT_AUTOMAKE
 
-#AC_SEARCH_LIBS(glutInit, glut)
-#AC_SEARCH_LIBS(X11, X11)
-#AC_SEARCH_LIBS(XNVCtrl, XNVCtrl)
+# cppUnit testing
+AC_ARG_ENABLE(cppunit,
+  [AS_HELP_STRING([--enable-cppunit], [enable unit testing (default: yes)])],
+  [], [])
+AC_MSG_RESULT($enable_cppunit)
+AM_CONDITIONAL(CPPUNIT, test "$enable_cppunit" = yes)
+if test "$enable_cppunit" = yes; then
+  AM_PATH_CPPUNIT(1.9.0,
+          [AM_CONDITIONAL(CPPUNIT, true)],
+          [AM_CONDITIONAL(CPPUNIT, false)])
+fi
 
-#PKG_CHECK_MODULES(OpenCV, opencv)
-ifdef([AM_PATH_CPPUNIT], [AM_PATH_CPPUNIT([1.11.0])], [])
+
 # Checks for programs.
 AC_PROG_CXX
 AC_PROG_MAKE_SET

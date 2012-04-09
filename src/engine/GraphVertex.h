@@ -7,6 +7,7 @@ template <typename T>
 class GraphVertex
 {
     friend class NodeGraph;
+    friend class Node;
 
 public:
     GraphVertex()
