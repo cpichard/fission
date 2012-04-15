@@ -6,6 +6,7 @@
 // Different node graph can be connected ??
 
 #include <Node.h>
+#include <Link.h>
 #include <utility>
 
 class NodeGraph : public Node
@@ -24,12 +25,13 @@ public:
     // List of the node is in GraphVertex
     // m_owned
 
-    //typedef Plug* ConnectionType;
-    //typedef Node* ParentingType;
 private:
     std::vector<Node*>                      m_nodes; // ie m_owned in graph vertex
-    std::vector< std::pair<Plug*,Plug*> >   m_links;
+    std::vector<Link*>                      m_links;
     int m_lastNodeIndex;
     int m_lastLinkIndex;
+        
+    // TODO
+    // Graph<Plug>                             m_dataFlowGraph;
 };
 #endif//NODEGRAPH_H

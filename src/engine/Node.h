@@ -45,6 +45,9 @@ protected:
     Plug & addOutput(const std::string &name, TypeId);
     bool addParameter(const std::string &name, TypeId);
 
+    unsigned int nbInputs() const;
+    unsigned int nbOutputs() const;
+
     bool removeInput(Plug & plug);
     bool removeOutput(Plug & plug);
     bool removeParameter(Plug & plug);

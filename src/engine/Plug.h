@@ -4,10 +4,9 @@
 #include <string>
 #include "GraphVertex.h"
 
-/// This class defines a plug, a entity that can be plug to another entity
+/// This class defines a plug, a entity that can be plugged to another entity
 class Plug : public GraphVertex<Plug*>
 {
-
 public: 
     Plug(const std::string &name)
     : m_name(name) {}
