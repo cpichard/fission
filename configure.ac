@@ -65,8 +65,7 @@ SWIG_PYTHON
 AC_CONFIG_FILES([
 	Makefile
 	src/Makefile
-	src/engine/Makefile
-	src/bindings/python/Makefile
+	bindings/python/Makefile
     tests/Makefile
     tests/engine/Makefile
 	])

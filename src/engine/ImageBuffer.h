@@ -1,11 +1,10 @@
 #ifndef IMAGEBUFFER_H
 #define IMAGEBUFFER_H
 
-
 class ImageBuffer
 {
-    friend size_t ImageWidth(const ImageBuffer &ib);
-    friend size_t ImageHeight(const ImageBuffer &ib);
+    //friend size_t ImageWidth(const ImageBuffer &ib);
+    //friend size_t ImageHeight(const ImageBuffer &ib);
 
 public:
     ImageBuffer()
@@ -28,7 +27,7 @@ private:
     void    *m_data;
 };
 
-size_t ImageWidth(const ImageBuffer &ib){return in.m_imageWidth;}
-size_t ImageHeight(const ImageBuffer &ib){return in.m_imageHeight;}
+//size_t ImageWidth(const ImageBuffer &ib){return ib.m_imageWidth;}
+//size_t ImageHeight(const ImageBuffer &ib){return ib.m_imageHeight;}
 
 #endif//IMAGEBUFFER_H

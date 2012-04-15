@@ -1,3 +1,4 @@
+#include "ImageBuffer.h"
 #include "JpegReader.h"
 #include "jpeglib.h"
 

@@ -34,7 +34,7 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
-subdir = src/bindings/python
+subdir = bindings/python
 DIST_COMMON = $(pkgpython_PYTHON) $(srcdir)/Makefile.am \
 	$(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
@@ -73,7 +73,7 @@ am__base_list = \
 am__installdirs = "$(DESTDIR)$(pkgpyexecdir)" \
 	"$(DESTDIR)$(pkgpythondir)"
 LTLIBRARIES = $(pkgpyexec_LTLIBRARIES)
-_fission_la_DEPENDENCIES = $(top_srcdir)/src/engine/libfission.la
+_fission_la_DEPENDENCIES = $(top_srcdir)/src/libfission.la
 am__objects_1 =
 am__fission_la_OBJECTS = _fission_la-fission_wrap.lo $(am__objects_1)
 _fission_la_OBJECTS = $(am__fission_la_OBJECTS)
@@ -252,9 +252,9 @@ $(top_srcdir)/src/engine/Status.i
 pkgpython_PYTHON = fission.py
 pkgpyexec_LTLIBRARIES = _fission.la
 _fission_la_SOURCES = fission_wrap.cpp $(SWIG_SOURCES)
-_fission_la_CPPFLAGS = $(SWIG_PYTHON_CPPFLAGS) -I$(top_srcdir)/src/engine
+_fission_la_CPPFLAGS = $(SWIG_PYTHON_CPPFLAGS) -I$(top_srcdir)/src/engine -I$(top_srcdir)/src/graph
 _fission_la_LDFLAGS = -module
-_fission_la_LIBADD = $(top_srcdir)/src/engine/libfission.la
+_fission_la_LIBADD = $(top_srcdir)/src/libfission.la
 all: $(BUILT_SOURCES)
 	$(MAKE) $(AM_MAKEFLAGS) all-am
 
@@ -269,9 +269,9 @@ $(srcdir)/Makefile.in:  $(srcdir)/Makefile.am  $(am__configure_deps)
 	      exit 1;; \
 	  esac; \
 	done; \
-	echo ' cd $(top_srcdir) && $(AUTOMAKE) --gnu src/bindings/python/Makefile'; \
+	echo ' cd $(top_srcdir) && $(AUTOMAKE) --gnu bindings/python/Makefile'; \
 	$(am__cd) $(top_srcdir) && \
-	  $(AUTOMAKE) --gnu src/bindings/python/Makefile
+	  $(AUTOMAKE) --gnu bindings/python/Makefile
 .PRECIOUS: Makefile
 Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 	@case '$?' in \
@@ -611,7 +611,7 @@ uninstall-am: uninstall-pkgpyexecLTLIBRARIES uninstall-pkgpythonPYTHON
 
 
 $(srcdir)/fission_wrap.cpp : $(SWIG_SOURCES)
-	$(SWIG) $(SWIG_PYTHON_OPT) -I$(top_srcdir)/src/engine -o $@ fission.i 
+	$(SWIG) $(SWIG_PYTHON_OPT) -I$(top_srcdir)/src/engine -I$(top_srcdir)/src/graph -o $@ fission.i 
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
