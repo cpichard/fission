@@ -2,6 +2,7 @@
 
 #include "ImageReader.h"
 #include "ImageWriter.h"
+#include "Name.h"
 
 // Constructor
 Engine::Engine()

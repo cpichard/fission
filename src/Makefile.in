@@ -72,8 +72,7 @@ am__base_list = \
 am__installdirs = "$(DESTDIR)$(libdir)"
 LTLIBRARIES = $(lib_LTLIBRARIES)
 libfission_la_LIBADD =
-am_libfission_la_OBJECTS = Engine.lo GLDisplay.lo Node.lo NodeGraph.lo \
-	Parameter.lo TestValue.lo
+am_libfission_la_OBJECTS = Engine.lo GLDisplay.lo TestValue.lo
 libfission_la_OBJECTS = $(am_libfission_la_OBJECTS)
 libfission_la_LINK = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(AM_CXXFLAGS) \
@@ -252,24 +251,11 @@ libfission_la_SOURCES = \
 ./engine/Context.h\
 ./engine/Engine.cpp\
 ./engine/Engine.h\
-./engine/GLDisplay.cpp\
-./engine/GLDisplay.h\
-./engine/GraphEdge.h\
-./engine/GraphVertex.h\
 ./engine/Link.h\
 ./engine/List.h\
 ./engine/Name.h\
-./engine/Node.cpp\
-./engine/Node.h\
-./engine/NodeGraph.cpp\
-./engine/NodeGraph.h\
-./engine/Parameter.cpp\
-./engine/Parameter.h\
-./engine/Plug.h\
 ./engine/Process.h\
 ./engine/Status.h\
-./engine/TestValue.cpp\
-./engine/TestValue.h\
 ./engine/Types.h\
 ./graph/Edge.h\
 ./graph/Graph.h\
@@ -279,7 +265,11 @@ libfission_la_SOURCES = \
 ./graph/Parameter.h\
 ./graph/Plug.h\
 ./graph/PlugLink.h\
-./graph/Vertex.h
+./graph/Vertex.h\
+./nodes/GLDisplay.cpp\
+./nodes/GLDisplay.h\
+./nodes/TestValue.cpp\
+./nodes/TestValue.h
 
 all: all-am
 
@@ -357,9 +347,6 @@ distclean-compile:
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Engine.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/GLDisplay.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Node.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/NodeGraph.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Parameter.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/TestValue.Plo@am__quote@
 
 .cpp.o:
@@ -390,40 +377,19 @@ Engine.lo: ./engine/Engine.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(LIBTOOL)  --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Engine.lo `test -f './engine/Engine.cpp' || echo '$(srcdir)/'`./engine/Engine.cpp
 
-GLDisplay.lo: ./engine/GLDisplay.cpp
-@am__fastdepCXX_TRUE@	$(LIBTOOL)  --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT GLDisplay.lo -MD -MP -MF $(DEPDIR)/GLDisplay.Tpo -c -o GLDisplay.lo `test -f './engine/GLDisplay.cpp' || echo '$(srcdir)/'`./engine/GLDisplay.cpp
+GLDisplay.lo: ./nodes/GLDisplay.cpp
+@am__fastdepCXX_TRUE@	$(LIBTOOL)  --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT GLDisplay.lo -MD -MP -MF $(DEPDIR)/GLDisplay.Tpo -c -o GLDisplay.lo `test -f './nodes/GLDisplay.cpp' || echo '$(srcdir)/'`./nodes/GLDisplay.cpp
 @am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/GLDisplay.Tpo $(DEPDIR)/GLDisplay.Plo
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='./engine/GLDisplay.cpp' object='GLDisplay.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='./nodes/GLDisplay.cpp' object='GLDisplay.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(LIBTOOL)  --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o GLDisplay.lo `test -f './engine/GLDisplay.cpp' || echo '$(srcdir)/'`./engine/GLDisplay.cpp
+@am__fastdepCXX_FALSE@	$(LIBTOOL)  --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o GLDisplay.lo `test -f './nodes/GLDisplay.cpp' || echo '$(srcdir)/'`./nodes/GLDisplay.cpp
 
-Node.lo: ./engine/Node.cpp
-@am__fastdepCXX_TRUE@	$(LIBTOOL)  --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Node.lo -MD -MP -MF $(DEPDIR)/Node.Tpo -c -o Node.lo `test -f './engine/Node.cpp' || echo '$(srcdir)/'`./engine/Node.cpp
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/Node.Tpo $(DEPDIR)/Node.Plo
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='./engine/Node.cpp' object='Node.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(LIBTOOL)  --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Node.lo `test -f './engine/Node.cpp' || echo '$(srcdir)/'`./engine/Node.cpp
-
-NodeGraph.lo: ./engine/NodeGraph.cpp
-@am__fastdepCXX_TRUE@	$(LIBTOOL)  --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT NodeGraph.lo -MD -MP -MF $(DEPDIR)/NodeGraph.Tpo -c -o NodeGraph.lo `test -f './engine/NodeGraph.cpp' || echo '$(srcdir)/'`./engine/NodeGraph.cpp
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/NodeGraph.Tpo $(DEPDIR)/NodeGraph.Plo
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='./engine/NodeGraph.cpp' object='NodeGraph.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(LIBTOOL)  --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o NodeGraph.lo `test -f './engine/NodeGraph.cpp' || echo '$(srcdir)/'`./engine/NodeGraph.cpp
-
-Parameter.lo: ./engine/Parameter.cpp
-@am__fastdepCXX_TRUE@	$(LIBTOOL)  --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Parameter.lo -MD -MP -MF $(DEPDIR)/Parameter.Tpo -c -o Parameter.lo `test -f './engine/Parameter.cpp' || echo '$(srcdir)/'`./engine/Parameter.cpp
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/Parameter.Tpo $(DEPDIR)/Parameter.Plo
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='./engine/Parameter.cpp' object='Parameter.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(LIBTOOL)  --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Parameter.lo `test -f './engine/Parameter.cpp' || echo '$(srcdir)/'`./engine/Parameter.cpp
-
-TestValue.lo: ./engine/TestValue.cpp
-@am__fastdepCXX_TRUE@	$(LIBTOOL)  --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT TestValue.lo -MD -MP -MF $(DEPDIR)/TestValue.Tpo -c -o TestValue.lo `test -f './engine/TestValue.cpp' || echo '$(srcdir)/'`./engine/TestValue.cpp
+TestValue.lo: ./nodes/TestValue.cpp
+@am__fastdepCXX_TRUE@	$(LIBTOOL)  --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT TestValue.lo -MD -MP -MF $(DEPDIR)/TestValue.Tpo -c -o TestValue.lo `test -f './nodes/TestValue.cpp' || echo '$(srcdir)/'`./nodes/TestValue.cpp
 @am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/TestValue.Tpo $(DEPDIR)/TestValue.Plo
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='./engine/TestValue.cpp' object='TestValue.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='./nodes/TestValue.cpp' object='TestValue.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(LIBTOOL)  --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o TestValue.lo `test -f './engine/TestValue.cpp' || echo '$(srcdir)/'`./engine/TestValue.cpp
+@am__fastdepCXX_FALSE@	$(LIBTOOL)  --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o TestValue.lo `test -f './nodes/TestValue.cpp' || echo '$(srcdir)/'`./nodes/TestValue.cpp
 
 mostlyclean-libtool:
 	-rm -f *.lo

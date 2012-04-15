@@ -2,6 +2,8 @@
 #define GLDISPLAY_H
 
 #include "Node.h"
+#include "Status.h"
+#include "Context.h"
 
 class GLDisplay : public Node
 {

@@ -3,20 +3,6 @@
 
 #include <vector>
 
-template<typename T>
-struct Vertex
-{
-    std::vector<Edge<T>*> m_outgoing;
-    std::vector<Edge<T>*> m_incoming;
-};
-
-template<typename T>
-struct Edge
-{
-    Vertex<T>   *m_src;
-    Vertex<T>   *m_dst;
-};
-
 template<typename V, typename E>
 class Graph
 {

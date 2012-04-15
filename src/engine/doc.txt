@@ -1,1 +1,0 @@
-idee : avoir plusieurs engine de calcul sur un meme graph

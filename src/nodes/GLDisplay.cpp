@@ -1,8 +1,9 @@
 #include "GLDisplay.h"
 
+static NodeType glDisplayType=9;
 
 GLDisplay::GLDisplay(const std::string &name)
-: Node(name)
+: Node(name, 0, &glDisplayType)
 {}
 
 GLDisplay::~GLDisplay()
