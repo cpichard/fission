@@ -1,6 +1,9 @@
 #ifndef NODECOLLECTION_H
 #define NODECOLLECTION_H
 
+#include <list>
+#include "Node.h"
+
 class NodeCollection : public Node
 {
 public:
@@ -8,12 +11,14 @@ public:
     : Node(name, 0, NULL){}
     ~NodeCollection(){}
 
-    NodeId createNode(const std::string &nodeName, const std::string *nodeTypeName);
-    void disposeNode(NodeId node); 
+    Node * createNode(const std::string &nodeName, const std::string &nodeTypeName);
+    void disposeNode(Node *node); 
     
-    registerNewNodeType();
-    unregisterNewNodeType();
-    nodeTypes();    
+    void registerNodeType(NodeType *newType);
+    void unregisterNodeType(NodeType *type);
+    
+    //
+    std::list<std::string>  nodeTypeNames();    
 
 private:
     std::list<NodeType*>    m_nodeTypes;

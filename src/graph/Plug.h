@@ -9,7 +9,7 @@ typedef int PlugType;
 class Plug : public Vertex<Plug>, Identifier<PlugType>
 {
 public:
-    Plug(const std::string &name, size_t id, PlugType *info)
+    Plug(const std::string &name, size_t id, const PlugType *info)
     : Vertex<Plug>()
     , Identifier<PlugType>(name, id, info) {}
     virtual ~Plug(){}

@@ -8,9 +8,7 @@ libfission_la_SOURCES = \
 ./engine/Context.h\
 ./engine/Engine.cpp\
 ./engine/Engine.h\
-./engine/Link.h\
-./engine/List.h\
-./engine/Name.h\
+./graph/Name.h\
 ./engine/Process.h\
 ./engine/Status.h\
 ./engine/Types.h\
@@ -18,7 +16,9 @@ libfission_la_SOURCES = \
 ./graph/Graph.h\
 ./graph/Identifier.h\
 ./graph/Node.h\
+./graph/Node.cpp\
 ./graph/NodeCollection.h\
+./graph/NodeCollection.cpp\
 ./graph/Parameter.h\
 ./graph/Plug.h\
 ./graph/PlugLink.h\

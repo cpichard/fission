@@ -72,7 +72,8 @@ am__base_list = \
 am__installdirs = "$(DESTDIR)$(libdir)"
 LTLIBRARIES = $(lib_LTLIBRARIES)
 libfission_la_LIBADD =
-am_libfission_la_OBJECTS = Engine.lo GLDisplay.lo TestValue.lo
+am_libfission_la_OBJECTS = Engine.lo Node.lo NodeCollection.lo \
+	GLDisplay.lo TestValue.lo
 libfission_la_OBJECTS = $(am_libfission_la_OBJECTS)
 libfission_la_LINK = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(AM_CXXFLAGS) \
@@ -251,9 +252,7 @@ libfission_la_SOURCES = \
 ./engine/Context.h\
 ./engine/Engine.cpp\
 ./engine/Engine.h\
-./engine/Link.h\
-./engine/List.h\
-./engine/Name.h\
+./graph/Name.h\
 ./engine/Process.h\
 ./engine/Status.h\
 ./engine/Types.h\
@@ -261,7 +260,9 @@ libfission_la_SOURCES = \
 ./graph/Graph.h\
 ./graph/Identifier.h\
 ./graph/Node.h\
+./graph/Node.cpp\
 ./graph/NodeCollection.h\
+./graph/NodeCollection.cpp\
 ./graph/Parameter.h\
 ./graph/Plug.h\
 ./graph/PlugLink.h\
@@ -347,6 +348,8 @@ distclean-compile:
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Engine.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/GLDisplay.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Node.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/NodeCollection.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/TestValue.Plo@am__quote@
 
 .cpp.o:
@@ -376,6 +379,20 @@ Engine.lo: ./engine/Engine.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='./engine/Engine.cpp' object='Engine.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(LIBTOOL)  --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Engine.lo `test -f './engine/Engine.cpp' || echo '$(srcdir)/'`./engine/Engine.cpp
+
+Node.lo: ./graph/Node.cpp
+@am__fastdepCXX_TRUE@	$(LIBTOOL)  --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Node.lo -MD -MP -MF $(DEPDIR)/Node.Tpo -c -o Node.lo `test -f './graph/Node.cpp' || echo '$(srcdir)/'`./graph/Node.cpp
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/Node.Tpo $(DEPDIR)/Node.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='./graph/Node.cpp' object='Node.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LIBTOOL)  --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Node.lo `test -f './graph/Node.cpp' || echo '$(srcdir)/'`./graph/Node.cpp
+
+NodeCollection.lo: ./graph/NodeCollection.cpp
+@am__fastdepCXX_TRUE@	$(LIBTOOL)  --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT NodeCollection.lo -MD -MP -MF $(DEPDIR)/NodeCollection.Tpo -c -o NodeCollection.lo `test -f './graph/NodeCollection.cpp' || echo '$(srcdir)/'`./graph/NodeCollection.cpp
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/NodeCollection.Tpo $(DEPDIR)/NodeCollection.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='./graph/NodeCollection.cpp' object='NodeCollection.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LIBTOOL)  --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o NodeCollection.lo `test -f './graph/NodeCollection.cpp' || echo '$(srcdir)/'`./graph/NodeCollection.cpp
 
 GLDisplay.lo: ./nodes/GLDisplay.cpp
 @am__fastdepCXX_TRUE@	$(LIBTOOL)  --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT GLDisplay.lo -MD -MP -MF $(DEPDIR)/GLDisplay.Tpo -c -o GLDisplay.lo `test -f './nodes/GLDisplay.cpp' || echo '$(srcdir)/'`./nodes/GLDisplay.cpp

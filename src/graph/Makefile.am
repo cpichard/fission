@@ -7,6 +7,7 @@ Edge.h\
 Graph.h\
 Identifier.h\
 Node.h\
+Node.cpp\
 NodeCollection.h\
 Parameter.h\
 Plug.h\

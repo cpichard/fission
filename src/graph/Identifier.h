@@ -3,17 +3,19 @@
 
 #include <string>
 
-template<typename TypeInfo>
+// TODO : rename with a more familiar name
+
+template<typename T>
 struct Identifier
 {
-    Identifier(const std::string &name, size_t id, TypeInfo *m_type=NULL)
+    Identifier(const std::string &name, size_t id, const T *type=NULL)
     : m_name(name)
     , m_id(id)
-    , m_type(NULL){}
+    , m_type(type){}
 
     std::string m_name;
     size_t      m_id;
-    TypeInfo *m_type;
+    const T     *m_type;
     // TODO : does it need an owner as well ?
     // T::OwnerType *m_owner;
 };
