@@ -37,6 +37,7 @@ void GraphTest::testCreateNode()
 
     //CPPUNIT_ASSERT( NbInputs(nodeTestValue) == 0);
     //CPPUNIT_ASSERT( NbOutputs(nodeTestValue) == 1);
+    //CPPUNIT_ASSERT( NbOutputs<TestValue>() == 1);
 }
 
 // TODO 

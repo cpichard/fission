@@ -7,12 +7,12 @@
 
 typedef int PlugLinkType; // TODO
 
-struct PlugLink : public Edge<Plug>, Identifier<PlugLinkType>
+struct PlugLink : public Edge<Plug>, ObjectId<PlugLinkType>
 {
 public:
     PlugLink(const std::string &name, size_t id, PlugLinkType *typeinfo)
     : Edge<Plug>()
-    , Identifier<PlugLinkType>(name, id, typeinfo)
+    , ObjectId<PlugLinkType>(name, id, typeinfo)
     {}
     ~PlugLink(){}
 };

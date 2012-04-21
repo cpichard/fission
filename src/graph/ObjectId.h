@@ -1,14 +1,14 @@
-#ifndef IDENTIFIER_H
-#define IDENTIFIER_H
+#ifndef OBJECTID_H
+#define OBJECTID_H
 
 #include <string>
 
 // TODO : rename with a more familiar name
 
 template<typename T>
-struct Identifier
+struct ObjectId
 {
-    Identifier(const std::string &name, size_t id, const T *type=NULL)
+    ObjectId(const std::string &name, size_t id, const T *type=NULL)
     : m_name(name)
     , m_id(id)
     , m_type(type){}
@@ -22,4 +22,4 @@ struct Identifier
 
 
 
-#endif//IDENTIFIER_H
+#endif//OBJECTID_H

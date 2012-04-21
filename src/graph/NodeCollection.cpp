@@ -1,14 +1,21 @@
 #include "NodeCollection.h"
 #include "TestValue.h" // TODO remove
+#include "Name.h"
+#include "Types.h"
 
+//
 Node * NodeCollection::createNode(const std::string &nodeTypeName, const std::string &nodeName)
 {
-    if(nodeTypeName.compare("TestValue")==0)
+    std::list<NodeType*>::iterator it;
+    for(it=m_nodeTypes.begin(); it != m_nodeTypes.end(); ++it)
     {
-        size_t id = m_nodes.size(); // Hope we don't count the number of values
-        Node *node = new Node(nodeName, id, new TestValue()); 
-        m_nodes.push_back(node);
-        return node;
+        if(nodeTypeName.compare(TypeName(*it))==0)
+        {
+            size_t id = m_nodes.size(); // Hope we don't count the number of values
+            Node *node = new Node(nodeName, id, *it); 
+            m_nodes.push_back(node);
+            return node;
+        }
     }
     return NULL;
 }

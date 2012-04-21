@@ -258,7 +258,7 @@ libfission_la_SOURCES = \
 ./engine/Types.h\
 ./graph/Edge.h\
 ./graph/Graph.h\
-./graph/Identifier.h\
+./graph/ObjectId.h\
 ./graph/Node.h\
 ./graph/Node.cpp\
 ./graph/NodeCollection.h\
