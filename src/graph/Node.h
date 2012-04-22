@@ -7,31 +7,37 @@
 #include "Graph.h"
 #include "ObjectId.h"
 #include "Types.h"
-#include "NodeType.h"
+#include "NodeDesc.h"
 
-class Node : public ObjectId<NodeType>
+class Node : public ObjectId<NodeDesc>
 {
+    friend class Module;
+
     // List of functions able to access an instance of Node
     template<typename T> friend const char * const TypeName(T*);
     friend size_t NbInputs(const Node &node);
     friend size_t NbOutputs(const Node &node);
     friend size_t NbInputs(Node *node);
     friend size_t NbOutputs(Node *node);
+    friend inline Plug * Output0(Node *node);
+    friend inline Plug * Input0(Node *node);
+
 
 public:
     // NOTE : may be this function can be protected
-    Node(const std::string &name, size_t id, const NodeType *type);
+    Node(const std::string &name, size_t id, const NodeDesc *type);
     virtual ~Node(){}
 
     // Typedefs
     typedef size_t  NodeId;
 
 protected:
-    void addInput(const std::string &name, PlugType *);
-    void addOutput(const std::string &name, PlugType *);
+    // Note : is it still usefull as now, we don't inherit new nodes from this class?
+    void addInput(const char *name, PlugType *);
+    void addOutput(const char *name, PlugType *);
     void addParameter(const std::string &name);
-
-    void connect(Plug *src, Plug *dst);
+    inline Plug* input(size_t i){return m_inputs[i];}
+    inline Plug* output(size_t i){return m_outputs[i];}
 
 protected:
     // type name
@@ -42,9 +48,6 @@ protected:
     std::vector<Plug*>          m_outputs;
     std::vector<Parameter*>     m_parameters;
 
-    // Dataflow inside the node TODO : in the module instead
-    Graph<Plug, PlugLink>           m_dataFlowGraph;
-    
     // Note : may be I can have the collection node link
     // Node *m_module;
 
@@ -59,5 +62,6 @@ inline size_t NbInputs(const Node &node){return node.m_inputs.size();}
 inline size_t NbOutputs(const Node &node){return node.m_outputs.size();}
 inline size_t NbInputs(Node *node){return node->m_inputs.size();}
 inline size_t NbOutputs(Node *node){return node->m_outputs.size();}
-
+inline Plug * Output0(Node *node){return node->m_outputs[0];}
+inline Plug * Input0(Node *node){return node->m_inputs[0];}
 #endif//NODE_H

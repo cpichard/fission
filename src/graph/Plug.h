@@ -4,14 +4,19 @@
 #include "Vertex.h"
 #include "ObjectId.h"
 
+/// WIP 
 typedef int PlugType;    
 
 class Node;
 
-class Plug : public Vertex<Plug>, ObjectId<PlugType>
+/// A plug is an node dynamic entry, input or output.
+/// It's a in a dataflow graph owned by a module
+
+
+class Plug : public Vertex<Plug>, public ObjectId<PlugType>
 {
     friend class Node;
-
+    friend class Module;
 public:
     Plug(const std::string &name, size_t id, const PlugType *info)
     : Vertex<Plug>()
@@ -19,6 +24,7 @@ public:
     virtual ~Plug(){}
 
 protected:
+    /// The node the plug belongs to
     Node    *m_owner;
 };
 

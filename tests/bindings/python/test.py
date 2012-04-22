@@ -2,7 +2,7 @@ import fission as f
 
 # 
 
-graph = f.NodeGraph("compo1")
+graph = f.Module("compo1")
 #reader=graph.createNode("ImageReader", "test1")
 #reader=graph.nodes.ImageReader("test1")
 #print reader

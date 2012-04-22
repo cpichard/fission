@@ -11,6 +11,8 @@ public:
     CPPUNIT_TEST_SUITE( GraphTest );
     CPPUNIT_TEST( testCreateNode );
     CPPUNIT_TEST( testGraphName );
+    CPPUNIT_TEST( testConnectNodes );
+    CPPUNIT_TEST( testFlowGraph );
     CPPUNIT_TEST_SUITE_END();
 public:
     void setUp();
@@ -20,7 +22,7 @@ public:
     void testGraphName();
     void testGetNode();
     void testConnectNodes();
-    
+    void testFlowGraph();    
 };
 
 #endif//GRAPHTEST_H

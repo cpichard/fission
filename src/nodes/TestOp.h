@@ -1,5 +1,5 @@
-#ifndef TESTVALUE
-#define TESTVALUE
+#ifndef TESTOP
+#define TESTOP
 
 #include <string>
 #include "NodeDesc.h"
@@ -11,7 +11,7 @@
 /// It must be able to return the inputs values description as well 
 /// as the output values.
 
-class TestValue : public NodeDesc
+class TestOp : public NodeDesc
 {
     
     // Friends 
@@ -22,15 +22,15 @@ class TestValue : public NodeDesc
 
 public:
     /// Virtual functions defining the node properties
-    const char * typeName() const {return TestValue::s_typeName;} 
-    const NodeDesc::Input * inputs() const {return NULL;}
+    const char * typeName() const {return TestOp::s_typeName;} 
+    const NodeDesc::Input * inputs() const {return TestOp::s_inputs;}
     const NodeDesc::Output * outputs() const {return s_outputs;}
-    inline size_t nbInputs() const {return TestValue::s_nbInputs;}; 
-    inline size_t nbOutputs() const {return TestValue::s_nbOutputs;}; 
+    inline size_t nbInputs() const {return TestOp::s_nbInputs;}; 
+    inline size_t nbOutputs() const {return TestOp::s_nbOutputs;}; 
 
 private:
     static const char * const       s_typeName;
-    static const size_t             s_nbInputs = 0;
+    static const size_t             s_nbInputs = 1;
     static const size_t             s_nbOutputs = 1;
     static const NodeDesc::Input    s_inputs[];
     static const NodeDesc::Output   s_outputs[];
@@ -41,6 +41,6 @@ private:
     // NodeDesc::FunctionTable  *s_funcs;
 };
 
-//TypeId Type(const TestValue &) {return 90;}
+//TypeId Type(const TestOp &) {return 90;}
 
-#endif//TESTVALUE
+#endif//TESTOP

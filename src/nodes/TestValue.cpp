@@ -11,6 +11,7 @@ const NodeType::Input  TestValue::s_inputs[]   = {};
 // Only one output, the value of the parameter
 const NodeType::Output TestValue::s_outputs[]  = 
 {   
+    // TEST
     NodeType::Output("Value","float") 
 };
 
@@ -20,8 +21,8 @@ const NodeType::Param TestValue::s_params[]   = {};
 // Version of the 
 const unsigned int TestValue::s_version = 0;
 
-size_t TestValue::nbInputs() const {return sizeof(s_inputs)/sizeof(NodeType::Input);}
-size_t TestValue::nbOutputs() const {return sizeof(s_outputs)/sizeof(NodeType::Output);}
+//size_t TestValue::nbInputs() const {return sizeof(s_inputs)/sizeof(NodeType::Input);}
+//size_t TestValue::nbOutputs() const {return sizeof(s_outputs)/sizeof(NodeType::Output);}
 
 
 

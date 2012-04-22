@@ -1,5 +1,5 @@
-#ifndef TESTVALUE
-#define TESTVALUE
+#ifndef TESTSOURCE
+#define TESTSOURCE
 
 #include <string>
 #include "NodeDesc.h"
@@ -11,7 +11,7 @@
 /// It must be able to return the inputs values description as well 
 /// as the output values.
 
-class TestValue : public NodeDesc
+class TestSource : public NodeDesc
 {
     
     // Friends 
@@ -22,11 +22,11 @@ class TestValue : public NodeDesc
 
 public:
     /// Virtual functions defining the node properties
-    const char * typeName() const {return TestValue::s_typeName;} 
+    const char * typeName() const {return TestSource::s_typeName;} 
     const NodeDesc::Input * inputs() const {return NULL;}
     const NodeDesc::Output * outputs() const {return s_outputs;}
-    inline size_t nbInputs() const {return TestValue::s_nbInputs;}; 
-    inline size_t nbOutputs() const {return TestValue::s_nbOutputs;}; 
+    inline size_t nbInputs() const {return TestSource::s_nbInputs;}; 
+    inline size_t nbOutputs() const {return TestSource::s_nbOutputs;}; 
 
 private:
     static const char * const       s_typeName;
@@ -41,6 +41,6 @@ private:
     // NodeDesc::FunctionTable  *s_funcs;
 };
 
-//TypeId Type(const TestValue &) {return 90;}
+//TypeId Type(const TestSource &) {return 90;}
 
-#endif//TESTVALUE
+#endif//TESTSOURCE
