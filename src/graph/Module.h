@@ -10,7 +10,8 @@
 /// All nodes are owned by a node or a module, the module being the last parent of the hierarchy
 class Module : public Node
 {
-friend class GraphTest;
+    // TODO : remove
+    friend class ModuleTest;
 
 public:
     Module(const std::string &name)

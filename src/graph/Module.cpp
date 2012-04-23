@@ -46,9 +46,7 @@ Node * Module::createNode(const std::string &nodeTypeName, const std::string &no
                 // Connect all imputs to current outputs
                 for (size_t i=0; i<nbInputs; i++) {
                     // TODO !!! 
-                    PlugLink *pl = new PlugLink("",0, NULL);
-                    pl->m_src = node->input(i);
-                    pl->m_dst = node->output(j);
+                    PlugLink *pl = new PlugLink("",0, NULL, node->input(i), node->output(j));
                     m_dataFlowGraph.addEdge(pl);  
                 }
             }
@@ -89,9 +87,7 @@ void Module::connect(Plug *src, Plug *dst) {
 
     // Create a new pluglink
     // TODO : is it really useful to have a plug link struct ?
-    PlugLink *pl = new PlugLink("",0, NULL);
-    pl->m_src = src;
-    pl->m_dst = dst;
+    PlugLink *pl = new PlugLink("",0, NULL, src, dst);
     m_dataFlowGraph.addEdge(pl);  
     
     // TODO 

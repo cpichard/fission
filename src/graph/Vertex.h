@@ -4,21 +4,32 @@
 #include <vector>
 #include "Edge.h"
 
-/// Client inherits from this class.
-/// It only implements the links between vertices
+/// Basic vertex
+/// It only stores the outgoing and incoming links between vertices
+/// with vectors
+/// A class must inherits from this if needs to store info.
 
-template<typename T>
 struct Vertex
 {
-    // Keep a trace of incoming and outgoing edges
-    std::vector<Edge<T>*> m_outgoing;
-    std::vector<Edge<T>*> m_incoming;
+    Vertex() 
+    : m_vid(0)
+    { 
+        m_outgoing.reserve(16);
+        m_incoming.reserve(16);
+    }
     
-    /// Type definitions for iterator on outgoing and incoming vectors
-    typedef typename std::vector<Edge<T>*>::iterator OutEdgeIterator;
-    typedef typename std::vector<Edge<T>*>::iterator InEdgeIterator;
+    /// Outgoing edges
+    std::vector<Edge*> m_outgoing;
+    
+    /// Incoming edges
+    std::vector<Edge*> m_incoming;
+    
+    // Type definitions for iterator on outgoing and incoming vectors
+    typedef std::vector<Edge*>::iterator OutEdgeIterator;
+    typedef std::vector<Edge*>::iterator InEdgeIterator;
     
     /// Vertex id in the graph
+    /// TODO Double check if we really need m_vid
     size_t m_vid;
 };
 

@@ -3,6 +3,11 @@
 
 #include <vector>
 
+/// Graph class
+/// Template is used if we have different kinds of Vertices or Edge
+/// At the moment, one has to inherit Vertex or Edge
+
+
 template<typename V, typename E>
 class Graph
 {
@@ -22,6 +27,9 @@ public:
 
     /// Add a vertex in the graph
     void addVertex(V *v) {
+        // TODO Test if vertex already exists ?
+        
+        // New id for this vertex
         const size_t id = m_vertices.size();
         v->m_vid = id;
         m_vertices.push_back(v);
@@ -37,15 +45,20 @@ public:
         m_edges.push_back(e); 
     }
 
+    bool hasVertex(V *v) {
+        // TODO 
+    }
+
     /// Return true if there is an edge between src and dst
     bool hasEdge(V *src, V *dst) {
 
         // Exhaustive search on all outgoing edges 
         typename V::OutEdgeIterator it=src->m_outgoing.begin();
         typename V::OutEdgeIterator itend=src->m_outgoing.end();
-        for( it; it!=itend; ++it) {
-            if((*it)->m_dst==dst)
+        for (it; it!=itend; ++it) {
+            if ((*it)->m_dst==dst) {
                 return true;
+            }
         }
         return false;
     }
@@ -57,10 +70,15 @@ public:
     const std::vector<V*> &vertices() const {return m_vertices;}
     const std::vector<E*> &edges() const {return m_edges;}
 
-protected:
+    size_t nbVertices()const{return m_vertices.size();}
+    size_t nbEdges()const{return m_edges.size();}
 
+protected:
+    /// Array of vertices
     std::vector<V*>     m_vertices;
     typedef typename std::vector<V*>::iterator VertexIterator;
+
+    /// Array of edges
     std::vector<E*>     m_edges;    
     typedef typename std::vector<E*>::iterator EdgeIterator;
 };

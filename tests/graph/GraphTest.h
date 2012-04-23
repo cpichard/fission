@@ -8,21 +8,16 @@ class GraphTest : public CppUnit::TestFixture
 {
 public:
     GraphTest();    
-    CPPUNIT_TEST_SUITE( GraphTest );
-    CPPUNIT_TEST( testCreateNode );
-    CPPUNIT_TEST( testGraphName );
-    CPPUNIT_TEST( testConnectNodes );
-    CPPUNIT_TEST( testFlowGraph );
+    CPPUNIT_TEST_SUITE(GraphTest);
+    CPPUNIT_TEST(testCreateGraph);
+    CPPUNIT_TEST(testCycle);
     CPPUNIT_TEST_SUITE_END();
 public:
     void setUp();
     void tearDown();
 
-    void testCreateNode();
-    void testGraphName();
-    void testGetNode();
-    void testConnectNodes();
-    void testFlowGraph();    
+    void testCreateGraph();
+    void testCycle();
 };
 
 #endif//GRAPHTEST_H

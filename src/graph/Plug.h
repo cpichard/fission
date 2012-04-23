@@ -13,13 +13,13 @@ class Node;
 /// It's a in a dataflow graph owned by a module
 
 
-class Plug : public Vertex<Plug>, public ObjectId<PlugType>
+class Plug : public Vertex, public ObjectId<PlugType>
 {
     friend class Node;
     friend class Module;
 public:
     Plug(const std::string &name, size_t id, const PlugType *info)
-    : Vertex<Plug>()
+    : Vertex()
     , ObjectId<PlugType>(name, id, info) {}
     virtual ~Plug(){}
 

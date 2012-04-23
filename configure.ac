@@ -67,7 +67,7 @@ AC_CONFIG_FILES([
 	src/Makefile
 	bindings/python/Makefile
     tests/Makefile
-    tests/engine/Makefile
+    tests/graph/Makefile
 	])
 
 # Checks for libraries.
