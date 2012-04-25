@@ -1,7 +1,7 @@
 #ifndef NODEDESC_H
 #define NODEDESC_H
 
-/// A node description is the base class for all new node type.
+/// A node description is the base class for all new types of node.
 /// The node type defines structures ....
 /// ...
 

@@ -11,11 +11,11 @@ typedef enum {
 } VertexColor;
 
 template<typename V, typename E>
-struct TraversalFunctionStack {
+struct TraversalStackElement {
 
     typedef typename V::InEdgeIterator EdgeIt;
 
-    TraversalFunctionStack(V *v)
+    TraversalStackElement(V *v)
     : m_it(v->m_outgoing.begin())
     , m_itEnd(v->m_outgoing.end())
     , m_v(v){}
@@ -25,11 +25,10 @@ struct TraversalFunctionStack {
     inline operator size_t () {return m_v->m_vid;} 
     inline operator bool() {return m_it!=m_itEnd;}
     inline operator E *(){return *m_it;}
-    inline TraversalFunctionStack<V,E> & operator ++ (){++m_it;return *this;}
+    inline TraversalStackElement<V,E> & operator ++ (){++m_it;return *this;}
 
     // TODO or m_src depending on the traversal direction
     V * nextVertex(){return (*m_it)->m_dst;}
-
 
     EdgeIt          m_it;
     EdgeIt          m_itEnd;
@@ -41,18 +40,18 @@ struct TraversalFunctionStack {
 template<typename V, typename E, typename Visitor>
 void DepthFirstSearch(Graph<V,E> &graph, V *v, Visitor &visitor) {
     
-    // Allocate a color stack to flag the vertices
+    // Allocate a color stack to flag the vertices during the traversal
     std::vector<VertexColor> colors(graph.nbVertices());
 
-    // Change color to white, double check it's by default
+    // Change color of all nodes to white, means not discovered.
     std::fill(colors.begin(), colors.end(), WHITE);
 
     // A stack for visiting nodes
-    typedef TraversalFunctionStack<V, E>  TFS;
-    std::deque<TFS>  stack;
+    typedef TraversalStackElement<V, E>  TSE;
+    std::deque<TSE>  stack;
 
     // Push first vertex in the stack
-    stack.push_back(TFS(v));
+    stack.push_back(TSE(v));
     colors[v->m_vid]=GRAY;
 
     // The visitor discover this first vertex
@@ -62,7 +61,7 @@ void DepthFirstSearch(Graph<V,E> &graph, V *v, Visitor &visitor) {
     while (!stack.empty()) {
 
         // Get the last element
-        TFS cur(stack.back());
+        TSE cur(stack.back());
 
         // Remove it from the stack
         stack.pop_back();
@@ -90,7 +89,7 @@ void DepthFirstSearch(Graph<V,E> &graph, V *v, Visitor &visitor) {
                 stack.push_back(++cur);
 
                 // Go further, same as a recursive call
-                cur = TFS(dst);
+                cur = TSE(dst);
 
             } else if (dstColor==GRAY) {
                 // This vertex is already planned to be visited

@@ -14,8 +14,8 @@ struct Vertex
     Vertex() 
     : m_vid(0)
     { 
-        m_outgoing.reserve(16);
-        m_incoming.reserve(16);
+        m_outgoing.reserve(8);
+        m_incoming.reserve(8);
     }
     
     /// Outgoing edges
