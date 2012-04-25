@@ -39,26 +39,41 @@ void GraphTest::testCreateGraph() {
 class Visitor
 {
 public:
+    Visitor()
+    : m_nbVertex(0)
+    {}
+
+    size_t m_nbVertex;
+
     void discoverVertex(Vertex *v)
     { 
-        std::cout << "discovering vertex " << v << std::endl;    
+        //std::cout << "discovering vertex " << v << std::endl;    
     }
 
-    void finishVertex(Vertex *){}
+    void finishVertex(Vertex *v)
+    {   
+        m_nbVertex++;
+        //std::cout << "finishing vertex " << v << std::endl;    
+    }
     void examineEdge(Edge *e)
     {
-        std::cout << "examining edge" << e << std::endl;
+        //std::cout << "examining edge" << e << std::endl;
     }
     void treeEdge(Edge *e)
     {
-        std::cout << "tree edge" << e << std::endl;
+        //std::cout << "tree edge" << e << std::endl;
     }
 
     void backEdge(Edge *e)
     {
-        std::cout << "back edge" << e << std::endl;
+        //std::cout << "back edge" << e << std::endl;
     }
-    void crossEdge(Edge*){}    
+
+    void crossEdge(Edge*e)
+    {
+        //std::cout << "cross edge" << e << std::endl;
+    }
+        
     bool endTraversal(){return false;}
 };
 
@@ -78,10 +93,21 @@ void GraphTest::testCycle()
     Edge e(&v1, &v2);
     graph.addEdge(&e);
 
-    
     //DepthFirstSearch(graph, &v2, visitor);
-    DepthFirstSearch(graph, &v1, visitor);
+    //DepthFirstSearch(graph, &v1, visitor);
+    
+    Vertex *varray= new Vertex[500000];
+    graph.addVertex(&varray[0]);
+    for (int i=0; i<499999; i++) {
+        graph.addVertex(&varray[i+1]);
+        Edge *e = new Edge(&varray[i], &varray[i+1]);    
+        graph.addEdge(e);
+     }
 
+    DepthFirstSearch(graph, &varray[0], visitor);
+   
+    
+    CPPUNIT_ASSERT(visitor.m_nbVertex==500000);
 }
 
 

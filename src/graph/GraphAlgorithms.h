@@ -27,6 +27,10 @@ struct TraversalFunctionStack {
     inline operator E *(){return *m_it;}
     inline TraversalFunctionStack<V,E> & operator ++ (){++m_it;return *this;}
 
+    // TODO or m_src depending on the traversal direction
+    V * nextVertex(){return (*m_it)->m_dst;}
+
+
     EdgeIt          m_it;
     EdgeIt          m_itEnd;
     V               *m_v;
@@ -55,8 +59,6 @@ void DepthFirstSearch(Graph<V,E> &graph, V *v, Visitor &visitor) {
     visitor.discoverVertex(v);
 
     // Begin the search
-    //typename V::InEdgeIterator it;
-    //typename V::InEdgeIterator itEnd;
     while (!stack.empty()) {
 
         // Get the last element
@@ -66,27 +68,29 @@ void DepthFirstSearch(Graph<V,E> &graph, V *v, Visitor &visitor) {
         stack.pop_back();
 
         // Now iterate on all incoming edge
-        while(cur) {
+        while (cur) {
 
             // Examine the edge
             visitor.examineEdge(cur);
             
-            // Retrieve destination vertex
-            V *dst = static_cast<E*>(cur)->m_dst;
+            // Retrieve next vertex in the traversal
+            V *dst = cur.nextVertex();
 
             // Check if we have already visited this vertex
             VertexColor &dstColor = colors[dst->m_vid]; 
-            if(dstColor==WHITE) {
-                // Not visited !
-                // edge is valid
+            if (dstColor==WHITE) { // Not visited !
+                // Edge is valid
                 visitor.treeEdge(cur);
 
-                // Store the current status of the traversal
-                stack.push_back(++cur);
-                // And go further
-                cur = TFS(dst);
                 // Discover new vertex
                 visitor.discoverVertex(dst);                     
+
+                // Prepare next edge for later processing and
+                // store the current status of the traversal
+                stack.push_back(++cur);
+
+                // Go further, same as a recursive call
+                cur = TFS(dst);
 
             } else if (dstColor==GRAY) {
                 // This vertex is already planned to be visited
