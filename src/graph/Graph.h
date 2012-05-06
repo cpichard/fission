@@ -6,7 +6,7 @@
 /// Graph class
 /// Template is used if we have different kinds of Vertices or Edge
 /// At the moment, one has to inherit Vertex or Edge
-
+namespace fission {
 
 template<typename V, typename E>
 class Graph
@@ -23,12 +23,13 @@ public:
     /// Destructor
     /// a graph is only a container, it owns nothing
     /// creates nothing and deletes nothing
+    /// It only stores handles.
     ~Graph(){}
 
     /// Add a vertex in the graph
     void addVertex(V *v) {
         // TODO Test if vertex already exists ?
-        
+
         // New id for this vertex
         const size_t id = m_vertices.size();
         v->m_vid = id;
@@ -36,23 +37,23 @@ public:
     }
 
     /// Add an edge in the graph
-    /// 
-    void addEdge(E *e) { 
+    ///
+    void addEdge(E *e) {
         const size_t id = m_edges.size();
         e->m_eid = id;
         e->m_src->m_outgoing.push_back(e);
         e->m_dst->m_incoming.push_back(e);
-        m_edges.push_back(e); 
+        m_edges.push_back(e);
     }
 
     bool hasVertex(V *v) {
-        // TODO 
+        // TODO
     }
 
     /// Return true if there is an edge between src and dst
     bool hasEdge(V *src, V *dst) {
 
-        // Exhaustive search on all outgoing edges 
+        // Exhaustive search on all outgoing edges
         typename V::OutEdgeIterator it=src->m_outgoing.begin();
         typename V::OutEdgeIterator itend=src->m_outgoing.end();
         for (it; it!=itend; ++it) {
@@ -63,7 +64,7 @@ public:
         return false;
     }
 
-    // TODO 
+    // TODO
     void removeVertex(V *v){}
     void removeEdge(E *e){}
 
@@ -79,8 +80,8 @@ protected:
     typedef typename std::vector<V*>::iterator VertexIterator;
 
     /// Array of edges
-    std::vector<E*>     m_edges;    
+    std::vector<E*>     m_edges;
     typedef typename std::vector<E*>::iterator EdgeIterator;
 };
-
+}; // namespace fission
 #endif//GRAPH_H

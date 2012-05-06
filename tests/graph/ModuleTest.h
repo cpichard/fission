@@ -7,7 +7,7 @@
 class ModuleTest : public CppUnit::TestFixture
 {
 public:
-    ModuleTest();    
+    ModuleTest();
     CPPUNIT_TEST_SUITE( ModuleTest );
     CPPUNIT_TEST( testCreateNode );
     CPPUNIT_TEST( testGraphName );
@@ -22,7 +22,6 @@ public:
     void testGraphName();
     void testGetNode();
     void testConnectNodes();
-    void testFlowGraph();    
+    void testFlowGraph();
 };
-
 #endif//MODULETEST_H

@@ -4,16 +4,17 @@
 #include <string>
 #include "NodeDesc.h"
 
+namespace fission {
 /// This is the first implementation of a node
 /// totally WIP
 /// A new node type inherit a NodeDesc
 /// It must provide a typename
-/// It must be able to return the inputs values description as well 
+/// It must be able to return the inputs values description as well
 /// as the output values.
 
 class TestSink : public NodeDesc
 {
-    // Friends 
+    // Friends
     // Note, it shouldn't have template friend functions if I want to
     // make plugins !
     template<typename T> friend const char * const TypeName();
@@ -22,11 +23,11 @@ class TestSink : public NodeDesc
 
 public:
     /// Virtual functions defining the node properties
-    const char * typeName() const {return TestSink::s_typeName;} 
+    const char * typeName() const {return TestSink::s_typeName;}
     const NodeDesc::Input * inputs() const {return s_inputs;}
     const NodeDesc::Output * outputs() const {return NULL;}
-    inline size_t nbInputs() const {return TestSink::s_nbInputs;}; 
-    inline size_t nbOutputs() const {return TestSink::s_nbOutputs;}; 
+    inline size_t nbInputs() const {return TestSink::s_nbInputs;};
+    inline size_t nbOutputs() const {return TestSink::s_nbOutputs;};
 
 private:
     static const char * const       s_typeName;
@@ -42,5 +43,5 @@ private:
 };
 
 //TypeId Type(const TestSink &) {return 90;}
-
+}; // namespace fission
 #endif//TESTSINK

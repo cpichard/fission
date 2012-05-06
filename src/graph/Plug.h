@@ -3,9 +3,11 @@
 
 #include "Vertex.h"
 #include "ObjectId.h"
+namespace fission {
 
-/// WIP 
-typedef int PlugType;    
+/// WIP
+/// Should implement the different kind of plug we will have
+typedef int PlugType;
 
 class Node;
 
@@ -27,5 +29,5 @@ protected:
     /// The node the plug belongs to
     Node    *m_owner;
 };
-
+}; // namespace fission
 #endif//PLUG_H

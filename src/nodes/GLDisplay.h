@@ -4,7 +4,7 @@
 #include "Node.h"
 #include "Status.h"
 #include "Context.h"
-
+namespace fission {
 class GLDisplay : public Node
 {
 public:
@@ -17,5 +17,7 @@ protected:
     virtual void * getResult();
     Status execute(Context &);
 };
+
+};// namespace fission
 
 #endif//GLDISPLAY_H

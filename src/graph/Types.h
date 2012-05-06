@@ -2,16 +2,17 @@
 #define TYPES_H
 
 #include <string>
+namespace fission {
 
-typedef enum { 
-    Unknown  
+typedef enum {
+    Unknown
     , ImageBuffer
     , Float
     , Integer
     , Bool
     , FileName
     , String
-    , Custom 
+    , Custom
 } KnownTypeId;
 
 typedef int TypeId;
@@ -25,4 +26,5 @@ const char * const TypeName(T *t){return t->typeName();}
 template<typename T>
 const char * const TypeName(){return T::s_typeName;}
 
+}; // namespace fission
 #endif//TYPES_H

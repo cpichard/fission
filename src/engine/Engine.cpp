@@ -4,6 +4,7 @@
 #include "ImageWriter.h"
 #include "Name.h"
 
+using namespace fission;
 // Constructor
 Engine::Engine()
 {
@@ -21,11 +22,11 @@ Engine::~Engine()
 #include <iostream>
 Status Engine::compute_async(Node &node, Context &context)
 {
-    std::cout   << "Computing node : " 
-                << Name(node) 
-                << " from " << context.m_first 
+    std::cout   << "Computing node : "
+                << Name(node)
+                << " from " << context.m_first
                 << " to " << context.m_last
-                << std::endl; 
+                << std::endl;
 
     // Goes inside the graph and make tasks
 

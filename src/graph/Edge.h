@@ -1,14 +1,14 @@
 #ifndef EDGE_H
 #define EDGE_H
 
+namespace fission {
 struct Vertex;
 
-/// Edge implements the idea of a source and a destination
-/// with pointers to elements
-
+/// Edge implements the storage of a source, a destination and an Id
+/// It doesn't store data.
 struct Edge
 {
-    Edge(Vertex *src, Vertex *dst) 
+    Edge(Vertex *src, Vertex *dst)
     : m_src(src)
     , m_dst(dst)
     {}
@@ -22,5 +22,5 @@ struct Edge
     /// Edge id in the graph
     size_t      m_eid;
 };
-
+}; // namespace fission
 #endif//EDGE_H

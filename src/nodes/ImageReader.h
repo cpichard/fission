@@ -3,6 +3,8 @@
 
 #include "Node.h"
 
+namespace fission {
+
 class ImageReader : public Node
 {
 public:
@@ -14,5 +16,5 @@ protected:
     virtual Status execute(Context &);
 };
 
-
+}; // namespace fission
 #endif//IMAGEREADER_H

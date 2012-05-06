@@ -3,6 +3,7 @@
 
 #include "Node.h"
 
+namespace fission {
 class ImageWriter : public Node
 {
     friend class Engine;
@@ -16,5 +17,5 @@ protected:
     Status execute(Context &);
 
 };
-
+}; // namespace fission
 #endif//IMAGEWRITER_H

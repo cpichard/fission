@@ -4,33 +4,35 @@
 #include <vector>
 #include "Edge.h"
 
-/// Basic vertex
+/// Basic implementation of a vertex
 /// It only stores the outgoing and incoming links between vertices
 /// with vectors
-/// A class must inherits from this if needs to store info.
-
+/// A class must inherits from this if needs to store data.
+namespace fission {
 struct Vertex
 {
-    Vertex() 
+    Vertex()
     : m_vid(0)
-    { 
+    {
+        // NOTE : might be very inefficient when a lot
+        // of vertices are created
         m_outgoing.reserve(8);
         m_incoming.reserve(8);
     }
-    
+
     /// Outgoing edges
     std::vector<Edge*> m_outgoing;
-    
+
     /// Incoming edges
     std::vector<Edge*> m_incoming;
-    
+
     // Type definitions for iterator on outgoing and incoming vectors
     typedef std::vector<Edge*>::iterator OutEdgeIterator;
     typedef std::vector<Edge*>::iterator InEdgeIterator;
-    
+
     /// Vertex id in the graph
     /// TODO Double check if we really need m_vid
     size_t m_vid;
 };
-
+}; // namespace fission
 #endif//VERTEX_H

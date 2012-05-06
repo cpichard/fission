@@ -6,7 +6,9 @@
 #include "Status.h"
 #include "Context.h"
 
-class Engine 
+namespace fission {
+
+class Engine
 {
 public:
     Engine();
@@ -18,7 +20,7 @@ public:
 private:
     // Graph of processing nodes
     // TODO : remove, engine is only use to compute stuff
-    // TODO : make a "Document" class, or Group or Graph... 
+    // TODO : make a "Document" class, or Group or Graph...
     // whatever can store list of nodes and do search, etc..
     std::list<Node*>    m_nodes;
 
@@ -27,5 +29,5 @@ private:
     // EventManager
     // Scheduler, etc...
 };
-
+}; // namespace fission
 #endif//ENGINE_H

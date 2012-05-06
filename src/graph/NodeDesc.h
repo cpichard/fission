@@ -1,6 +1,7 @@
 #ifndef NODEDESC_H
 #define NODEDESC_H
 
+namespace fission {
 /// A node description is the base class for all new types of node.
 /// The node type defines structures ....
 /// ...
@@ -11,15 +12,15 @@ class NodeDesc
     template<typename NT> friend inline size_t NbInputs();
     template<typename NT> friend inline size_t NbOutputs();
 
-public: 
-    // IO structure definition
-    struct IODesc 
-    {   
+public:
+    // Input/Output structure definition
+    struct IODesc
+    {
         IODesc(const char *name, const char *type)
         : m_name(name)
         , m_type(type)
         {}
-        const char *m_name; 
+        const char *m_name;
         const char *m_type;
     };
 
@@ -27,18 +28,29 @@ public:
     typedef struct IODesc Output;
     typedef struct IODesc Input;
 
+    struct ParamDesc
+    {
+        ParamDesc(const char *name, const char *type, const char *prop)
+        : m_name(name)
+        , m_type(type)
+        , m_prop(prop)
+        {}
+        const char *m_name;
+        const char *m_type;
+        const char *m_prop; /// Properties
+    };
+    typedef struct ParamDesc Param;
+
     /// All derived nodetypes must implement these functions
     /// to define a new node type
-    virtual const char * typeName() const=0; 
-    
-    virtual const NodeDesc::Input * inputs() const = 0; 
-    virtual const NodeDesc::Output * outputs() const  = 0;
-    
-    virtual size_t nbInputs() const = 0; 
-    virtual size_t nbOutputs() const = 0; 
+    virtual const char * typeName() const=0;
 
-    // TODO parameter description 
-    struct Param {const char *inputName; int inputType;};
+    virtual const NodeDesc::Input * inputs() const = 0;
+    virtual const NodeDesc::Output * outputs() const  = 0;
+
+    virtual size_t nbInputs() const = 0;
+    virtual size_t nbOutputs() const = 0;
+
 };
 
 /// Functions to access node description infos from an instance or from
@@ -59,5 +71,7 @@ inline const NodeDesc::Input * Inputs(const NT *nodetype){return nodetype->input
 
 template<typename NT>
 inline const NodeDesc::Output * Outputs(const NT *nodetype){return nodetype->outputs();}
+
+}; // namespace fission
 
 #endif//NODEDESC_H

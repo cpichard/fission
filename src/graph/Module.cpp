@@ -3,6 +3,7 @@
 #include "Name.h"
 #include "Types.h"
 
+namespace fission {
 /// Destructor
 /// Module is supposed to destroy everything that it owns
 Module::~Module() {
@@ -20,21 +21,21 @@ Node * Module::createNode(const std::string &nodeTypeName, const std::string &no
 {
     std::list<NodeDesc*>::iterator it;
     for (it=m_nodeDesc.begin(); it != m_nodeDesc.end(); ++it) {
-        
+
         // Type name comparison. There surely is a better way of testing types
         if (nodeTypeName.compare(TypeName(*it))==0) {
 
             // Last Id is equal to the size of the vector
             size_t id = m_nodes.size(); // Hope vector doesn't count the number of values
-            Node *node = new Node(nodeName, id, *it); 
-            // TODO : node.m_owner = 
+            Node *node = new Node(nodeName, id, *it);
+            // TODO : node.m_owner =
             //node.m_module = this;
             m_nodes.push_back(node);
 
             // Add all the plugs of this new node to the graph
             const size_t nbInputs = NbInputs(node);
             for (size_t i=0; i<nbInputs; i++) {
-                m_dataFlowGraph.addVertex(node->input(i));  
+                m_dataFlowGraph.addVertex(node->input(i));
             }
 
             const size_t nbOutputs = NbOutputs(node);
@@ -42,15 +43,15 @@ Node * Module::createNode(const std::string &nodeTypeName, const std::string &no
 
                 // Add vertex
                 m_dataFlowGraph.addVertex(node->output(j));
-            
+
                 // Connect all imputs to current outputs
                 for (size_t i=0; i<nbInputs; i++) {
-                    // TODO !!! 
+                    // TODO !!!
                     PlugLink *pl = new PlugLink("",0, NULL, node->input(i), node->output(j));
-                    m_dataFlowGraph.addEdge(pl);  
+                    m_dataFlowGraph.addEdge(pl);
                 }
             }
-             
+
             // TODO : is it useful to return the node ?
             return node;
         }
@@ -61,7 +62,7 @@ Node * Module::createNode(const std::string &nodeTypeName, const std::string &no
 /// Remove the node from the module ?? the graph ??
 /// Actually deletes the node ?
 void Module::disposeNode(Node *node) {
-    
+
 }
 
 void Module::registerNodeDesc(NodeDesc *newType) {
@@ -74,8 +75,8 @@ void Module::unregisterNodeDesc(NodeDesc *type) {
 }
 
 void Module::connect(Plug *src, Plug *dst) {
-    
-    // Double check we have the plugs here   
+
+    // Double check we have the plugs here
     if (src==NULL || dst==NULL) {
         return;
     }
@@ -88,10 +89,12 @@ void Module::connect(Plug *src, Plug *dst) {
     // Create a new pluglink
     // TODO : is it really useful to have a plug link struct ?
     PlugLink *pl = new PlugLink("",0, NULL, src, dst);
-    m_dataFlowGraph.addEdge(pl);  
-    
-    // TODO 
+    m_dataFlowGraph.addEdge(pl);
+
+    // TODO
     // Test for cycles
 
 
 }
+
+}; // namespace fission

@@ -5,6 +5,7 @@
 #include "Plug.h"
 #include <string>
 
+namespace fission {
 typedef int PlugLinkType; // TODO
 
 struct PlugLink : public Edge, public ObjectId<PlugLinkType>
@@ -20,5 +21,5 @@ public:
     {}
     ~PlugLink(){}
 };
-
+}; // namespace fission
 #endif//PLUGLINK_H
