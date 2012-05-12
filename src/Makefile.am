@@ -21,6 +21,9 @@ libfission_la_SOURCES = \
 ./graph/Module.h\
 ./graph/Module.cpp\
 ./graph/Parameter.h\
+./graph/Parameter.cpp\
+./graph/ParameterDesc.h\
+./graph/ParameterDesc.cpp\
 ./graph/Plug.h\
 ./graph/PlugLink.h\
 ./graph/Vertex.h\

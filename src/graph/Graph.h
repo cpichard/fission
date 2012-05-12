@@ -3,6 +3,8 @@
 
 #include <vector>
 
+#include "Status.h"
+
 /// Graph class
 /// Template is used if we have different kinds of Vertices or Edge
 /// At the moment, one has to inherit Vertex or Edge
@@ -27,23 +29,25 @@ public:
     ~Graph(){}
 
     /// Add a vertex in the graph
-    void addVertex(V *v) {
+    Status addVertex(V *v) {
         // TODO Test if vertex already exists ?
 
         // New id for this vertex
         const size_t id = m_vertices.size();
-        v->m_vid = id;
+        v->m_vid = id; // TODO SetId
         m_vertices.push_back(v);
+        return SUCCESS;
     }
 
     /// Add an edge in the graph
     ///
-    void addEdge(E *e) {
+    Status addEdge(E *e) {
         const size_t id = m_edges.size();
-        e->m_eid = id;
+        e->m_eid = id; // TODO SetId
         e->m_src->m_outgoing.push_back(e);
         e->m_dst->m_incoming.push_back(e);
         m_edges.push_back(e);
+        return SUCCESS;
     }
 
     bool hasVertex(V *v) {
@@ -65,8 +69,8 @@ public:
     }
 
     // TODO
-    void removeVertex(V *v){}
-    void removeEdge(E *e){}
+    Status removeVertex(V *v){return ERROR;}
+    Status removeEdge(E *e){return ERROR;}
 
     const std::vector<V*> &vertices() const {return m_vertices;}
     const std::vector<E*> &edges() const {return m_edges;}

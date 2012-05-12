@@ -2,10 +2,12 @@
 #define STATUS_H
 
 
-enum Status
-{ 
-    SUCCESS
+/// Return Status of some functions
+
+typedef enum {
+      SUCCESS
     , ERROR
-};
+    // TODO
+} Status;
 
 #endif//STATUS_H

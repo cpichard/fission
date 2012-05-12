@@ -38,6 +38,8 @@ protected:
     void addInput(const char *name, PlugType *);
     void addOutput(const char *name, PlugType *);
     void addParameter(const std::string &name);
+
+    // Non checked accesssors
     inline Plug* input(size_t i){return m_inputs[i];}
     inline Plug* output(size_t i){return m_outputs[i];}
 
