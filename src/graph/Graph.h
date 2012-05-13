@@ -17,13 +17,13 @@ public:
     /// Constructor
     Graph() {
         // reserve some space to avoid resizing vectors
-        // when doing a push backs
+        // when pushing back data
         m_vertices.reserve(1024);
         m_edges.reserve(1024);
     }
 
     /// Destructor
-    /// a graph is only a container, it owns nothing
+    /// a graph is only a container, it owns nothing,
     /// creates nothing and deletes nothing
     /// It only stores handles.
     ~Graph(){}
@@ -34,7 +34,7 @@ public:
 
         // New id for this vertex
         const size_t id = m_vertices.size();
-        v->m_vid = id; // TODO SetId
+        v->m_vid = id; // TODO SetId function
         m_vertices.push_back(v);
         return SUCCESS;
     }
