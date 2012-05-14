@@ -20,8 +20,8 @@ typedef enum {
 
 
 /// TraversalStackElement
-/// Structure used when simulating a recursive traversal.
-/// It stores the stack of a traversal function
+/// Structure used to simulate a recursive stack when traversing a dag.
+/// It stores an element of the stack 
 template<typename V, typename E>
 struct TraversalStackElement {
 
@@ -44,6 +44,7 @@ struct TraversalStackElement {
     // TODO or m_src depending on the traversal direction
     V * nextVertex(){return (*m_it)->m_dst;}
 
+    // The actual datas
     EdgeIt          m_it;
     EdgeIt          m_itEnd;
     V               *m_v;
@@ -60,7 +61,7 @@ void DepthFirstSearch(Graph<V,E> &graph, V *v, Visitor &visitor) {
     // Change color of all nodes to white, means not discovered.
     std::fill(colors.begin(), colors.end(), WHITE);
 
-    // A stack for visiting nodes, a deque is used ATM, might be changed
+    // A stack for visiting nodes, ATM a deque is used, might be changed
     typedef TraversalStackElement<V, E>  TSE;
     std::deque<TSE>  stack;
 
@@ -92,6 +93,7 @@ void DepthFirstSearch(Graph<V,E> &graph, V *v, Visitor &visitor) {
             // Check if we have already visited this vertex
             VertexColor &dstColor = colors[dst->m_vid];
             if (dstColor==WHITE) { // Not visited !
+
                 // Edge is valid
                 visitor.treeEdge(cur);
 
@@ -126,6 +128,7 @@ void DepthFirstSearch(Graph<V,E> &graph, V *v, Visitor &visitor) {
 }
 
 
+// TODO
 void DepthFirstVisit(){}
 }; // namespace fission
 #endif//GRAPHALGORITHMS_H
