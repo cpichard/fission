@@ -4,6 +4,13 @@
 #include <string>
 namespace fission {
 
+// TODO : StandardTypes.h
+//struct Integer {}
+//alloc
+//release
+//assign
+//cast
+
 typedef enum {
     Unknown
     , ImageBuffer

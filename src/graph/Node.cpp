@@ -36,6 +36,10 @@ Node::Node(const std::string &name, size_t id, const NodeDesc *type)
         // add an input
         addOutput(outputs[i].m_name, NULL); // TODO
     }
+
+    const size_t nbParams=NbParameters(type);
+
+
 }
 
 // TODO add input du meme type que le PlugTypeInfo
@@ -56,6 +60,7 @@ void Node::addOutput(const char *name, PlugType *type)
     m_outputs.push_back(plug);
 }
 
+// Add a parameter
 void Node::addParameter(const std::string &name)
 {}
 

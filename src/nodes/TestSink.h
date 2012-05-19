@@ -20,19 +20,23 @@ class TestSink : public NodeDesc
     template<typename T> friend const char * const TypeName();
     template<typename NT> friend inline size_t NbInputs();
     template<typename NT> friend inline size_t NbOutputs();
+    template<typename NT> friend inline size_t NbParameters();
 
 public:
     /// Virtual functions defining the node properties
     const char * typeName() const {return TestSink::s_typeName;}
     const NodeDesc::Input * inputs() const {return s_inputs;}
     const NodeDesc::Output * outputs() const {return NULL;}
+    const NodeDesc::Param * parameters() const {return NULL;}
     inline size_t nbInputs() const {return TestSink::s_nbInputs;};
     inline size_t nbOutputs() const {return TestSink::s_nbOutputs;};
+    inline size_t nbParameters() const {return TestSink::s_nbParams;};
 
 private:
     static const char * const       s_typeName;
     static const size_t             s_nbInputs = 1;
     static const size_t             s_nbOutputs = 0;
+    static const size_t             s_nbParams = 0;
     static const NodeDesc::Input    s_inputs[];
     //static const NodeDesc::Output   s_outputs[];
     static const NodeDesc::Param    s_params[];

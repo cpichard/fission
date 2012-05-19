@@ -11,6 +11,7 @@ class NodeDesc
     // Friend functions
     template<typename NT> friend inline size_t NbInputs();
     template<typename NT> friend inline size_t NbOutputs();
+    template<typename NT> friend inline size_t NbParameters();
 
 public:
     // Input/Output structure definition
@@ -30,14 +31,14 @@ public:
 
     struct ParamDesc
     {
-        ParamDesc(const char *name, const char *type, const char *prop)
+        ParamDesc(const char *name, const char *type, const void *prop)
         : m_name(name)
         , m_type(type)
         , m_prop(prop)
         {}
-        const char *m_name;
-        const char *m_type;
-        const char *m_prop; /// Properties
+        const char  *m_name;
+        const char  *m_type;
+        const void  *m_prop; /// Properties
     };
     typedef struct ParamDesc Param;
 
@@ -45,11 +46,13 @@ public:
     /// to define a new node type
     virtual const char * typeName() const=0;
 
-    virtual const NodeDesc::Input * inputs() const = 0;
-    virtual const NodeDesc::Output * outputs() const  = 0;
+    virtual const NodeDesc::Input * inputs() const=0;
+    virtual const NodeDesc::Output * outputs() const=0;
+    virtual const NodeDesc::Param * parameters() const=0;
 
-    virtual size_t nbInputs() const = 0;
-    virtual size_t nbOutputs() const = 0;
+    virtual size_t nbInputs() const=0;
+    virtual size_t nbOutputs() const=0;
+    virtual size_t nbParameters() const=0;
 
 };
 
@@ -62,9 +65,14 @@ inline size_t NbInputs(){return NT::s_nbInputs;}
 template<typename NT>
 inline size_t NbOutputs(){return NT::s_nbOutputs;}
 
+template<typename NT>
+inline size_t NbParameters(){return NT::s_nbParameters;}
+
 inline size_t NbInputs(const NodeDesc *node){return node->nbInputs();}
 
 inline size_t NbOutputs(const NodeDesc *node){return node->nbOutputs();}
+
+inline size_t NbParameters(const NodeDesc *node){return node->nbParameters();}
 
 template<typename NT>
 inline const NodeDesc::Input * Inputs(const NT *nodetype){return nodetype->inputs();}
@@ -72,6 +80,8 @@ inline const NodeDesc::Input * Inputs(const NT *nodetype){return nodetype->input
 template<typename NT>
 inline const NodeDesc::Output * Outputs(const NT *nodetype){return nodetype->outputs();}
 
+template<typename NT>
+inline const NodeDesc::Param * Parameters(const NT *nodetype){return nodetype->parameters();}
 }; // namespace fission
 
 #endif//NODEDESC_H

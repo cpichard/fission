@@ -25,13 +25,16 @@ public:
     const char * typeName() const {return TestSource::s_typeName;}
     const NodeDesc::Input * inputs() const {return NULL;}
     const NodeDesc::Output * outputs() const {return s_outputs;}
+    const NodeDesc::Param * parameters() const {return s_params;}
     inline size_t nbInputs() const {return TestSource::s_nbInputs;};
     inline size_t nbOutputs() const {return TestSource::s_nbOutputs;};
+    inline size_t nbParameters() const {return TestSource::s_nbParams;}
 
 private:
     static const char * const       s_typeName;
     static const size_t             s_nbInputs = 0;
     static const size_t             s_nbOutputs = 1;
+    static const size_t             s_nbParams = 1;
     static const NodeDesc::Input    s_inputs[];
     static const NodeDesc::Output   s_outputs[];
     static const NodeDesc::Param    s_params[];
