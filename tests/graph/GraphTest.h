@@ -12,6 +12,7 @@ public:
     CPPUNIT_TEST(testCreateGraph);
     CPPUNIT_TEST(testCycle);
     CPPUNIT_TEST_SUITE_END();
+
 public:
     void setUp();
     void tearDown();
