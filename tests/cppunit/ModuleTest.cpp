@@ -130,4 +130,21 @@ void ModuleTest::testGraphName()
     CPPUNIT_ASSERT( Name(module) == "test1" );
 }
 
+/*
+void ModuleTest::testSetParameter()
+{
+    Module module("test1");
+    module.registerNodeDesc(new TestSource());
+    module.registerNodeDesc(new TestSink());
+    module.registerNodeDesc(new TestOp());
+
+    Node *source = module.createNode("TestSource", "node1");
+    // TODO Node *source = module.createNode(Type<TestSource>(), "node2")
+
+    //module.setParameter( source["invalue"], 4);
+
+}
+*/
+
+
 

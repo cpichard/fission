@@ -15,6 +15,7 @@ class BaseType {
 public:
 
     /// Basic types used in the application
+    /// Not used atm
     /// TODO : use c++0x enum class
     typedef enum {
           VoidId
