@@ -1,7 +1,7 @@
 #include "Module.h"
 #include "TestValue.h" // TODO remove
 #include "Name.h"
-#include "Types.h"
+#include "Type.h"
 
 namespace fission {
 /// Destructor

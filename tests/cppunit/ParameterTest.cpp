@@ -1,9 +1,9 @@
 #include "ParameterTest.h"
 #include "Parameter.h"
+#include "Module.h"
 #include "TestOp.h"
 #include "TestSource.h"
 #include "TestSink.h"
-#include "Types.h"
 #include "Name.h"
 
 using namespace fission;

@@ -3,9 +3,10 @@
 
 #include <string>
 
-/// ObjectId stores data we need to
-/// define an object : a name, an ID and a type
-
+/// ObjectId 
+/// defines an object : a name, an ID and a type
+/// The type is stored as a pointer to an unique type description
+/// This struct should be as small as possible
 template<typename T>
 struct ObjectId
 {
@@ -15,7 +16,7 @@ struct ObjectId
     , m_id(id)
     , m_type(type){}
 
-    std::string m_name; // Can the name change ?
+    std::string m_name; // Can the name change ? should I use a const char * instead ?
     size_t      m_id;
     const T     *m_type;
     // TODO : does it need an owner as well ?

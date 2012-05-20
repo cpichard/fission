@@ -3,7 +3,6 @@
 #include "TestOp.h"
 #include "TestSource.h"
 #include "TestSink.h"
-#include "Types.h"
 #include "Name.h"
 
 using namespace fission;
@@ -40,10 +39,10 @@ void ModuleTest::testCreateNode()
     CPPUNIT_ASSERT(Name(*nodeTestSource) == "test1");
     CPPUNIT_ASSERT(Name(nodeTestSource) == "test1");
 
-    CPPUNIT_ASSERT( NbInputs(nodeTestSource) == 0);
-    CPPUNIT_ASSERT( NbOutputs(nodeTestSource) == 1);
-    CPPUNIT_ASSERT( NbOutputs<TestSource>() == 1);
-    CPPUNIT_ASSERT( NbInputs<TestSource>() == 0);
+    CPPUNIT_ASSERT(NbInputs(nodeTestSource) == 0);
+    CPPUNIT_ASSERT(NbOutputs(nodeTestSource) == 1);
+    CPPUNIT_ASSERT(NbOutputs<TestSource>() == 1);
+    CPPUNIT_ASSERT(NbInputs<TestSource>() == 0);
 }
 
 // TODO
@@ -88,10 +87,10 @@ void ModuleTest::testConnectNodes()
 
     Node *node3 = module.createNode("TestOp", "node3");
 
-    CPPUNIT_ASSERT( Name(Input0(node3))== "InValue");
+    CPPUNIT_ASSERT( Name(Input0(node3)) == "InValue");
 
-    CPPUNIT_ASSERT( module.m_dataFlowGraph.vertices().size() == 4 );
-    CPPUNIT_ASSERT( module.m_dataFlowGraph.edges().size() == 2 );
+    CPPUNIT_ASSERT( module.m_dataFlowGraph.vertices().size() == 5 );
+    CPPUNIT_ASSERT( module.m_dataFlowGraph.edges().size() == 3 );
 
 }
 
@@ -103,7 +102,6 @@ void ModuleTest::testFlowGraph()
     module.registerNodeDesc(new TestSink());
     module.registerNodeDesc(new TestOp());
 
-
     Node *source = module.createNode("TestSource", "node1");
     Node *sink = module.createNode("TestSink", "node2");
     Node *op = module.createNode("TestOp", "node3");
@@ -113,8 +111,8 @@ void ModuleTest::testFlowGraph()
     module.connect(Output0(op), Input0(sink));
 
     // Look in the dataflow graph directly
-    CPPUNIT_ASSERT( module.m_dataFlowGraph.vertices().size() == 4 );
-    CPPUNIT_ASSERT( module.m_dataFlowGraph.edges().size() == 3 );
+    CPPUNIT_ASSERT( module.m_dataFlowGraph.vertices().size() == 5 );
+    CPPUNIT_ASSERT( module.m_dataFlowGraph.edges().size() == 4 );
 
     // Look if all connections are correct
     Plug *outSource = Output0(source);

@@ -1,12 +1,19 @@
 #ifndef NODEDESC_H
 #define NODEDESC_H
 
+
 namespace fission {
+
+class BaseType;
+
 /// A node description is the base class for all new types of node.
+/// It is used to describe node input/outputs, parameters and functions
 /// The node type defines structures ....
 /// ...
 
 class NodeDesc
+/// TODO : is it a NodeBaseType that inherits from BaseType ?
+/// So it's directly in the type system
 {
     // Friend functions
     template<typename NT> friend inline size_t NbInputs();
@@ -14,15 +21,15 @@ class NodeDesc
     template<typename NT> friend inline size_t NbParameters();
 
 public:
-    // Input/Output structure definition
+    /// Input/Output of a node structure definition
     struct IODesc
     {
-        IODesc(const char *name, const char *type)
+        IODesc(const char *name, BaseType *type)
         : m_name(name)
         , m_type(type)
         {}
         const char *m_name;
-        const char *m_type;
+        BaseType   *m_type; // TODO : PlugType ??
     };
 
     // Input and output definition
@@ -31,13 +38,13 @@ public:
 
     struct ParamDesc
     {
-        ParamDesc(const char *name, const char *type, const void *prop)
+        ParamDesc(const char *name, BaseType *type, const void *prop)
         : m_name(name)
         , m_type(type)
         , m_prop(prop)
         {}
         const char  *m_name;
-        const char  *m_type;
+        BaseType    *m_type; /// Might change to a pointer to a structure
         const void  *m_prop; /// Properties
     };
     typedef struct ParamDesc Param;
@@ -55,6 +62,10 @@ public:
     virtual size_t nbParameters() const=0;
 
 };
+
+typedef NodeDesc::Output NodeOutput;
+typedef NodeDesc::Input NodeInput;
+typedef NodeDesc::Param NodeParameter;
 
 /// Functions to access node description infos from an instance or from
 /// the class itself.

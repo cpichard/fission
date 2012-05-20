@@ -1,24 +1,25 @@
 #include "TestSink.h"
 #include "Parameter.h"
-#include "Types.h"
+#include "StandardTypes.h"
 
 namespace fission {
-// Name of the node
+
+// Name of the node type
 const char * const TestSink::s_typeName = "TestSink";
 
-// No inputs for this node
-const NodeDesc::Input  TestSink::s_inputs[]   =
-{
-    NodeDesc::Input("value", "float")
+/// Version of this node type
+const unsigned int TestSink::s_version = 0;
+
+// One inputs for this node
+const NodeDesc::Input  TestSink::s_inputs[] = {
+    NodeDesc::Input("value", Type<Float>())
 };
 
-// Only one output, the value of the parameter
+// No outputs
 //const NodeDesc::Output TestSink::s_outputs[]  = {};
 
-// TODO : only one parameter
+// TODO : no parameter
 const NodeDesc::Param TestSink::s_params[]   = {};
 
-// Version of the
-const unsigned int TestSink::s_version = 0;
 
 }; // namespace fission

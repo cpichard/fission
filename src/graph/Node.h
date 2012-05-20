@@ -6,7 +6,7 @@
 #include "Parameter.h"
 #include "Graph.h"
 #include "ObjectId.h"
-#include "Types.h"
+#include "Type.h"
 #include "NodeDesc.h"
 
 namespace fission {
@@ -35,9 +35,9 @@ public:
 
 protected:
     // Note : is it still usefull as now, we don't inherit new nodes from this class?
-    void addInput(const char *name, PlugType *);
-    void addOutput(const char *name, PlugType *);
-    void addParameter(const std::string &name);
+    //void addInput(const char *name, const PlugType *);
+    //void addOutput(const char *name, const PlugType *);
+    //void addParameter(const std::string &name,  *);
 
     // Non checked accesssors
     inline Plug* input(size_t i){return m_inputs[i];}

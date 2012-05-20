@@ -1,5 +1,5 @@
 #AM_CPPFLAGS = -g @BOOST_CFLAGS@ 
-AM_CPPFLAGS = -g -Iengine/ -Igraph/ -Inodes/ 
+AM_CPPFLAGS = -std=c++0x -g -Iengine/ -Igraph/ -Inodes/ -Irtts/
 
 lib_LTLIBRARIES=libfission.la
 #libfission_la_LIBADD = @BOOST_LIBS@ 
@@ -11,7 +11,7 @@ libfission_la_SOURCES = \
 ./graph/Name.h\
 ./engine/Process.h\
 ./engine/Status.h\
-./engine/Types.h\
+./rtts/Types.h\
 ./graph/Edge.h\
 ./graph/Graph.h\
 ./graph/ObjectId.h\
@@ -34,4 +34,7 @@ libfission_la_SOURCES = \
 ./nodes/TestOp.cpp\
 ./nodes/TestOp.h\
 ./nodes/TestSink.cpp\
-./nodes/TestSink.h
+./nodes/TestSink.h\
+./rtts/Value.h\
+./rtts/StandardTypes.h\
+./rtts/StandardTypes.cpp

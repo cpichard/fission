@@ -1,30 +1,37 @@
 #include "TestOp.h"
 #include "Parameter.h"
-#include "Types.h"
+#include "Status.h"
+#include "StandardTypes.h"
+#include "Value.h"
+
 namespace fission {
-// Name of the node
+
+/// Name of the node
 const char * const TestOp::s_typeName = "TestOp";
 
-// No inputs for this node
-const NodeDesc::Input  TestOp::s_inputs[]   = {
-    NodeDesc::Input("InValue","float")
+/// Version of the node
+const unsigned int TestOp::s_version = 0;
+
+// One input for this node
+const NodeDesc::Input  TestOp::s_inputs[] = {
+    NodeDesc::Input("InValue1", Type<Float>()),
+    NodeDesc::Input("InValue2", Type<Float>()),
 };
 
 // Only one output, the value of the parameter
-const NodeDesc::Output TestOp::s_outputs[]  =
-{
+const NodeDesc::Output TestOp::s_outputs[] = {
     // TEST
-    NodeDesc::Output("Value","float")
+    NodeDesc::Output("OutValue", Type<Float>())
 };
 
-// TODO : only one parameter
-const NodeDesc::Param TestOp::s_params[]   = {};
+// TODO : no parameter
+const NodeDesc::Param TestOp::s_params[] = {};
 
-// Version of the
-const unsigned int TestOp::s_version = 0;
-
-//size_t TestOp::nbInputs() const {return sizeof(s_inputs)/sizeof(NodeDesc::Input);}
-//size_t TestOp::nbOutputs() const {return sizeof(s_outputs)/sizeof(NodeDesc::Output);}
+// First test function
+Status execute(const Value *in, Value &out) {
+    // Do something really cool !    
+    out = in[0];
+}
 
 
 }; // namespace fission

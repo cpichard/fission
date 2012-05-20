@@ -4,7 +4,7 @@
 namespace fission {
 struct Vertex;
 
-/// Edge implements the storage of a source, a destination and an Id
+/// Edge stores a source, a destination and an Id
 /// It doesn't store data.
 struct Edge
 {

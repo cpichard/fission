@@ -24,21 +24,21 @@ class TestOp : public NodeDesc
 public:
     /// Virtual functions defining the node properties
     const char * typeName() const {return TestOp::s_typeName;}
-    const NodeDesc::Input * inputs() const {return TestOp::s_inputs;}
-    const NodeDesc::Output * outputs() const {return s_outputs;}
-    const NodeDesc::Param * parameters() const {return s_params;}
+    const NodeInput * inputs() const {return TestOp::s_inputs;}
+    const NodeOutput * outputs() const {return s_outputs;}
+    const NodeParameter * parameters() const {return NULL;}
     inline size_t nbInputs() const {return TestOp::s_nbInputs;};
     inline size_t nbOutputs() const {return TestOp::s_nbOutputs;};
     inline size_t nbParameters() const {return TestOp::s_nbParams;};
 
 private:
     static const char * const       s_typeName;
-    static const size_t             s_nbInputs = 1;
+    static const size_t             s_nbInputs = 2;
     static const size_t             s_nbOutputs = 1;
     static const size_t             s_nbParams = 0;
-    static const NodeDesc::Input    s_inputs[];
-    static const NodeDesc::Output   s_outputs[];
-    static const NodeDesc::Param    s_params[];
+    static const NodeInput          s_inputs[];
+    static const NodeOutput         s_outputs[];
+    static const NodeParameter      s_params[];
     static const unsigned int       s_version;
 
     // Compute functions here ! eventually
