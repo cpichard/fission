@@ -16,7 +16,14 @@ protected:
     Void()
     : BaseType(VoidId)
     {}
+public:
+    static const BaseType * getType();
+private:
+    static Void *m_instance;
 };
+
+
+///////////////////////////// Int /////////////////////////////
 
 class Int : public BaseType {
 protected:
@@ -24,10 +31,13 @@ protected:
     : BaseType(IntegerId)
     {}
 public:
-    static BaseType * getType();
+    static const BaseType * getType();
 private:
     static Int *m_instance;
 };
+
+
+/////////////////////////// Float //////////////////////////////
 
 class Float : public BaseType {
 protected:
@@ -35,13 +45,22 @@ protected:
     : BaseType(FloatId)
     {}
 public:
-    static BaseType * getType();
+    static const BaseType * getType();
 private:
     static Float *m_instance;
 };
 
+// Specialization for float
+
+///////////////////////// String //////////////////////////////
+
 class String : public BaseType {
 };
+
+/// Specialization for standard c++ types
+template <> inline const BaseType * Type<int>(){return Int::getType();}
+template <> inline const BaseType * Type<float>(){return Float::getType();}
+template <> inline const BaseType * Type<double>(){return Float::getType();}
 
 }; // namespace fission
 #endif//STANDARDTYPES_H

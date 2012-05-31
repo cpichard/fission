@@ -30,7 +30,24 @@ void ValueTest::testCreateValue()
     //Value v;
     //v.set<IntType>(0);
     //Value<IntType> v(0);
-    Value v(0);
+    Value v_int(0);
+    CPPUNIT_ASSERT(isType<Int>(v_int));
+
+    Value v_float(0.f);
+    CPPUNIT_ASSERT(isType<Float>(v_float));
+
+    //int v=static_cast<int>(v_int);
+    Value v_void;
+    CPPUNIT_ASSERT(isType<Void>(v_void));
+    
+    // TODO :
+    //int v_int2=2;
+    // CPPUNIT_ASSERT(isType<Int>(v_int2));
+
+
+
+
+    // TODO : string and double
 
     //Value v(Float(0));
     //Int i(0);
@@ -54,3 +71,13 @@ void ValueTest::testCreateValue()
     //CPPUNIT_ASSERT(v==10);
 }
 
+
+
+void ValueTest::testAssignValue()
+{
+    Value v_int(0);
+    v_int = 10;
+
+    CPPUNIT_ASSERT(v_int==10);
+
+}

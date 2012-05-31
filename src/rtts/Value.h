@@ -1,6 +1,8 @@
 #ifndef VALUE_H
 #define VALUE_H
 
+#include "StandardTypes.h"
+
 namespace fission {
 
 /// A Value has a type and a memory space
@@ -31,20 +33,48 @@ public:
         delete m_data;
     }
 
-    class placeholder
-    {
+    class placeholder {
     public:
+        placeholder(const BaseType *bType)
+        : m_type(bType) {}
         virtual ~placeholder(){}
+        //virtual void copy()=0;
         //const std::type_info &type const=0;
         //virtual placeholder *clone() const=0;
+        const BaseType *m_type;
     };
+
+    inline
+    const BaseType * getType() const {
+        if (!m_data) {
+            return Void::getType();
+        } else {
+            return m_data->m_type;
+        }
+    }
+
+    Value & operator=(const Value &rhs) {
+        if (m_data && rhs.m_data) {
+            // TODO 
+            //m_data.getType()->copy();
+            //m_data->held = rhs.m_data->held;
+        }
+        return *this;
+    }
+
+    bool operator == (const Value &rhs) const {
+        return false;
+    }
+
 
     template<typename ValueType>
     class holder : public placeholder
     {
     public:
         holder(const ValueType & value)
-        : held(value){}
+        : placeholder(Type<ValueType>())
+        , held(value)
+        {}
 /*
         virtual const std::type_info & type() const
         {
@@ -58,6 +88,7 @@ public:
 */
         ValueType held;
     };
+
 private:
     template<typename ValueType>
     friend ValueType * value_cast(Value *);

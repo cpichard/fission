@@ -24,12 +24,12 @@ public:
     /// Input/Output of a node structure definition
     struct IODesc
     {
-        IODesc(const char *name, BaseType *type)
+        IODesc(const char *name, const BaseType *type)
         : m_name(name)
         , m_type(type)
         {}
-        const char *m_name;
-        BaseType   *m_type; // TODO : PlugType ??
+        const char      *m_name;
+        const BaseType  *m_type; // TODO : PlugType ??
     };
 
     // Input and output definition
@@ -38,14 +38,14 @@ public:
 
     struct ParamDesc
     {
-        ParamDesc(const char *name, BaseType *type, const void *prop)
+        ParamDesc(const char *name, const BaseType *type, const void *prop)
         : m_name(name)
         , m_type(type)
         , m_prop(prop)
         {}
-        const char  *m_name;
-        BaseType    *m_type; /// Might change to a pointer to a structure
-        const void  *m_prop; /// Properties
+        const char      *m_name;
+        const BaseType  *m_type; /// Might change to a pointer to a structure
+        const void      *m_prop; /// Properties
     };
     typedef struct ParamDesc Param;
 

@@ -87,7 +87,8 @@ void ModuleTest::testConnectNodes()
 
     Node *node3 = module.createNode("TestOp", "node3");
 
-    CPPUNIT_ASSERT( Name(Input0(node3)) == "InValue");
+    CPPUNIT_ASSERT( Name(Input0(node3)) == "InValue1");
+    CPPUNIT_ASSERT( Name(Input1(node3)) == "InValue2");
 
     CPPUNIT_ASSERT( module.m_dataFlowGraph.vertices().size() == 5 );
     CPPUNIT_ASSERT( module.m_dataFlowGraph.edges().size() == 3 );

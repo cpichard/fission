@@ -59,9 +59,22 @@ private:
 /// type : Type<Float>() or Type<Int> or Type<Node> or Type<Value>
 template<typename DerivedType>
 inline
-BaseType * Type() {
+const BaseType * Type() {
     return DerivedType::getType();
 }
+
+template<typename lType, typename rType>
+inline bool isType(const rType &v) {
+    return Type<lType>()==TypeOf(v);
+}
+
+// Unknown type is associated to Void.
+// I may rename Void with a more precise name
+// is it TypeOf
+template <typename ValueType>
+inline
+const BaseType * TypeOf(ValueType &v){return v.getType();}
+
 
 // TODO remove
 typedef int TypeId;

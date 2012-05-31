@@ -16,7 +16,15 @@ class Node : public ObjectId<NodeDesc>
     friend class Module;
 
     // List of functions able to access an instance of Node
-    // This is to test a way of building the API
+    // This is to test a way of building the API with only
+    // functions like Name(obj) or Input0(obj)
+    // I think it's more readable
+    // The ugly counter part is the code below
+    // I might use and "#include NodeFriends.h"
+    // or something more close to
+    // IMPLEMENTS(Naming)
+    // IMPLEMENTS(PlugIO)
+    // IMPLEMENTS(Typeable)
     template<typename T> friend const char * const TypeName(T*);
     friend size_t NbInputs(const Node &node);
     friend size_t NbOutputs(const Node &node);
@@ -24,6 +32,8 @@ class Node : public ObjectId<NodeDesc>
     friend size_t NbOutputs(Node *node);
     friend inline Plug * Output0(Node *node);
     friend inline Plug * Input0(Node *node);
+    friend inline Plug * Output1(Node *node);
+    friend inline Plug * Input1(Node *node);
 
 public:
     // NOTE : may be this function can be protected
@@ -66,7 +76,9 @@ inline size_t NbOutputs(const Node &node){return node.m_outputs.size();}
 inline size_t NbInputs(Node *node){return node->m_inputs.size();}
 inline size_t NbOutputs(Node *node){return node->m_outputs.size();}
 inline Plug * Output0(Node *node){return node->m_outputs[0];}
+inline Plug * Output1(Node *node){return node->m_outputs[1];}
 inline Plug * Input0(Node *node){return node->m_inputs[0];}
+inline Plug * Input1(Node *node){return node->m_inputs[1];}
 
 }; // namespace fission
 #endif//NODE_H
