@@ -1,6 +1,8 @@
 #ifndef NODEDESC_H
 #define NODEDESC_H
 
+#include "llvm/LLVMContext.h"
+#include "llvm/Module.h"
 
 namespace fission {
 
@@ -61,6 +63,8 @@ public:
     virtual size_t nbOutputs() const=0;
     virtual size_t nbParameters() const=0;
 
+    // LLVM generated IR code
+    virtual void loadExecuteFunction(llvm::Module *)=0;
 };
 
 typedef NodeDesc::Output NodeOutput;

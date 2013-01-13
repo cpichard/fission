@@ -29,6 +29,7 @@ public:
     inline size_t nbInputs() const {return TestSource::s_nbInputs;};
     inline size_t nbOutputs() const {return TestSource::s_nbOutputs;};
     inline size_t nbParameters() const {return TestSource::s_nbParams;}
+    virtual void loadExecuteFunction(llvm::Module *){};
 
 private:
     static const char * const       s_typeName;

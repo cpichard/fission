@@ -1,14 +1,14 @@
-#include "Engine.h"
+#include "ExecutionEngine.h"
 #include "Name.h"
 
 using namespace fission;
 // Constructor
-Engine::Engine()
+ExecutionEngine::ExecutionEngine()
 {
 }
 
 // Destructor
-Engine::~Engine()
+ExecutionEngine::~ExecutionEngine()
 {}
 
 
@@ -17,7 +17,7 @@ Engine::~Engine()
 // Le rendercontext peut servir d'object qui monitore le calcul en cours.
 // a voir plus tard
 #include <iostream>
-Status Engine::compute_async(Node &node, Context &context)
+Status ExecutionEngine::compute_async(Node &node, Context &context)
 {
     std::cout   << "Computing node : "
                 << Name(node)
@@ -31,7 +31,7 @@ Status Engine::compute_async(Node &node, Context &context)
     return SUCCESS;
 }
 
-Status Engine::compute(Node &node, Context &context)
+Status ExecutionEngine::compute(Node &node, Context &context)
 {
     return SUCCESS;
 }

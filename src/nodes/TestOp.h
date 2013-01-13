@@ -31,6 +31,8 @@ public:
     inline size_t nbOutputs() const {return TestOp::s_nbOutputs;};
     inline size_t nbParameters() const {return TestOp::s_nbParams;};
 
+    virtual void loadExecuteFunction(llvm::Module *){};
+
 private:
     static const char * const       s_typeName;
     static const size_t             s_nbInputs = 2;

@@ -1,5 +1,5 @@
-#ifndef ENGINE_H
-#define ENGINE_H
+#ifndef EXECUTIONENGINE_H
+#define EXECUTIONENGINE_H
 
 #include <list>
 #include "Node.h"
@@ -8,11 +8,11 @@
 
 namespace fission {
 
-class Engine
+class ExecutionEngine
 {
 public:
-    Engine();
-    ~Engine();
+    ExecutionEngine();
+    ~ExecutionEngine();
 
     Status compute_async(Node &, Context &);
     Status compute(Node &, Context &);
@@ -30,4 +30,4 @@ private:
     // Scheduler, etc...
 };
 }; // namespace fission
-#endif//ENGINE_H
+#endif//EXECUTIONENGINE_H

@@ -30,6 +30,8 @@ using namespace llvm;
 
 int main(int argc, char **argv)
 {
+    // TODO :fission::init();
+
     // LLVM initialize
     InitializeNativeTarget();
     LLVMContext &llvmContext = getGlobalContext();
@@ -39,12 +41,24 @@ int main(int argc, char **argv)
     // ??????
     llvm::IRBuilder<> Builder(llvmContext);
 
-    // Load a graph of code
+    // Creation of a module which contains nodes
     fission::Module module("test1");
     module.registerNodeDesc(new TestSource());
-    //fission::Node *node1 = module.createNode("unknown", "");
-    //fission::Node *node2 = module.createNode("unknown", "");
-    //module.connect(Output0(node1), Input0(node2));
+    module.registerNodeDesc(new TestOp());
+    module.registerNodeDesc(new TestSink());
+    fission::Node *node1 = module.createNode("TestSource", "");
+    fission::Node *node2 = module.createNode("TestSource", "");
+    fission::Node *node3 = module.createNode("TestOp", "");
+    fission::Node *node4 = module.createNode("TestSink", "");
+    module.connect(Output0(node1), Input0(node3));
+    module.connect(Output0(node2), Input1(node3));
+    module.connect(Output0(node3), Input0(node4));
+
+    // Tell the module the sink is the node to execute
+    ExecutionEngine engine(module);
+    engine.execute(Output0(module)); // buildResult ?
+
+    // Build a render engine
 
     std::string ErrStr;
     ExecutionEngine *TheExecutionEngine = EngineBuilder(TheModule).setErrorStr(&ErrStr).create();
