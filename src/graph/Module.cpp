@@ -47,7 +47,7 @@ Node * Module::createNode(const std::string &nodeTypeName, const std::string &no
                 // Connect all imputs to current outputs
                 for (size_t i=0; i<nbInputs; i++) {
                     // TODO !!!
-                    PlugLink *pl = new PlugLink("",0, NULL, node->input(i), node->output(j));
+                    PlugLink *pl = new PlugLink("", 0, NULL, node->input(i), node->output(j));
                     m_dataFlowGraph.addEdge(pl);
                 }
             }

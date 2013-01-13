@@ -29,8 +29,10 @@ const NodeDesc::Param TestOp::s_params[] = {};
 
 // First test function
 Status execute(const Value *in, Value &out) {
-    // Do something really cool !    
+    // Do something really cool !
     out = in[0];
+
+    return SUCCESS;
 }
 
 

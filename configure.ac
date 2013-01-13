@@ -25,6 +25,9 @@ fi
 
 
 # Checks for programs.
+${CC=clang}
+${CXX=clang++}
+
 AC_PROG_CXX
 AC_PROG_MAKE_SET
 
@@ -68,6 +71,8 @@ AC_CONFIG_FILES([
 	bindings/python/Makefile
     tests/Makefile
     tests/cppunit/Makefile
+    drafts/Makefile
+    drafts/llvm/Makefile
 	])
 
 # Checks for libraries.

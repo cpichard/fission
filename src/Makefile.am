@@ -1,5 +1,5 @@
 #AM_CPPFLAGS = -g @BOOST_CFLAGS@ 
-AM_CPPFLAGS = -std=c++0x -g -Iengine/ -Igraph/ -Inodes/ -Irtts/
+AM_CPPFLAGS = -std=c++11 -g -Iengine/ -Igraph/ -Inodes/ -Irtts/
 
 lib_LTLIBRARIES=libfission.la
 #libfission_la_LIBADD = @BOOST_LIBS@ 

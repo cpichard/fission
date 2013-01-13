@@ -1,1 +1,19 @@
-This is the fission library, a node and graph library used for my spare time projects. 
+Fission
+=======
+
+Description
+===========
+This is a sandbox project to play with nodal engine concepts.
+
+Compilation
+===========
+It currently uses clang and clang++ and llvm framework for the drafts subproject
+At the moment, the project can be built using :
+autoreconf
+./configure
+make
+
+It might not compile at all !
+
+
+

@@ -21,7 +21,7 @@ typedef enum {
 
 /// TraversalStackElement
 /// Structure used to simulate a recursive stack when traversing a dag.
-/// It stores an element of the stack 
+/// It stores an element of the stack
 template<typename V, typename E>
 struct TraversalStackElement {
 
@@ -32,7 +32,7 @@ struct TraversalStackElement {
     , m_itEnd(v->m_outgoing.end())
     , m_v(v){}
 
-    // Loads of operator to simplify the code
+    // Plenty of operators to simplify the code
     inline operator EdgeIt & (){return m_it;}
     inline operator V * (){return m_v;}
     inline operator E *(){return *m_it;}

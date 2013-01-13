@@ -60,7 +60,7 @@ public:
         // Exhaustive search on all outgoing edges
         typename V::OutEdgeIterator it=src->m_outgoing.begin();
         typename V::OutEdgeIterator itend=src->m_outgoing.end();
-        for (it; it!=itend; ++it) {
+        for (; it!=itend; ++it) {
             if ((*it)->m_dst==dst) {
                 return true;
             }
