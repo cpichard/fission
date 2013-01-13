@@ -9,7 +9,6 @@ libfission_la_SOURCES = \
 ./engine/ExecutionEngine.cpp\
 ./engine/ExecutionEngine.h\
 ./graph/Name.h\
-./engine/Process.h\
 ./engine/Status.h\
 ./rtts/Types.h\
 ./graph/Edge.h\
