@@ -72,7 +72,7 @@ am__base_list = \
 am__installdirs = "$(DESTDIR)$(libdir)"
 LTLIBRARIES = $(lib_LTLIBRARIES)
 libfission_la_LIBADD =
-am_libfission_la_OBJECTS = ExecutionEngine.lo Node.lo Module.lo \
+am_libfission_la_OBJECTS = ComputeEngine.lo Node.lo Module.lo \
 	Parameter.lo ParameterDesc.lo TestSource.lo TestOp.lo \
 	TestSink.lo StandardTypes.lo
 libfission_la_OBJECTS = $(am_libfission_la_OBJECTS)
@@ -251,10 +251,9 @@ lib_LTLIBRARIES = libfission.la
 libfission_la_LDFLAGS = -Wl,-rpath,./ `llvm-config --ldflags --libs core jit native`
 libfission_la_SOURCES = \
 ./engine/Context.h\
-./engine/ExecutionEngine.cpp\
-./engine/ExecutionEngine.h\
+./engine/ComputeEngine.cpp\
+./engine/ComputeEngine.h\
 ./graph/Name.h\
-./engine/Process.h\
 ./engine/Status.h\
 ./rtts/Types.h\
 ./graph/Edge.h\
@@ -356,7 +355,7 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ExecutionEngine.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ComputeEngine.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Module.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Node.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Parameter.Plo@am__quote@
@@ -387,12 +386,12 @@ distclean-compile:
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(LTCXXCOMPILE) -c -o $@ $<
 
-ExecutionEngine.lo: ./engine/ExecutionEngine.cpp
-@am__fastdepCXX_TRUE@	$(LIBTOOL)  --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT ExecutionEngine.lo -MD -MP -MF $(DEPDIR)/ExecutionEngine.Tpo -c -o ExecutionEngine.lo `test -f './engine/ExecutionEngine.cpp' || echo '$(srcdir)/'`./engine/ExecutionEngine.cpp
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/ExecutionEngine.Tpo $(DEPDIR)/ExecutionEngine.Plo
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='./engine/ExecutionEngine.cpp' object='ExecutionEngine.lo' libtool=yes @AMDEPBACKSLASH@
+ComputeEngine.lo: ./engine/ComputeEngine.cpp
+@am__fastdepCXX_TRUE@	$(LIBTOOL)  --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT ComputeEngine.lo -MD -MP -MF $(DEPDIR)/ComputeEngine.Tpo -c -o ComputeEngine.lo `test -f './engine/ComputeEngine.cpp' || echo '$(srcdir)/'`./engine/ComputeEngine.cpp
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/ComputeEngine.Tpo $(DEPDIR)/ComputeEngine.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='./engine/ComputeEngine.cpp' object='ComputeEngine.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(LIBTOOL)  --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o ExecutionEngine.lo `test -f './engine/ExecutionEngine.cpp' || echo '$(srcdir)/'`./engine/ExecutionEngine.cpp
+@am__fastdepCXX_FALSE@	$(LIBTOOL)  --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o ComputeEngine.lo `test -f './engine/ComputeEngine.cpp' || echo '$(srcdir)/'`./engine/ComputeEngine.cpp
 
 Node.lo: ./graph/Node.cpp
 @am__fastdepCXX_TRUE@	$(LIBTOOL)  --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Node.lo -MD -MP -MF $(DEPDIR)/Node.Tpo -c -o Node.lo `test -f './graph/Node.cpp' || echo '$(srcdir)/'`./graph/Node.cpp

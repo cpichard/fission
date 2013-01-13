@@ -64,7 +64,7 @@ public:
     virtual size_t nbParameters() const=0;
 
     // LLVM generated IR code
-    virtual void loadExecuteFunction(llvm::Module *)=0;
+    virtual void registerFunctions(llvm::Module *)=0;
 };
 
 typedef NodeDesc::Output NodeOutput;

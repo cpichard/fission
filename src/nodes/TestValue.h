@@ -27,7 +27,8 @@ public:
     const NodeDesc::Output * outputs() const {return s_outputs;}
     inline size_t nbInputs() const {return TestValue::s_nbInputs;};
     inline size_t nbOutputs() const {return TestValue::s_nbOutputs;};
-    virtual void loadExecuteFunction(llvm::Module *){};
+
+    virtual void registerFunctions(llvm::Module *){};
 
 private:
     static const char * const       s_typeName;

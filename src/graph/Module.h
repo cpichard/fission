@@ -3,8 +3,6 @@
 
 #include <list>
 #include "Node.h"
-#include "llvm/LLVMContext.h"
-#include "llvm/Module.h"
 
 // TODO : remove moduletest, it's just for ... tests
 class ModuleTest;
@@ -50,8 +48,7 @@ private:
     Graph<Plug, PlugLink>           m_dataFlowGraph;
 
     /// llvm module that contains the generated code and functions
-    llvm::Module *llvmModule; 
-
+    llvm::Module *m_llvmModule;
 
 };
 

@@ -3,7 +3,7 @@
 
 // Execution context.
 // Defines all the parameters 
-
+namespace fission {
 class Context
 {
 public:
@@ -23,5 +23,5 @@ public:
     size_t m_first;
     size_t m_last;
 };
-
+}; // namespace fission
 #endif//CONTEXT_H

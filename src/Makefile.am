@@ -6,8 +6,8 @@ lib_LTLIBRARIES=libfission.la
 libfission_la_LDFLAGS = -Wl,-rpath,./ `llvm-config --ldflags --libs core jit native`
 libfission_la_SOURCES = \
 ./engine/Context.h\
-./engine/ExecutionEngine.cpp\
-./engine/ExecutionEngine.h\
+./engine/ComputeEngine.cpp\
+./engine/ComputeEngine.h\
 ./graph/Name.h\
 ./engine/Status.h\
 ./rtts/Types.h\

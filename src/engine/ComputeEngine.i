@@ -1,13 +1,13 @@
 %{
 #define SWIG_FILE_WITH_INIT
-#include "ExecutionEngine.h"
+#include "ComputeEngine.h"
 %}
 
-class ExecutionEngine 
+class ComputeEngine 
 {
 public:
-    ExecutionEngine();
-    ~ExecutionEngine();
+    ComputeEngine();
+    ~ComputeEngine();
     // Test
     Status compute_async(Node &, Context &);
     Status compute(Node &, Context &);

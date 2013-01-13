@@ -11,7 +11,7 @@ Module::Module(const std::string &name)
     // Declate a new llvm module
     // It will store all the "execute" functions of the nodes
     llvm::LLVMContext &llvmContext = llvm::getGlobalContext();
-    llvmModule = new llvm::Module(name, llvmContext);
+    m_llvmModule = new llvm::Module("compute engine", llvmContext);
 }
 
 
@@ -80,9 +80,10 @@ void Module::registerNodeDesc(NodeDesc *newType) {
     
     // Take ownership of this new type
     m_nodeDesc.push_back(newType);
-
     // Register the execute function of the node in llvm
-    newType->loadExecuteFunction(llvmModule);
+    newType->registerFunctions(m_llvmModule);
+    
+
 }
 
 void Module::unregisterNodeDesc(NodeDesc *type) {
