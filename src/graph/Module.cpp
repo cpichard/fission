@@ -4,6 +4,17 @@
 #include "Type.h"
 
 namespace fission {
+
+Module::Module(const std::string &name)
+: Node(name, 0, NULL) {
+
+    // Declate a new llvm module
+    // It will store all the "execute" functions of the nodes
+    llvm::LLVMContext &llvmContext = llvm::getGlobalContext();
+    llvmModule = new llvm::Module(name, llvmContext);
+}
+
+
 /// Destructor
 /// Module is supposed to destroy everything that it owns
 Module::~Module() {
@@ -66,10 +77,18 @@ void Module::disposeNode(Node *node) {
 }
 
 void Module::registerNodeDesc(NodeDesc *newType) {
+    
+    // Take ownership of this new type
     m_nodeDesc.push_back(newType);
+
+    // Register the execute function of the node in llvm
+    newType->loadExecuteFunction(llvmModule);
 }
 
 void Module::unregisterNodeDesc(NodeDesc *type) {
+
+    // TODO : remove the execute function from llvm module
+
     // TODO: look if some nodes still uses this type
     m_nodeDesc.remove(type);
 }

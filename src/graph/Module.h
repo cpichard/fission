@@ -3,6 +3,8 @@
 
 #include <list>
 #include "Node.h"
+#include "llvm/LLVMContext.h"
+#include "llvm/Module.h"
 
 // TODO : remove moduletest, it's just for ... tests
 class ModuleTest;
@@ -21,8 +23,7 @@ class Module : public Node
 
 public:
     /// Constructor
-    Module(const std::string &name)
-    : Node(name, 0, NULL){}
+    Module(const std::string &name);
 
     /// Destructor
     ~Module();
@@ -47,6 +48,11 @@ private:
 
     /// Dataflow inside the module
     Graph<Plug, PlugLink>           m_dataFlowGraph;
+
+    /// llvm module that contains the generated code and functions
+    llvm::Module *llvmModule; 
+
+
 };
 
 }; // namespace fission

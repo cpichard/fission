@@ -19,7 +19,10 @@
 #include <map>
 #include <vector>
 
-
+/*
+ *  LLVM framework tests
+ *
+ */
 
 #include "Module.h"
 
@@ -31,16 +34,14 @@ int main(int argc, char **argv)
     InitializeNativeTarget();
     LLVMContext &llvmContext = getGlobalContext();
 
-    // The llvm module holds all the code
-    llvm::Module *TheModule = new llvm::Module("My function", llvmContext);
-
+    // The llvm module holds all the code (should be in fission module)
 
     // ??????
     llvm::IRBuilder<> Builder(llvmContext);
 
     // Load a graph of code
-    //fission::Module module("test1");
-    //module.registerNodeDesc(new fission::TestSource());
+    fission::Module module("test1");
+    module.registerNodeDesc(new TestSource());
     //fission::Node *node1 = module.createNode("unknown", "");
     //fission::Node *node2 = module.createNode("unknown", "");
     //module.connect(Output0(node1), Input0(node2));
@@ -68,8 +69,8 @@ int main(int argc, char **argv)
     OurFPM.doInitialization();
 
 
-
     // Get the pointer to the generated code and execute it.
+    // This is fission::Module->execute(output0)
     //void *FPtr = TheExecutionEngine->getPointerToFunction(LF);
     //double (*FP)() = (double (*)())(intptr_t)FPtr;
 
@@ -78,9 +79,6 @@ int main(int argc, char **argv)
     //FunctionPassManager *TheFPM;
     // Compile, jit and execute
 
-    
-
-    
     return EXIT_SUCCESS;
 }
 

@@ -1,8 +1,4 @@
-#
 #include "Engine.h"
-
-#include "ImageReader.h"
-#include "ImageWriter.h"
 #include "Name.h"
 
 using namespace fission;
