@@ -3,13 +3,14 @@
 #include "ComputeEngine.h"
 %}
 
+
+namespace fission {
 class ComputeEngine 
 {
 public:
     ComputeEngine();
     ~ComputeEngine();
     // Test
-    Status compute_async(Node &, Context &);
-    Status compute(Node &, Context &);
+    Status compute(fission::Node &, fission::Context &);
 };
-
+};

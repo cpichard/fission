@@ -2,11 +2,10 @@
 #define COMPUTEENGINE_H
 
 #include <list>
+#include "Module.h"
 #include "Node.h"
 #include "Status.h"
 #include "Context.h"
-#include "llvm/LLVMContext.h"
-#include "llvm/Module.h"
 
 namespace fission {
 
@@ -16,7 +15,7 @@ public:
     ComputeEngine();
     ~ComputeEngine();
 
-    Status compute(Node &, Context &);
+    Status compute(Module &, Node &, const Context &);
 
 private:
 

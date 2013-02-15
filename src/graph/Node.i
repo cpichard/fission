@@ -7,7 +7,11 @@
 
 // Name concept
 %include "Name.i"
-%template(nodename) Name<Node>;
+
+
+namespace fission {
+
+%template(nodename) fission::Name<fission::Node>;
 
 class Node
 {
@@ -18,7 +22,7 @@ public:
 
     // Extend with function name
     %extend {
-        inline std::string name(){return Name(*$self);}
+        inline std::string name(){return fission::Name(*$self);}
     }
 
 protected:
@@ -26,4 +30,5 @@ protected:
     virtual Status execute(Context &)=0;
 };
 
+};
 

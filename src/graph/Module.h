@@ -9,6 +9,7 @@ class ModuleTest;
 
 namespace fission {
 
+class ComputeEngine;
 /// A module is a container and factory of nodes.
 /// It inherits properties of a node : inputs, outputs and parameters.
 /// It can register new types of nodes and be able to create those.
@@ -18,6 +19,7 @@ class Module : public Node
 {
     // TODO : remove, this is only for testing
     friend class ::ModuleTest;
+    friend class fission::ComputeEngine;
 
 public:
     /// Constructor
@@ -45,10 +47,10 @@ private:
     std::list<NodeDesc*>    m_nodeDesc;
 
     /// Dataflow inside the module
-    Graph<Plug, PlugLink>           m_dataFlowGraph;
+    Graph<Plug, PlugLink>   m_dataFlowGraph;
 
     /// llvm module that contains the generated code and functions
-    llvm::Module *m_llvmModule;
+    llvm::Module            *m_llvmModule;
 
 };
 

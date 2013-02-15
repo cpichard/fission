@@ -25,8 +25,8 @@ fi
 
 
 # Checks for programs.
-${CC=clang}
-${CXX=clang++}
+#${CC=clang}
+#${CXX=clang++}
 
 AC_PROG_CXX
 AC_PROG_MAKE_SET
@@ -68,11 +68,12 @@ SWIG_PYTHON
 AC_CONFIG_FILES([
 	Makefile
 	src/Makefile
-	bindings/python/Makefile
     tests/Makefile
     tests/cppunit/Makefile
     drafts/Makefile
     drafts/llvm/Makefile
+	bindings/Makefile
+	bindings/python/Makefile
 	])
 
 # Checks for libraries.

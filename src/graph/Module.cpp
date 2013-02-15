@@ -3,6 +3,9 @@
 #include "Name.h"
 #include "Type.h"
 
+#include "llvm/Module.h"
+#include "llvm/LLVMContext.h"
+
 namespace fission {
 
 Module::Module(const std::string &name)

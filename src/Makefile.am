@@ -1,5 +1,5 @@
 #AM_CPPFLAGS = -g @BOOST_CFLAGS@ 
-AM_CPPFLAGS = -std=c++11 -g -Iengine/ -Igraph/ -Inodes/ -Irtts/ `llvm-config --cppflags`
+AM_CPPFLAGS = -g -Iengine/ -Igraph/ -Inodes/ -Irtts/ `llvm-config --cppflags`
 
 lib_LTLIBRARIES=libfission.la
 #libfission_la_LIBADD = @BOOST_LIBS@ 
@@ -24,6 +24,7 @@ libfission_la_SOURCES = \
 ./graph/ParameterDesc.h\
 ./graph/ParameterDesc.cpp\
 ./graph/Plug.h\
+./graph/Plug.cpp\
 ./graph/PlugLink.h\
 ./graph/Vertex.h\
 ./nodes/TestSource.cpp\

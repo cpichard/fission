@@ -7,6 +7,7 @@
 
 
 #include <algorithm>
+#include <deque>
 #include "Graph.h"
 
 namespace fission {
@@ -28,21 +29,23 @@ struct TraversalStackElement {
     typedef typename V::InEdgeIterator EdgeIt;
 
     TraversalStackElement(V *v)
-    : m_it(v->m_outgoing.begin())
-    , m_itEnd(v->m_outgoing.end())
+    : m_it(v->m_incoming.begin())
+    , m_itEnd(v->m_incoming.end())
     , m_v(v){}
 
     // Plenty of operators to simplify the code
     inline operator EdgeIt & (){return m_it;}
     inline operator V * (){return m_v;}
-    inline operator E *(){return *m_it;}
+    inline operator E *(){return static_cast<E*>(*m_it);}
 
     inline operator size_t () {return m_v->m_vid;}
     inline operator bool() {return m_it!=m_itEnd;}
     inline TraversalStackElement<V,E> & operator ++ (){++m_it;return *this;}
 
     // TODO or m_src depending on the traversal direction
-    V * nextVertex(){return (*m_it)->m_dst;}
+    // Template selection forward or reverse 
+    //V * nextVertex(){return static_cast<V*>((*m_it)->m_dst);}
+    V * nextVertex(){return static_cast<V*>((*m_it)->m_src);}
 
     // The actual datas
     EdgeIt          m_it;

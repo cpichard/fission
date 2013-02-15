@@ -28,7 +28,7 @@ Node::Node(const std::string &name, size_t id, const NodeDesc *type)
         // TODO Find correct plugtype from name.... 
         // or just use a pointer...
         const size_t id = m_inputs.size();
-        Plug *plug = new Plug(inputs[i].m_name, id, NULL); // TODO correct type
+        Plug *plug = new Plug(inputs[i].m_name, id, &PlugInputType); // TODO correct type
         plug->m_owner = this;
         m_inputs.push_back(plug);
     }
@@ -39,7 +39,7 @@ Node::Node(const std::string &name, size_t id, const NodeDesc *type)
     for (size_t i=0; i < nbOutputs; i++) {
         // Find correct plugtype
         const size_t id = m_outputs.size();
-        Plug *plug = new Plug(outputs[i].m_name, id, NULL); // TODO correct type
+        Plug *plug = new Plug(outputs[i].m_name, id, &PlugOutputType); // TODO correct type
         plug->m_owner = this;
         m_outputs.push_back(plug);
     }

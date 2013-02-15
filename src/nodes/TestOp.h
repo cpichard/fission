@@ -31,7 +31,7 @@ public:
     inline size_t nbOutputs() const {return TestOp::s_nbOutputs;};
     inline size_t nbParameters() const {return TestOp::s_nbParams;};
 
-    virtual void registerFunctions(llvm::Module *){};
+    virtual void registerFunctions(llvm::Module *);
 
 private:
     static const char * const       s_typeName;

@@ -73,7 +73,7 @@ am__installdirs = "$(DESTDIR)$(libdir)"
 LTLIBRARIES = $(lib_LTLIBRARIES)
 libfission_la_LIBADD =
 am_libfission_la_OBJECTS = ComputeEngine.lo Node.lo Module.lo \
-	Parameter.lo ParameterDesc.lo TestSource.lo TestOp.lo \
+	Parameter.lo ParameterDesc.lo Plug.lo TestSource.lo TestOp.lo \
 	TestSink.lo StandardTypes.lo
 libfission_la_OBJECTS = $(am_libfission_la_OBJECTS)
 libfission_la_LINK = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) \
@@ -245,7 +245,7 @@ top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 
 #AM_CPPFLAGS = -g @BOOST_CFLAGS@ 
-AM_CPPFLAGS = -std=c++11 -g -Iengine/ -Igraph/ -Inodes/ -Irtts/ `llvm-config --cppflags`
+AM_CPPFLAGS = -g -Iengine/ -Igraph/ -Inodes/ -Irtts/ `llvm-config --cppflags`
 lib_LTLIBRARIES = libfission.la
 #libfission_la_LIBADD = @BOOST_LIBS@ 
 libfission_la_LDFLAGS = -Wl,-rpath,./ `llvm-config --ldflags --libs core jit native`
@@ -269,6 +269,7 @@ libfission_la_SOURCES = \
 ./graph/ParameterDesc.h\
 ./graph/ParameterDesc.cpp\
 ./graph/Plug.h\
+./graph/Plug.cpp\
 ./graph/PlugLink.h\
 ./graph/Vertex.h\
 ./nodes/TestSource.cpp\
@@ -360,6 +361,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Node.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Parameter.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ParameterDesc.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Plug.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/StandardTypes.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/TestOp.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/TestSink.Plo@am__quote@
@@ -420,6 +422,13 @@ ParameterDesc.lo: ./graph/ParameterDesc.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='./graph/ParameterDesc.cpp' object='ParameterDesc.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(LIBTOOL)  --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o ParameterDesc.lo `test -f './graph/ParameterDesc.cpp' || echo '$(srcdir)/'`./graph/ParameterDesc.cpp
+
+Plug.lo: ./graph/Plug.cpp
+@am__fastdepCXX_TRUE@	$(LIBTOOL)  --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Plug.lo -MD -MP -MF $(DEPDIR)/Plug.Tpo -c -o Plug.lo `test -f './graph/Plug.cpp' || echo '$(srcdir)/'`./graph/Plug.cpp
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/Plug.Tpo $(DEPDIR)/Plug.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='./graph/Plug.cpp' object='Plug.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LIBTOOL)  --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Plug.lo `test -f './graph/Plug.cpp' || echo '$(srcdir)/'`./graph/Plug.cpp
 
 TestSource.lo: ./nodes/TestSource.cpp
 @am__fastdepCXX_TRUE@	$(LIBTOOL)  --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT TestSource.lo -MD -MP -MF $(DEPDIR)/TestSource.Tpo -c -o TestSource.lo `test -f './nodes/TestSource.cpp' || echo '$(srcdir)/'`./nodes/TestSource.cpp

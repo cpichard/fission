@@ -1,8 +1,9 @@
 #ifndef NODEDESC_H
 #define NODEDESC_H
 
-#include "llvm/LLVMContext.h"
-#include "llvm/Module.h"
+namespace llvm {
+class Module;
+};
 
 namespace fission {
 

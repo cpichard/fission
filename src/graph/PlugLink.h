@@ -21,5 +21,6 @@ public:
     {}
     ~PlugLink(){}
 };
+
 }; // namespace fission
 #endif//PLUGLINK_H

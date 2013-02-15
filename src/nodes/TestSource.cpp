@@ -1,6 +1,14 @@
 #include "TestSource.h"
 #include "Parameter.h"
 #include "StandardTypes.h"
+#include <llvm/Constants.h>
+#include "llvm/DerivedTypes.h"
+#include "llvm/IRBuilder.h"
+#include "llvm/LLVMContext.h"
+#include "llvm/Module.h"
+#include "llvm/Analysis/Verifier.h"
+
+#include <iostream>
 
 namespace fission {
 
@@ -27,36 +35,65 @@ TestSource::s_params[] = {
     NodeParameter("val", Type<Float>(), "standard"),
 };
 
+using llvm::getGlobalContext;
+using llvm::Function;
+using llvm::FunctionType;
+using llvm::BasicBlock;
+
 // LLVM code directly here
-void TestSource::registerFunctions(llvm::Module *) {
-//
-//    // build a llvm function
-//    // Function prototype
-//    std::vector<Type*> Doubles(Args.size(),
-//                               Type::getDoubleTy(getGlobalContext()));
-//    FunctionType *FT = FunctionType::get(Type::getDoubleTy(getGlobalContext()),
-//                                           Doubles, false);
-//    Function *F = Function::Create(FT, Function::ExternalLinkage, Name, TheModule);
-//    if (F->getName() != Name) {
-//        // Delete the one we just made and get the existing one.
-//        F->eraseFromParent();
-//        F = TheModule->getFunction(Name);
-//
-//        // If F already has a body, reject this.
-//        if (!F->empty()) {
-//            ErrorF("redefinition of function");
-//        return 0;
-//        }
-//    }
-//
-//    // Set names for all arguments.
-//      unsigned Idx = 0;
-//        for (Function::arg_iterator AI = F->arg_begin(); Idx != Args.size();
-//               ++AI, ++Idx) {
-//                AI->setName(Args[Idx]);
-//
-//
-//    BasicBlock *BB = BasicBlock::Create(getGlobalContext(), "entry", TheFunction);
+void TestSource::registerFunctions(llvm::Module *module) {
+
+    std::string funcName("TestSource::execute");
+
+    //
+    // Function prototype (Should be in the base class)
+    //
+    //std::vector<llvm::Type*> argsProto(1, llvm::Type::getDoubleTy(getGlobalContext()));
+    std::vector<llvm::Type*> argsProto;
+    FunctionType *FT = FunctionType::get(
+            llvm::Type::getDoubleTy(getGlobalContext()),
+            argsProto, 
+            false);
+    Function *F = Function::Create(
+            FT,         // Function type 
+            llvm::Function::ExternalLinkage, 
+            funcName, 
+            module);
+    if (F->getName() != funcName) {
+        // Delete the one we just made and get the existing one.
+        F->eraseFromParent();
+        F = module->getFunction(funcName);
+
+        // If F already has a body, reject this.
+        if (!F->empty()) {
+            std::cout << "redefinition of function" << std::endl;
+            return;
+        }
+    }
+
+    // Set names for all arguments.
+    //unsigned Idx = 0;
+    //for (Function::arg_iterator AI = F->arg_begin(); Idx != Args.size(); ++AI, ++Idx) {
+    //    AI->setName(Args[Idx]);
+    //    // Add arguments to variable symbol table.
+    //    //NamedValues[Args[Idx]] = AI;
+    //}
+    //Function::arg_iterator arg1 = F->arg_begin();
+    //arg1->setName("val");
+
+    // Insert a basic block in the function
+    BasicBlock *BB = BasicBlock::Create(getGlobalContext(), "entry", F);
+    llvm::IRBuilder<> builder(getGlobalContext());
+    builder.SetInsertPoint(BB);
+
+    // TestSource only returns a constant value for the moment
+    llvm::Value *cst=llvm::ConstantFP::get(getGlobalContext(), llvm::APFloat(2.0)); 
+
+    // create return value ?
+    builder.CreateRet(cst);
+
+    llvm::verifyFunction(*F);
+
 
 }
 

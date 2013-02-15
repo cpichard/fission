@@ -3065,8 +3065,8 @@ fi
 
 
 # Checks for programs.
-${CC=clang}
-${CXX=clang++}
+#${CC=clang}
+#${CXX=clang++}
 
 ac_ext=cpp
 ac_cpp='$CXXCPP $CPPFLAGS'
@@ -15119,7 +15119,7 @@ ac_compiler_gnu=$ac_cv_c_compiler_gnu
 
 
 
-ac_config_files="$ac_config_files Makefile src/Makefile bindings/python/Makefile tests/Makefile tests/cppunit/Makefile drafts/Makefile drafts/llvm/Makefile"
+ac_config_files="$ac_config_files Makefile src/Makefile tests/Makefile tests/cppunit/Makefile drafts/Makefile drafts/llvm/Makefile bindings/Makefile bindings/python/Makefile"
 
 
 # Checks for libraries.
@@ -16238,11 +16238,12 @@ do
     "libtool") CONFIG_COMMANDS="$CONFIG_COMMANDS libtool" ;;
     "Makefile") CONFIG_FILES="$CONFIG_FILES Makefile" ;;
     "src/Makefile") CONFIG_FILES="$CONFIG_FILES src/Makefile" ;;
-    "bindings/python/Makefile") CONFIG_FILES="$CONFIG_FILES bindings/python/Makefile" ;;
     "tests/Makefile") CONFIG_FILES="$CONFIG_FILES tests/Makefile" ;;
     "tests/cppunit/Makefile") CONFIG_FILES="$CONFIG_FILES tests/cppunit/Makefile" ;;
     "drafts/Makefile") CONFIG_FILES="$CONFIG_FILES drafts/Makefile" ;;
     "drafts/llvm/Makefile") CONFIG_FILES="$CONFIG_FILES drafts/llvm/Makefile" ;;
+    "bindings/Makefile") CONFIG_FILES="$CONFIG_FILES bindings/Makefile" ;;
+    "bindings/python/Makefile") CONFIG_FILES="$CONFIG_FILES bindings/python/Makefile" ;;
 
   *) as_fn_error $? "invalid argument: \`$ac_config_target'" "$LINENO" 5 ;;
   esac
