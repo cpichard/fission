@@ -7,59 +7,97 @@
 
 #include "llvm/LLVMContext.h"
 #include "llvm/Module.h"
+#include "llvm/IRBuilder.h"
+#include <llvm/Constants.h>
+#include "llvm/DerivedTypes.h"
+#include "llvm/Analysis/Verifier.h"
+#include "llvm/ExecutionEngine/ExecutionEngine.h"
+#include "llvm/ExecutionEngine/JIT.h"
+#include "llvm/PassManager.h"
+#include "llvm/Analysis/Verifier.h"
+#include "llvm/Analysis/Passes.h"
+#include "llvm/DataLayout.h"
+#include "llvm/Transforms/Scalar.h"
+#include "llvm/Support/TargetSelect.h"
+#include "llvm/LinkAllPasses.h"
 
 using namespace fission;
+using llvm::getGlobalContext;
+using llvm::Function;
+using llvm::FunctionType;
+using llvm::BasicBlock;
 
 
-
-
-// Compute visitor is only defined 
-class ComputeVisitor
+llvm::Value *recursiveAst(
+      Plug *plug
+    , Graph<Plug, PlugLink> &graph
+    , llvm::Module &module
+    , llvm::IRBuilder<> &builder)
 {
-public:
-    ComputeVisitor()
-    {}
-
-
-    void discoverVertex(Plug *v)
-    {
-        //std::cout << "discovering vertex " << v << std::endl;
-    }
-
-    void finishVertex(Plug *v)
-    {
-        //std::cout << "finishing vertex " << v << std::endl;
-        std::cout << "Plug: " << Name(Owner(v)) << ":" <<Name(v) << " is input " << IsInput(v) << std::endl;
-    }
-
-    void examineEdge(PlugLink *e)
-    {
-        //std::cout << "examining edge" << e << std::endl;
-    }
-
-    void treeEdge(PlugLink *e)
-    {
-        //std::cout << "tree edge " << e << std::endl;
-        if(Owner(Src<Plug>(e)) == Owner(Dst<Plug>(e))) {
-            std::cout << "same owner " << Name(Owner(Src<Plug>(e))) << std::endl;
-        } else {
-            std::cout << "diff owner " << Name(Owner(Src<Plug>(e))) << " -> " << Name(Owner(Dst<Plug>(e))) << std::endl;
+    if(IsOutput(plug)) {
+        // iterate on args,
+        // Look up the name in the global module table.
+        std::string Callee(std::string(TypeName(Owner(plug))) + "::execute");
+        llvm::Function *CalleeF = module.getFunction(Callee);
+        if (CalleeF == 0) {
+            std::cout << "ERROR Function " << Callee << " not found" << std::endl;
+            return NULL;
         }
-    }
 
-    void backEdge(PlugLink *e)
-    {
-        //std::cout << "back edge" << e << std::endl;
-    }
+        const size_t nbArgs = NbConnectedInputs(plug);
+        std::vector<llvm::Value*> ArgsV(nbArgs);
+        TraversalStackElement<Plug, PlugLink> it(plug);
+        for (unsigned int i=0; i < nbArgs; ++i, ++it) {
+            ArgsV[i] = recursiveAst(it.nextVertex(), graph, module, builder);
+        }
+        std::cout << "Create call " << Name(Owner(plug)) << "_tmp" << std::endl;
+        llvm::Value *ret=builder.CreateCall(CalleeF, ArgsV, Name(Owner(plug))+"_tmp");     
+        return ret; 
 
-    void crossEdge(Edge*e)
-    {
-        //std::cout << "cross edge" << e << std::endl;
-    }
+    } else if(IsInput(plug)) {
+        const size_t nbConnections = NbConnectedInputs(plug);
+        if (nbConnections==0) {
+            // recursive call
+            // Create a dummy value
+            assert(0); // shouldn't happen with the current setup
+            return NULL; 
+        } else { 
+            // only one connection allowed
+            assert(nbConnections==1);
+            TraversalStackElement<Plug, PlugLink> n(plug);
+            return recursiveAst(n.nextVertex(), graph, module, builder );
+        }
 
-    bool endTraversal(){return false;}
-    
-};
+    } else {
+        // ERROR !!
+        return NULL;
+    }
+}
+
+
+/// Build and ast starting at plug
+llvm::Value *buildAst(llvm::Module &module, Graph<Plug, PlugLink>  &graph, Plug *plug)
+{
+    llvm::IRBuilder<> builder(llvm::getGlobalContext());
+    std::string funcName("ComputeEngine::run");
+    // Create a function and a building block
+    std::vector<llvm::Type*> argsProto;
+    FunctionType *FT = FunctionType::get(
+            llvm::Type::getDoubleTy(getGlobalContext()), // Return type
+            argsProto,                                   // Arguments type
+            false);
+    Function *F = Function::Create(
+            FT,         // Function type 
+            llvm::Function::ExternalLinkage, 
+            funcName, 
+            &module);
+        // Insert a basic block in the function
+    BasicBlock *BB = BasicBlock::Create(getGlobalContext(), "entry", F);
+    builder.SetInsertPoint(BB);
+    builder.CreateRet(recursiveAst(plug, graph, module, builder));
+    llvm::verifyFunction(*F);
+    return 0;
+}
 
 // Constructor
 ComputeEngine::ComputeEngine()
@@ -70,17 +108,55 @@ ComputeEngine::ComputeEngine()
 ComputeEngine::~ComputeEngine()
 {}
 
-
 Status ComputeEngine::compute(Module &module, Node &node, const Context &context)
 {
     // Build execution graph recursively
-    // Its like an ast
-    //visitor.visit(node, module.m_llvmModule);
-    //BuildASTComputeVisitor visitor(module);
-    ComputeVisitor toto;
-    DepthFirstSearch(module.m_dataFlowGraph, Input0(&node), toto);
+    llvm::Module &llvmMod = *module.m_llvmModule;
+    llvm::Value *ast = buildAst(llvmMod, module.m_dataFlowGraph, Input0(node));
 
-    // Compile it
+    std::cout << "ast = " << ast << std::endl;
+
+    std::string ErrStr;
+    llvm::ExecutionEngine *ee = llvm::EngineBuilder(&llvmMod).setErrorStr(&ErrStr).create();
+
+    Function* LF = ee->FindFunctionNamed("ComputeEngine::run");
+
+    llvm::PassManager optPM;
+    //optPM.add(new llvm::TargetData(&llvmMod));
+    optPM.add(llvm::createFunctionInliningPass());
+    optPM.run(llvmMod);
+    // NOTE CYWILL : these optimizations works only on functions.
+    // User PassManager to optimize globally
+    // Function pass manager Run
+    llvm::FunctionPassManager OurFPM(&llvmMod);
+    // Set up the optimizer pipeline.  Start with registering info about how the
+    // target lays out data structures.
+    OurFPM.add(new llvm::DataLayout(*ee->getDataLayout()));
+    // Promote allocas to registers.
+    OurFPM.add(llvm::createPromoteMemoryToRegisterPass());
+    // Provide basic AliasAnalysis support for GVN.
+    OurFPM.add(llvm::createBasicAliasAnalysisPass());
+    // Do simple "peephole" optimizations and bit-twiddling optzns.
+    OurFPM.add(llvm::createInstructionCombiningPass());
+    // Reassociate expressions.
+    OurFPM.add(llvm::createReassociatePass());
+    // Eliminate Common SubExpressions.
+    OurFPM.add(llvm::createGVNPass());
+    // Simplify the control flow graph (deleting unreachable blocks, etc).
+    OurFPM.add(llvm::createCFGSimplificationPass());
+
+    OurFPM.add(llvm::createLoopUnrollPass());
+
+    OurFPM.doInitialization();
+    OurFPM.run(*LF);
+
+    llvmMod.dump();
+    LF->dump();
+    // Compile the function and returns a pointer to it
+    void *FPtr = ee->getPointerToFunction(LF);
+    double (*FP)() = (double (*)())(intptr_t)FPtr;
+
+    std::cout << "calling " << FP() << std::endl;
 
     // Execute the function on node
     return SUCCESS;

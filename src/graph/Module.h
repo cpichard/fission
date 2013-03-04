@@ -41,7 +41,7 @@ public:
     // connect two plugs
     void connect(Plug *src, Plug *dst);
 
-private:
+//private:
 
     /// Types of node known by this module
     std::list<NodeDesc*>    m_nodeDesc;

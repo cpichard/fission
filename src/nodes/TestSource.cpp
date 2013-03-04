@@ -43,6 +43,11 @@ using llvm::BasicBlock;
 // LLVM code directly here
 void TestSource::registerFunctions(llvm::Module *module) {
 
+//=======================================================================//
+    // Test loading IR code from a file
+//    llvm::SMDiagnostic Err;
+//    llvm::Module *Mod = llvm::ParseIRFile("myfunctions.s", Err, llvm::getGlobalContext());
+
     std::string funcName("TestSource::execute");
 
     //

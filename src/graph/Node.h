@@ -34,6 +34,10 @@ class Node : public ObjectId<NodeDesc>
     friend inline Plug * Input0(Node *node);
     friend inline Plug * Output1(Node *node);
     friend inline Plug * Input1(Node *node);
+    friend inline Plug * Output0(Node &node);
+    friend inline Plug * Input0(Node &node);
+    friend inline Plug * Output1(Node &node);
+    friend inline Plug * Input1(Node &node);
 
 public:
     // NOTE : may be this function can be protected
@@ -75,10 +79,14 @@ inline size_t NbInputs(const Node &node){return node.m_inputs.size();}
 inline size_t NbOutputs(const Node &node){return node.m_outputs.size();}
 inline size_t NbInputs(Node *node){return node->m_inputs.size();}
 inline size_t NbOutputs(Node *node){return node->m_outputs.size();}
-inline Plug * Output0(Node *node){return node->m_outputs[0];}
-inline Plug * Output1(Node *node){return node->m_outputs[1];}
-inline Plug * Input0(Node *node){return node->m_inputs[0];}
-inline Plug * Input1(Node *node){return node->m_inputs[1];}
+inline Plug * Output0(Node *node){return node ? node->m_outputs[0]:NULL;}
+inline Plug * Output1(Node *node){return node ? node->m_outputs[1]:NULL;}
+inline Plug * Input0(Node *node){return node ? node->m_inputs[0]:NULL;}
+inline Plug * Input1(Node *node){return node ? node->m_inputs[1]:NULL;}
 
+inline Plug * Output0(Node &node){return node.m_outputs[0];}
+inline Plug * Output1(Node &node){return node.m_outputs[1];}
+inline Plug * Input0(Node &node){return node.m_inputs[0];}
+inline Plug * Input1(Node &node){return node.m_inputs[1];}
 }; // namespace fission
 #endif//NODE_H

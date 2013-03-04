@@ -24,9 +24,9 @@ struct Edge
 };
 
 template<typename OT, typename T> inline OT * Src(T &e){return static_cast<OT*>(e.m_src);}
-template<typename OT, typename T> inline OT * Src(T *e){return static_cast<OT*>(e->m_src);}
+template<typename OT, typename T> inline OT * Src(T *e){return static_cast<OT*>((e) ? e->m_src : NULL);}
 template<typename OT, typename T> inline OT * Dst(T &e){return static_cast<OT*>(e.m_dst);}
-template<typename OT, typename T> inline OT * Dst(T *e){return static_cast<OT*>(e->m_dst);}
+template<typename OT, typename T> inline OT * Dst(T *e){return static_cast<OT*>((e) ? e->m_dst : NULL);}
 
 }; // namespace fission
 #endif//EDGE_H

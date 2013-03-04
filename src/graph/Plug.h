@@ -35,14 +35,14 @@ protected:
 
 
 
-inline bool IsInput(Plug *p){return p->m_type==&PlugInputType;}
-inline bool IsOutput(Plug *p){return p->m_type==&PlugOutputType;}
+inline bool IsInput(Plug *p){return p ? p->m_type==&PlugInputType:false;}
+inline bool IsOutput(Plug *p){return p ? p->m_type==&PlugOutputType:false;}
 
 
 
 // TODO : move blow code to Owner.h if more than one class is using it
 template<typename T> Node * Owner(T &v){return v.m_owner;}
-template<typename T> Node * Owner(T *v){return v->m_owner;}
+template<typename T> Node * Owner(T *v){return v ? v->m_owner:NULL;}
 
 }; // namespace fission
 #endif//PLUG_H

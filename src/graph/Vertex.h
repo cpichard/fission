@@ -34,5 +34,10 @@ struct Vertex
     /// TODO Double check if we really need m_vid
     size_t m_vid;
 };
+
+inline size_t NbConnectedInputs(const Vertex &v){return v.m_incoming.size();}
+inline size_t NbConnectedOutputs(const Vertex &v){return v.m_outgoing.size();}
+inline size_t NbConnectedInputs(Vertex *v){return v->m_incoming.size();}
+inline size_t NbConnectedOutputs(Vertex *v){return v->m_outgoing.size();}
 }; // namespace fission
 #endif//VERTEX_H

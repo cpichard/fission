@@ -49,6 +49,7 @@ using llvm::getGlobalContext;
 using llvm::Function;
 using llvm::FunctionType;
 using llvm::BasicBlock;
+
 void TestOp::registerFunctions(llvm::Module *module) {
 
     std::string funcName("TestOp::execute");
@@ -79,40 +80,35 @@ void TestOp::registerFunctions(llvm::Module *module) {
     }
 
     // Set names for all arguments.
-    //unsigned Idx = 0;
-    //for (Function::arg_iterator AI = F->arg_begin(); Idx != Args.size(); ++AI, ++Idx) {
-    //    AI->setName(Args[Idx]);
-    //    // Add arguments to variable symbol table.
-    //    //NamedValues[Args[Idx]] = AI;
-    //}
     Function::arg_iterator arg1 = F->arg_begin();
-    arg1++->setName("val1");
-    arg1->setName("val2");
+    arg1++->setName("var1");
+    arg1->setName("var2");
+
     // Insert a basic block in the function
     BasicBlock *BB = BasicBlock::Create(getGlobalContext(), "entry", F);
     llvm::IRBuilder<> builder(getGlobalContext());
     builder.SetInsertPoint(BB);
 
-    // TODO : Create allocas
+    // Create allocas
     llvm::AllocaInst *var1 = builder.CreateAlloca(llvm::Type::getDoubleTy(getGlobalContext()), 0,
                                     "var1");        
     llvm::AllocaInst *var2 = builder.CreateAlloca(llvm::Type::getDoubleTy(getGlobalContext()), 0,
                                     "var2");        
-    //llvm::AllocaInst *res = builder.CreateAlloca(llvm::Type::getDoubleTy(getGlobalContext()), 0,
-    //                               "res");        
+
+    arg1 = F->arg_begin();
+    // Store args in allocas
+    builder.CreateStore(arg1++, var1);
+    builder.CreateStore(arg1, var2);
+
+    // Load allocas
     llvm::Value *L = builder.CreateLoad(var1, "var1");
     llvm::Value *R = builder.CreateLoad(var2, "var2");
 
     // TestSource only returns a constant value for the moment
-    //llvm::Value *cst=llvm::ConstantFP::get(getGlobalContext(), llvm::APFloat(2.0)); 
     llvm::Value *op = builder.CreateFAdd(L, R, "addtmp");
-    //llvm::Value *result = builder.CreateStore(op, res);
-    // create return value ?
     builder.CreateRet(op);
 
     llvm::verifyFunction(*F);
-
-
 }
 
 }; // namespace fission
