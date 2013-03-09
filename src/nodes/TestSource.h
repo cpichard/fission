@@ -29,7 +29,8 @@ public:
     inline size_t nbInputs() const {return TestSource::s_nbInputs;};
     inline size_t nbOutputs() const {return TestSource::s_nbOutputs;};
     inline size_t nbParameters() const {return TestSource::s_nbParams;}
-    virtual void registerFunctions(llvm::Linker *);
+
+    virtual const char * getIrFile() const;
 
 private:
     static const char * const       s_typeName;

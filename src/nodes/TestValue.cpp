@@ -11,16 +11,16 @@ const char * const TestValue::s_typeName = "TestValue";
 const NodeDesc::Input  TestValue::s_inputs[]   = {};
 
 // Only one output, the value of the parameter
-const NodeDesc::Output TestValue::s_outputs[]  = 
-{   
+const NodeDesc::Output TestValue::s_outputs[]  =
+{
     // TEST
-    NodeDesc::Output("Value","float") 
+    NodeDesc::Output("Value","float")
 };
 
 // TODO : only one parameter
 const NodeDesc::Param TestValue::s_params[]   = {};
 
-// Version of the 
+// Version of the
 const unsigned int TestValue::s_version = 0;
 
 //size_t TestValue::nbInputs() const {return sizeof(s_inputs)/sizeof(NodeDesc::Input);}

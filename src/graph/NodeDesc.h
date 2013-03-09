@@ -64,8 +64,8 @@ public:
     virtual size_t nbOutputs() const=0;
     virtual size_t nbParameters() const=0;
 
-    // LLVM generated IR code
-    virtual void registerFunctions(llvm::Linker *)=0;
+    // llvm ir file
+    virtual const char * getIrFile() const=0;
 };
 
 typedef NodeDesc::Output NodeOutput;

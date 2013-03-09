@@ -6,6 +6,12 @@
 #include <llvm/Linker.h>
 #include <llvm/LLVMContext.h>
 #include <llvm/ADT/StringRef.h>
+#include <llvm/Linker.h>
+#include <llvm/Support/IRReader.h>
+#include <llvm/Support/SourceMgr.h>
+#include <llvm/Module.h>
+
+#include <iostream>
 
 namespace fission {
 
@@ -88,8 +94,18 @@ void Module::registerNodeDesc(NodeDesc *newType) {
     // Take ownership of this new type
     m_nodeDesc.push_back(newType);
     // Register the execute function of the node in llvm
-    newType->registerFunctions(m_llvmLinker);
+    //newType->registerFunctions(m_llvmLinker);
     
+    // Link IR code in the module
+    llvm::SMDiagnostic Err;
+    llvm::Module *mod = llvm::ParseIRFile(newType->getIrFile(), Err, llvm::getGlobalContext());
+    // Rename the first function. We test only with 1 function atm
+    llvm::Module::FunctionListType &flist = mod->getFunctionList();
+    llvm::Module::FunctionListType::iterator it=flist.begin();
+    (*it).setName(string(TypeName(newType))+"::execute");
+    std::cout << TypeName(newType) << " : " << mod << std::endl;
+
+    m_llvmLinker->LinkInModule(mod);
 
 }
 

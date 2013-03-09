@@ -5,22 +5,22 @@
 #include "Plug.h"
 #include "Edge.h"
 
-#include "llvm/LLVMContext.h"
-#include "llvm/Module.h"
-#include "llvm/IRBuilder.h"
 #include <llvm/Constants.h>
-#include "llvm/DerivedTypes.h"
-#include "llvm/Analysis/Verifier.h"
-#include "llvm/ExecutionEngine/ExecutionEngine.h"
-#include "llvm/ExecutionEngine/JIT.h"
-#include "llvm/PassManager.h"
-#include "llvm/Analysis/Verifier.h"
-#include "llvm/Analysis/Passes.h"
-#include "llvm/DataLayout.h"
-#include "llvm/Transforms/Scalar.h"
-#include "llvm/Support/TargetSelect.h"
-#include "llvm/LinkAllPasses.h"
-#include "llvm/Linker.h"
+#include <llvm/LLVMContext.h>
+#include <llvm/Module.h>
+#include <llvm/IRBuilder.h>
+#include <llvm/DerivedTypes.h>
+#include <llvm/Analysis/Verifier.h>
+#include <llvm/ExecutionEngine/ExecutionEngine.h>
+#include <llvm/ExecutionEngine/JIT.h>
+#include <llvm/PassManager.h>
+#include <llvm/Analysis/Verifier.h>
+#include <llvm/Analysis/Passes.h>
+#include <llvm/DataLayout.h>
+#include <llvm/Transforms/Scalar.h>
+#include <llvm/Support/TargetSelect.h>
+#include <llvm/LinkAllPasses.h>
+#include <llvm/Linker.h>
 
 using namespace fission;
 using llvm::getGlobalContext;
@@ -52,8 +52,8 @@ llvm::Value *recursiveAst(
             ArgsV[i] = recursiveAst(it.nextVertex(), graph, module, builder);
         }
         std::cout << "Create call " << Name(Owner(plug)) << "_tmp" << std::endl;
-        llvm::Value *ret=builder.CreateCall(CalleeF, ArgsV, Name(Owner(plug))+"_tmp");     
-        return ret; 
+        llvm::Value *ret=builder.CreateCall(CalleeF, ArgsV, Name(Owner(plug))+"_tmp");
+        return ret;
 
     } else if(IsInput(plug)) {
         const size_t nbConnections = NbConnectedInputs(plug);
@@ -61,8 +61,8 @@ llvm::Value *recursiveAst(
             // recursive call
             // Create a dummy value
             assert(0); // shouldn't happen with the current setup
-            return NULL; 
-        } else { 
+            return NULL;
+        } else {
             // only one connection allowed
             assert(nbConnections==1);
             TraversalStackElement<Plug, PlugLink> n(plug);
@@ -77,7 +77,7 @@ llvm::Value *recursiveAst(
 
 
 /// Build and ast starting at plug
-llvm::Value *buildAst(llvm::Module &module, Graph<Plug, PlugLink>  &graph, Plug *plug)
+llvm::Value *buildCallGraph(llvm::Module &module, Graph<Plug, PlugLink>  &graph, Plug *plug)
 {
     llvm::IRBuilder<> builder(llvm::getGlobalContext());
     std::string funcName("ComputeEngine::run");
@@ -88,11 +88,12 @@ llvm::Value *buildAst(llvm::Module &module, Graph<Plug, PlugLink>  &graph, Plug 
             argsProto,                                   // Arguments type
             false);
     Function *F = Function::Create(
-            FT,         // Function type 
-            llvm::Function::ExternalLinkage, 
-            funcName, 
+            FT,         // Function type
+            llvm::Function::ExternalLinkage,
+            funcName,
             &module);
-        // Insert a basic block in the function
+
+    // Insert a basic block in the function
     BasicBlock *BB = BasicBlock::Create(getGlobalContext(), "entry", F);
     builder.SetInsertPoint(BB);
     builder.CreateRet(recursiveAst(plug, graph, module, builder));
@@ -112,7 +113,6 @@ ComputeEngine::~ComputeEngine()
 Status ComputeEngine::compute(Module &module, Node &node, const Context &context)
 {
     std::cout << "Compute" << std::endl;
-    // Build execution graph recursively
     llvm::Module &llvmMod = *module.m_llvmLinker->getModule();
 
     llvm::Module::FunctionListType &flist = llvmMod.getFunctionList();
@@ -121,9 +121,9 @@ Status ComputeEngine::compute(Module &module, Node &node, const Context &context
         std::cout << (*it).getName().str() << std::endl;
     }
 
-    // Build the functions
-    llvm::Value *ast = buildAst(llvmMod, module.m_dataFlowGraph, Input0(node));
-    std::cout << "ast = " << ast << std::endl;
+    // Build execution graph recursively
+    llvm::Value *cc = buildCallGraph(llvmMod, module.m_dataFlowGraph, Input0(node));
+    std::cout << "cc = " << cc << std::endl;
 
     std::string ErrStr;
     llvm::ExecutionEngine *ee = llvm::EngineBuilder(&llvmMod).setErrorStr(&ErrStr).create();

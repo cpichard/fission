@@ -2,15 +2,6 @@
 #include "Parameter.h"
 #include "StandardTypes.h"
 
-#include <llvm/Constants.h>
-#include "llvm/DerivedTypes.h"
-#include "llvm/IRBuilder.h"
-#include "llvm/LLVMContext.h"
-#include "llvm/Module.h"
-#include "llvm/Analysis/Verifier.h"
-#include "llvm/Linker.h"
-#include "llvm/Support/IRReader.h"
-#include "llvm/Support/SourceMgr.h"
 
 #include <iostream>
 namespace fission {
@@ -39,18 +30,7 @@ const NodeDesc::Param TestSink::s_params[]   = {};
 //}
 
 
-void TestSink::registerFunctions(llvm::Linker *linker) {
-
-    llvm::SMDiagnostic Err;
-    llvm::Module *mod = llvm::ParseIRFile("TestSink_s.s", Err, llvm::getGlobalContext());
-    llvm::Module::FunctionListType &flist = mod->getFunctionList();
-    llvm::Module::FunctionListType::iterator it=flist.begin();
-    (*it).setName("TestSink::execute");
-    std::cout << "TestSink : "<< mod << std::endl;
-
-    linker->LinkInModule(mod);
-
-}
+const char * TestSink::getIrFile() const {return "TestSink_s.s";}
 
 
 
