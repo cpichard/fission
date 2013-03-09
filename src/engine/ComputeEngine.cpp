@@ -30,13 +30,36 @@ using llvm::FunctionType;
 using llvm::BasicBlock;
 
 
-llvm::Value *recursiveAst(
-      Plug *plug
-    , Graph<Plug, PlugLink> &graph
-    , llvm::Module &module
-    , llvm::IRBuilder<> &builder
-    , const Context &context)
+llvm::Value *
+ComputeEngine::buildContext(const Context &context)
 {
+    // Make a constant from the context stored in a global variable
+    llvm::StructType *ctxType = m_llvmModule.getTypeByName ("class.fission::Context");
+    // Note : get pointer type from a type
+    //llvm::PointerType *const ctxTypePtr = llvm::PointerType::getUnqual( ctxType );
+    if(ctxType==0) {
+        std::cout << "Context type not found" << std::endl;
+        exit(0);
+    }
+    llvm::Constant *res = llvm::ConstantStruct::get(ctxType
+                    , m_builder->getInt32(context.m_first)
+                    , m_builder->getInt32(context.m_last)
+                    , NULL );
+    llvm::GlobalVariable *glob = new llvm::GlobalVariable( m_llvmModule
+                                , ctxType
+                                , true
+                                , llvm::GlobalValue::InternalLinkage
+                                , res);
+    return glob;
+}
+
+llvm::Value *
+ComputeEngine::buildCallGraphRecursively(
+      Plug *plug
+    , llvm::Value *context)
+{
+    llvm::Module &module = m_llvmModule;
+    llvm::IRBuilder<> &builder = *m_builder;
     if(IsOutput(plug)) {
         // iterate on args,
         // Look up the name in the global module table.
@@ -47,34 +70,25 @@ llvm::Value *recursiveAst(
             return NULL;
         }
 
-        std::cout << "====Fun: \n";
-        CalleeF->getFunctionType()->getParamType(0)->dump() ;
-        std::cout << "====\n";
+        // TODO :Optimize function
+        // check clang -O3 passes
+        // m_funcPassManager->run(*CalleeF);
+
+        // debug
+        // std::cout << "====Fun: \n";
+        //CalleeF->getFunctionType()->getParamType(0)->dump() ;
+        // std::cout << "====\n";
 
         const size_t nbArgs = NbConnectedInputs(plug);
         std::vector<llvm::Value*> ArgsV(nbArgs+1);
         TraversalStackElement<Plug, PlugLink> it(plug);
 
-        // Make a constant from the context stored in a global variable
-        llvm::StructType *ctxType = module.getTypeByName ("class.fission::Context");
-        //llvm::PointerType *const ctxTypePtr = llvm::PointerType::getUnqual( ctxType );
-        if(ctxType==0) {
-            std::cout << "Context type not found" << std::endl;
-            exit(0);
-        }
-        llvm::Constant *res = llvm::ConstantStruct::get(ctxType
-                        , builder.getInt32(context.m_first)
-                        , builder.getInt32(context.m_last)
-                        , NULL );
-        llvm::GlobalVariable *ga = new llvm::GlobalVariable( module
-                                    , ctxType
-                                    , true
-                                    , llvm::GlobalValue::InternalLinkage
-                                    , res);
-        ArgsV[0] = ga;
+        // First argument of all function is the context define as a constant
+        ArgsV[0] = context;
 
+        // The other arguments are built recursively
         for (unsigned int i=1; i < nbArgs+1; ++i, ++it) {
-            ArgsV[i] = recursiveAst(it.nextVertex(), graph, module, builder, context);
+            ArgsV[i] = buildCallGraphRecursively(it.nextVertex(), context);
         }
         std::cout << "Create call " << Name(Owner(plug)) << "_tmp" << std::endl;
         llvm::Value *ret=builder.CreateCall(CalleeF, ArgsV, Name(Owner(plug))+"_tmp");
@@ -91,25 +105,26 @@ llvm::Value *recursiveAst(
             // only one connection allowed
             assert(nbConnections==1);
             TraversalStackElement<Plug, PlugLink> n(plug);
-            return recursiveAst(n.nextVertex(), graph, module, builder, context);
+            return buildCallGraphRecursively(n.nextVertex(), context);
         }
 
     } else {
         // ERROR !!
         return NULL;
     }
+
+    return NULL;
 }
 
 
 /// Build and ast starting at plug
-llvm::Value *buildCallGraph(
-      llvm::Module &module
-    , Graph<Plug, PlugLink>  &graph
-    , Plug *plug
+llvm::Value *
+ComputeEngine::buildCallGraph(
+      Plug *plug
     , const Context &context)
 {
-    llvm::IRBuilder<> builder(llvm::getGlobalContext());
     std::string funcName("ComputeEngine::run");
+
     // Create a function and a building block
     std::vector<llvm::Type*> argsProto;
     FunctionType *FT = FunctionType::get(
@@ -120,83 +135,104 @@ llvm::Value *buildCallGraph(
             FT,         // Function type
             llvm::Function::ExternalLinkage,
             funcName,
-            &module);
+            &m_llvmModule);
 
     // Insert a basic block in the function
     BasicBlock *BB = BasicBlock::Create(getGlobalContext(), "entry", F);
-    builder.SetInsertPoint(BB);
-    builder.CreateRet(recursiveAst(plug, graph, module, builder, context));
+    m_builder->SetInsertPoint(BB);
+    llvm::Value *ctxVal = buildContext(context);
+
+    m_builder->CreateRet(buildCallGraphRecursively(plug, ctxVal));
     llvm::verifyFunction(*F);
     return 0;
 }
 
 // Constructor
-ComputeEngine::ComputeEngine()
+ComputeEngine::ComputeEngine(Module &fissionModule)
+: m_module(fissionModule)
+, m_llvmModule(*fissionModule.m_llvmLinker->getModule())
+, m_passManager(new llvm::PassManager())
+, m_funcPassManager(new llvm::FunctionPassManager(&m_llvmModule))
+, m_engine(0)
+, m_engineErrStr("")
+, m_builder(0)
 {
+    m_builder=new llvm::IRBuilder<>(llvm::getGlobalContext());
+
+    m_engine = llvm::EngineBuilder(&m_llvmModule).setErrorStr(&m_engineErrStr).create();
+    //
+    // Initialize optimization passes
+    //
+    // PassManager to optimize the whole module
+    //m_passManager->add(new llvm::TargetData(&m_llvmModule));
+    m_passManager->add(llvm::createFunctionInliningPass());
+
+    // Function pass manager
+    // Set up the optimizer pipeline.  Start with registering info about how the
+    // target lays out data structures.
+    m_funcPassManager->add(new llvm::DataLayout(*m_engine->getDataLayout()));
+    // Promote allocas to registers.
+    m_funcPassManager->add(llvm::createPromoteMemoryToRegisterPass());
+    // Provide basic AliasAnalysis support for GVN.
+    m_funcPassManager->add(llvm::createBasicAliasAnalysisPass());
+    // Do simple "peephole" optimizations and bit-twiddling optzns.
+    m_funcPassManager->add(llvm::createInstructionCombiningPass());
+    // Reassociate expressions.
+    m_funcPassManager->add(llvm::createReassociatePass());
+    // Eliminate Common SubExpressions.
+    m_funcPassManager->add(llvm::createGVNPass());
+    // Simplify the control flow graph (deleting unreachable blocks, etc).
+    m_funcPassManager->add(llvm::createCFGSimplificationPass());
+
+    m_funcPassManager->add(llvm::createLoopUnrollPass());
+    //m_funcPassManager->add(llvm::createLoopInstSimplifyPass());
+    //m_funcPassManager->add(llvm::createLoopRotatePass());
+    //m_funcPassManager->add(llvm::createLoopIdiomPass());
+    m_funcPassManager->add(llvm::createLoopVectorizePass ());
+    m_funcPassManager->doInitialization();
 }
 
 // Destructor
 ComputeEngine::~ComputeEngine()
-{}
+{
+    delete m_builder;
+    delete m_funcPassManager;
+    delete m_passManager;
+    delete m_engine;
+}
 
-Status ComputeEngine::compute(Module &module, Node &node, const Context &context)
+Status ComputeEngine::run(Node &node, const Context &context)
 {
     std::cout << "Compute" << std::endl;
-    llvm::Module &llvmMod = *module.m_llvmLinker->getModule();
-
-    llvm::Module::FunctionListType &flist = llvmMod.getFunctionList();
-    llvm::Module::FunctionListType::iterator it;
-    for (it = flist.begin(); it != flist.end(); ++it) {
-        std::cout << (*it).getName().str() << std::endl;
-    }
+    // List function in the current module
+    // TODO : might go in LlvmUtils ??
+    //llvm::Module::FunctionListType &flist = m_llvmModule.getFunctionList();
+    //llvm::Module::FunctionListType::iterator it;
+    //for (it = flist.begin(); it != flist.end(); ++it) {
+    //    std::cout << (*it).getName().str() << std::endl;
+    //}
 
     // Build execution graph recursively
-    llvm::Value *cc = buildCallGraph(llvmMod, module.m_dataFlowGraph, Input0(node), context);
-    std::cout << "cc = " << cc << std::endl;
+    llvm::Value *cc = buildCallGraph(Output0(node), context);
+    std::cout << "result of callgraph = " << cc << std::endl;
 
-    std::string ErrStr;
-    llvm::ExecutionEngine *ee = llvm::EngineBuilder(&llvmMod).setErrorStr(&ErrStr).create();
+    Function* LF = m_engine->FindFunctionNamed("ComputeEngine::run");
 
-    Function* LF = ee->FindFunctionNamed("ComputeEngine::run");
+    m_passManager->run(m_llvmModule);
+    m_funcPassManager->run(*LF);
 
-    llvm::PassManager optPM;
-    //optPM.add(new llvm::TargetData(&llvmMod));
-    optPM.add(llvm::createFunctionInliningPass());
-    optPM.run(llvmMod);
-    // NOTE CYWILL : these optimizations work only on functions.
-    // User PassManager to optimize globally
-    // Function pass manager Run
-    llvm::FunctionPassManager OurFPM(&llvmMod);
-    // Set up the optimizer pipeline.  Start with registering info about how the
-    // target lays out data structures.
-    OurFPM.add(new llvm::DataLayout(*ee->getDataLayout()));
-    // Promote allocas to registers.
-    OurFPM.add(llvm::createPromoteMemoryToRegisterPass());
-    // Provide basic AliasAnalysis support for GVN.
-    OurFPM.add(llvm::createBasicAliasAnalysisPass());
-    // Do simple "peephole" optimizations and bit-twiddling optzns.
-    OurFPM.add(llvm::createInstructionCombiningPass());
-    // Reassociate expressions.
-    OurFPM.add(llvm::createReassociatePass());
-    // Eliminate Common SubExpressions.
-    OurFPM.add(llvm::createGVNPass());
-    // Simplify the control flow graph (deleting unreachable blocks, etc).
-    OurFPM.add(llvm::createCFGSimplificationPass());
+    m_llvmModule.dump();
 
-    OurFPM.add(llvm::createLoopUnrollPass());
-
-    OurFPM.doInitialization();
-    OurFPM.run(*LF);
-
-    llvmMod.dump();
-    LF->dump();
+    //LF->dump();
     // Compile the function and returns a pointer to it
-    void *FPtr = ee->getPointerToFunction(LF);
+    void *FPtr = m_engine->getPointerToFunction(LF);
     double (*FP)() = (double (*)())(intptr_t)FPtr;
 
     std::cout << "result=" << FP() << std::endl;
 
-    // Execute the function on node
+    // Remove the function from the module
+    LF->eraseFromParent();
+
     return SUCCESS;
 }
 

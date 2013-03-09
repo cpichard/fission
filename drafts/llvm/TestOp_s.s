@@ -4,16 +4,8 @@ target triple = "i386-pc-linux-gnu"
 
 %"class.fission::Context" = type { i32, i32 }
 
-define double @_Z14TestOP_executeN7fission7ContextEdd(%"class.fission::Context"* %ctx, double %a, double %b) nounwind {
+define double @_Z14TestOP_executeRKN7fission7ContextEdd(%"class.fission::Context"* nocapture %ctx, double %a, double %b) nounwind readnone {
 entry:
-  %a.addr = alloca double, align 8
-  %b.addr = alloca double, align 8
-  store double %a, double* %a.addr, align 8
-  store double %b, double* %b.addr, align 8
-  %0 = load double* %a.addr, align 8
-  %mul = fmul double 2.000000e+00, %0
-  %1 = load double* %b.addr, align 8
-  %mul1 = fmul double 3.000000e+00, %1
-  %add = fadd double %mul, %mul1
+  %add = fadd double %a, %b
   ret double %add
 }

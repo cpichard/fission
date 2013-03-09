@@ -1,4 +1,13 @@
 #include "Context.h"
 
 using namespace fission;
-double TestSource_execute(const Context ctx){return (double)ctx.m_first * 2.0;}
+//extern "C" {
+double TestSource_execute(Context ctx)
+{
+    double tmp=0;
+    for(int i=0; i < ctx.m_first;i++)
+    {
+        tmp=tmp+1.0;
+    }
+    return tmp;
+};

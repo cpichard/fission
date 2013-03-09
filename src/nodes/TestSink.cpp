@@ -17,6 +17,10 @@ const NodeDesc::Input  TestSink::s_inputs[] = {
     NodeDesc::Input("value", Type<Float>())
 };
 
+const NodeOutput
+TestSink::s_outputs[] = {
+    NodeOutput("IO", Type<Float>())
+};
 // No outputs
 //const NodeDesc::Output TestSink::s_outputs[]  = {};
 

@@ -4,9 +4,12 @@ target triple = "i386-pc-linux-gnu"
 
 %"class.fission::Context" = type { i32, i32 }
 
-define void @_Z16TestSink_executeN7fission7ContextEd(%"class.fission::Context"* %ctx, double %a) nounwind {
+@.str = private unnamed_addr constant [19 x i8] c"sink received: %g\0A\00", align 1
+
+define double @_Z16TestSink_executeN7fission7ContextEd(%"class.fission::Context"* nocapture %ctx, double %a) nounwind {
 entry:
-  %a.addr = alloca double, align 8
-  store double %a, double* %a.addr, align 8
-  ret void
+  %call = tail call i32 (i8*, ...)* @printf(i8* getelementptr inbounds ([19 x i8]* @.str, i32 0, i32 0), double %a)
+  ret double %a
 }
+
+declare i32 @printf(i8* nocapture, ...) nounwind

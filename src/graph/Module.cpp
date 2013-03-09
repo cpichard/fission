@@ -9,6 +9,7 @@
 #include <llvm/Linker.h>
 #include <llvm/Support/IRReader.h>
 #include <llvm/Support/SourceMgr.h>
+#include <llvm/Support/TargetSelect.h>
 #include <llvm/Module.h>
 
 #include <iostream>
@@ -20,6 +21,8 @@ using std::string;
 Module::Module(const std::string &name)
 : Node(name, 0, NULL) {
 
+    // Init llvm target
+    llvm::InitializeNativeTarget();
     // Declate a new llvm module
     // It will store all the "execute" functions of the nodes
     llvm::LLVMContext &llvmContext = llvm::getGlobalContext();

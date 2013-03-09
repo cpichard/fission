@@ -39,7 +39,6 @@ int main(int argc, char **argv)
 {
     // TODO : fission::init();
     //        instead of LLVM initialize
-    InitializeNativeTarget();
 
     // Creation of a module which contains nodes
     // Ex : fission::createModule("Comp1", "Compositing", fission::ComputeEngine())
@@ -64,11 +63,17 @@ int main(int argc, char **argv)
     module.connect(Output0(node1), Input1(node4));
     module.connect(Output0(node4), Input0(node5));
 
-    // Tell the module the sink is the node to execute
-    fission::ComputeEngine engine;
-    fission::Context ctx(3);
-    engine.compute(module, *node5, ctx); 
-    // TODO : find a coherent syntax ex:
+    // Run the computation on the sink 
+    fission::ComputeEngine engine(module);
+    fission::Context ctx(32);
+    engine.run(*node5, ctx);
+
+    // Change context value and see what happens
+    // when we re-run the sink
+    ctx.m_first = 0;
+    engine.run(*node5, ctx);
+
+    // TODO : find a cleaner syntax ex:
     //Value *result = engine.compute(Output0(node4)); // buildResult ?
     //engine.compute(module, *node1, ctx); // buildResult ?
     // Or engine.run(module, node, ctx);
