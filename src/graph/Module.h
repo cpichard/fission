@@ -4,6 +4,10 @@
 #include <list>
 #include "Node.h"
 
+namespace llvm {
+class Linker;
+};
+
 // TODO : remove moduletest, it's just for ... tests
 class ModuleTest;
 
@@ -50,7 +54,7 @@ public:
     Graph<Plug, PlugLink>   m_dataFlowGraph;
 
     /// llvm module that contains the generated code and functions
-    llvm::Module            *m_llvmModule;
+    llvm::Linker            *m_llvmLinker;
 
 };
 

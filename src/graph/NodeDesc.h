@@ -2,7 +2,7 @@
 #define NODEDESC_H
 
 namespace llvm {
-class Module;
+class Linker;
 };
 
 namespace fission {
@@ -65,7 +65,7 @@ public:
     virtual size_t nbParameters() const=0;
 
     // LLVM generated IR code
-    virtual void registerFunctions(llvm::Module *)=0;
+    virtual void registerFunctions(llvm::Linker *)=0;
 };
 
 typedef NodeDesc::Output NodeOutput;

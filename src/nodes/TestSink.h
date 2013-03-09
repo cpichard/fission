@@ -32,7 +32,7 @@ public:
     inline size_t nbOutputs() const {return TestSink::s_nbOutputs;};
     inline size_t nbParameters() const {return TestSink::s_nbParams;};
 
-    virtual void registerFunctions(llvm::Module *);
+    virtual void registerFunctions(llvm::Linker *);
 private:
     static const char * const       s_typeName;
     static const size_t             s_nbInputs = 1;

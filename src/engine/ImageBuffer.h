@@ -1,6 +1,8 @@
 #ifndef IMAGEBUFFER_H
 #define IMAGEBUFFER_H
 
+#include <cstdlib>
+
 class ImageBuffer
 {
     //friend size_t ImageWidth(const ImageBuffer &ib);

@@ -28,7 +28,7 @@ public:
     inline size_t nbInputs() const {return TestValue::s_nbInputs;};
     inline size_t nbOutputs() const {return TestValue::s_nbOutputs;};
 
-    virtual void registerFunctions(llvm::Module *){};
+    virtual void registerFunctions(llvm::Linker *){};
 
 private:
     static const char * const       s_typeName;

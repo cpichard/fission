@@ -20,6 +20,7 @@
 #include "llvm/Transforms/Scalar.h"
 #include "llvm/Support/TargetSelect.h"
 #include "llvm/LinkAllPasses.h"
+#include "llvm/Linker.h"
 
 using namespace fission;
 using llvm::getGlobalContext;
@@ -110,10 +111,18 @@ ComputeEngine::~ComputeEngine()
 
 Status ComputeEngine::compute(Module &module, Node &node, const Context &context)
 {
+    std::cout << "Compute" << std::endl;
     // Build execution graph recursively
-    llvm::Module &llvmMod = *module.m_llvmModule;
-    llvm::Value *ast = buildAst(llvmMod, module.m_dataFlowGraph, Input0(node));
+    llvm::Module &llvmMod = *module.m_llvmLinker->getModule();
 
+    llvm::Module::FunctionListType &flist = llvmMod.getFunctionList();
+    llvm::Module::FunctionListType::iterator it;
+    for (it = flist.begin(); it != flist.end(); ++it) {
+        std::cout << (*it).getName().str() << std::endl;
+    }
+
+    // Build the functions
+    llvm::Value *ast = buildAst(llvmMod, module.m_dataFlowGraph, Input0(node));
     std::cout << "ast = " << ast << std::endl;
 
     std::string ErrStr;
@@ -125,7 +134,7 @@ Status ComputeEngine::compute(Module &module, Node &node, const Context &context
     //optPM.add(new llvm::TargetData(&llvmMod));
     optPM.add(llvm::createFunctionInliningPass());
     optPM.run(llvmMod);
-    // NOTE CYWILL : these optimizations works only on functions.
+    // NOTE CYWILL : these optimizations work only on functions.
     // User PassManager to optimize globally
     // Function pass manager Run
     llvm::FunctionPassManager OurFPM(&llvmMod);
@@ -156,7 +165,7 @@ Status ComputeEngine::compute(Module &module, Node &node, const Context &context
     void *FPtr = ee->getPointerToFunction(LF);
     double (*FP)() = (double (*)())(intptr_t)FPtr;
 
-    std::cout << "calling " << FP() << std::endl;
+    std::cout << "result=" << FP() << std::endl;
 
     // Execute the function on node
     return SUCCESS;

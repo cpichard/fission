@@ -3,10 +3,13 @@
 #include "Name.h"
 #include "Type.h"
 
-#include "llvm/Module.h"
-#include "llvm/LLVMContext.h"
+#include <llvm/Linker.h>
+#include <llvm/LLVMContext.h>
+#include <llvm/ADT/StringRef.h>
 
 namespace fission {
+
+using std::string;
 
 Module::Module(const std::string &name)
 : Node(name, 0, NULL) {
@@ -14,7 +17,8 @@ Module::Module(const std::string &name)
     // Declate a new llvm module
     // It will store all the "execute" functions of the nodes
     llvm::LLVMContext &llvmContext = llvm::getGlobalContext();
-    m_llvmModule = new llvm::Module("compute engine", llvmContext);
+    m_llvmLinker = new llvm::Linker("computeengine", "comp", llvmContext, 0);
+
 }
 
 
@@ -84,7 +88,7 @@ void Module::registerNodeDesc(NodeDesc *newType) {
     // Take ownership of this new type
     m_nodeDesc.push_back(newType);
     // Register the execute function of the node in llvm
-    newType->registerFunctions(m_llvmModule);
+    newType->registerFunctions(m_llvmLinker);
     
 
 }
