@@ -51,7 +51,8 @@ public:
     }
 
     bool hasVertex(V *v) {
-        // TODO
+        // TODO correct return 
+        return false;
     }
 
     /// Return true if there is an edge between src and dst

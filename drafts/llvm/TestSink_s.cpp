@@ -1,2 +1,5 @@
+#include "Context.h"
 
-void TestSink_execute(double a){return;}
+using namespace fission;
+
+void TestSink_execute(const Context ctx, double a){return;}

@@ -1,9 +1,9 @@
 #AM_CPPFLAGS = -g @BOOST_CFLAGS@ 
-AM_CPPFLAGS = -g -Iengine/ -Igraph/ -Inodes/ -Irtts/ `llvm-config --cppflags`
+AM_CPPFLAGS = -g -O0 -Wall -Iengine/ -Igraph/ -Inodes/ -Irtts/ `llvm-config --cppflags`
 
 lib_LTLIBRARIES=libfission.la
 #libfission_la_LIBADD = @BOOST_LIBS@ 
-libfission_la_LDFLAGS = -Wl,-rpath,./ `llvm-config --ldflags --libs core jit native`
+libfission_la_LDFLAGS = -g -O0 -Wall -Wl,-rpath,./ `llvm-config --ldflags --libs core jit native`
 libfission_la_SOURCES = \
 ./engine/Context.h\
 ./engine/ComputeEngine.cpp\

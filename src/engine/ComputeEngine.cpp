@@ -4,6 +4,7 @@
 #include "Name.h"
 #include "Plug.h"
 #include "Edge.h"
+#include "Context.h"
 
 #include <llvm/Constants.h>
 #include <llvm/LLVMContext.h>
@@ -33,7 +34,8 @@ llvm::Value *recursiveAst(
       Plug *plug
     , Graph<Plug, PlugLink> &graph
     , llvm::Module &module
-    , llvm::IRBuilder<> &builder)
+    , llvm::IRBuilder<> &builder
+    , const Context &context)
 {
     if(IsOutput(plug)) {
         // iterate on args,
@@ -45,11 +47,34 @@ llvm::Value *recursiveAst(
             return NULL;
         }
 
+        std::cout << "====Fun: \n";
+        CalleeF->getFunctionType()->getParamType(0)->dump() ;
+        std::cout << "====\n";
+
         const size_t nbArgs = NbConnectedInputs(plug);
-        std::vector<llvm::Value*> ArgsV(nbArgs);
+        std::vector<llvm::Value*> ArgsV(nbArgs+1);
         TraversalStackElement<Plug, PlugLink> it(plug);
-        for (unsigned int i=0; i < nbArgs; ++i, ++it) {
-            ArgsV[i] = recursiveAst(it.nextVertex(), graph, module, builder);
+
+        // Make a constant from the context stored in a global variable
+        llvm::StructType *ctxType = module.getTypeByName ("class.fission::Context");
+        //llvm::PointerType *const ctxTypePtr = llvm::PointerType::getUnqual( ctxType );
+        if(ctxType==0) {
+            std::cout << "Context type not found" << std::endl;
+            exit(0);
+        }
+        llvm::Constant *res = llvm::ConstantStruct::get(ctxType
+                        , builder.getInt32(context.m_first)
+                        , builder.getInt32(context.m_last)
+                        , NULL );
+        llvm::GlobalVariable *ga = new llvm::GlobalVariable( module
+                                    , ctxType
+                                    , true
+                                    , llvm::GlobalValue::InternalLinkage
+                                    , res);
+        ArgsV[0] = ga;
+
+        for (unsigned int i=1; i < nbArgs+1; ++i, ++it) {
+            ArgsV[i] = recursiveAst(it.nextVertex(), graph, module, builder, context);
         }
         std::cout << "Create call " << Name(Owner(plug)) << "_tmp" << std::endl;
         llvm::Value *ret=builder.CreateCall(CalleeF, ArgsV, Name(Owner(plug))+"_tmp");
@@ -66,7 +91,7 @@ llvm::Value *recursiveAst(
             // only one connection allowed
             assert(nbConnections==1);
             TraversalStackElement<Plug, PlugLink> n(plug);
-            return recursiveAst(n.nextVertex(), graph, module, builder );
+            return recursiveAst(n.nextVertex(), graph, module, builder, context);
         }
 
     } else {
@@ -77,7 +102,11 @@ llvm::Value *recursiveAst(
 
 
 /// Build and ast starting at plug
-llvm::Value *buildCallGraph(llvm::Module &module, Graph<Plug, PlugLink>  &graph, Plug *plug)
+llvm::Value *buildCallGraph(
+      llvm::Module &module
+    , Graph<Plug, PlugLink>  &graph
+    , Plug *plug
+    , const Context &context)
 {
     llvm::IRBuilder<> builder(llvm::getGlobalContext());
     std::string funcName("ComputeEngine::run");
@@ -96,7 +125,7 @@ llvm::Value *buildCallGraph(llvm::Module &module, Graph<Plug, PlugLink>  &graph,
     // Insert a basic block in the function
     BasicBlock *BB = BasicBlock::Create(getGlobalContext(), "entry", F);
     builder.SetInsertPoint(BB);
-    builder.CreateRet(recursiveAst(plug, graph, module, builder));
+    builder.CreateRet(recursiveAst(plug, graph, module, builder, context));
     llvm::verifyFunction(*F);
     return 0;
 }
@@ -122,7 +151,7 @@ Status ComputeEngine::compute(Module &module, Node &node, const Context &context
     }
 
     // Build execution graph recursively
-    llvm::Value *cc = buildCallGraph(llvmMod, module.m_dataFlowGraph, Input0(node));
+    llvm::Value *cc = buildCallGraph(llvmMod, module.m_dataFlowGraph, Input0(node), context);
     std::cout << "cc = " << cc << std::endl;
 
     std::string ErrStr;

@@ -1,9 +1,12 @@
 #ifndef CONTEXT_H
 #define CONTEXT_H
 
+#include <cstdlib> // size_t
 // Execution context.
-// Defines all the parameters 
+// Defines all the parameters
 namespace fission {
+
+/// Dummy context class, with start and end frames
 class Context
 {
 public:

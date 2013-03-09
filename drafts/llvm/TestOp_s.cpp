@@ -1,4 +1,6 @@
+#include "Context.h"
 
-double TestOP_execute(double a, double b){
+using namespace fission;
+double TestOP_execute(const Context ctx, double a, double b){
     return 2.0*a+3.0*b;
 }

@@ -66,7 +66,7 @@ int main(int argc, char **argv)
 
     // Tell the module the sink is the node to execute
     fission::ComputeEngine engine;
-    fission::Context ctx(0);
+    fission::Context ctx(3);
     engine.compute(module, *node5, ctx); 
     // TODO : find a coherent syntax ex:
     //Value *result = engine.compute(Output0(node4)); // buildResult ?
