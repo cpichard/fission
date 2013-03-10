@@ -20,27 +20,25 @@ typedef enum {
 } VertexColor;
 
 
-/// TraversalStackElement
-/// Structure used to simulate a recursive stack when traversing a dag.
-/// It stores an element of the stack
+/// GraphIterator
 template<typename V, typename E>
-struct TraversalStackElement {
+struct GraphIterator {
 
     typedef typename V::InEdgeIterator EdgeIt;
 
-    TraversalStackElement(V *v)
+    GraphIterator(V *v)
     : m_it(v->m_incoming.begin())
     , m_itEnd(v->m_incoming.end())
     , m_v(v){}
 
-    // Plenty of operators to simplify the code
+    // Plenty of cast operators to simplify the code
     inline operator EdgeIt & (){return m_it;}
     inline operator V * (){return m_v;}
     inline operator E *(){return static_cast<E*>(*m_it);}
 
     inline operator size_t () {return m_v->m_vid;}
     inline operator bool() {return m_it!=m_itEnd;}
-    inline TraversalStackElement<V,E> & operator ++ (){++m_it;return *this;}
+    inline GraphIterator<V,E> & operator ++ (){++m_it;return *this;}
 
     // TODO or m_src depending on the traversal direction
     // Template selection forward or reverse 
@@ -65,7 +63,7 @@ void DepthFirstSearch(Graph<V,E> &graph, V *v, Visitor &visitor) {
     std::fill(colors.begin(), colors.end(), WHITE);
 
     // A stack for visiting nodes, ATM a deque is used, might be changed
-    typedef TraversalStackElement<V, E>  TSE;
+    typedef GraphIterator<V, E>  TSE;
     std::deque<TSE>  stack;
 
     // Push first vertex in the stack
@@ -129,7 +127,6 @@ void DepthFirstSearch(Graph<V,E> &graph, V *v, Visitor &visitor) {
         }
     }
 }
-
 
 // TODO
 void DepthFirstVisit(){}

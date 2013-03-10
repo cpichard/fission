@@ -41,6 +41,13 @@ ComputeEngine::buildContext(const Context &context)
         std::cout << "Context type not found" << std::endl;
         exit(0);
     }
+
+    // Pass values to jitted code
+    // 2 methods : define constant value, which can be folded
+    //             define a mapping to a instance of the value
+    // The constant value allows further optimization
+#define USE_CONSTANT 1
+#if USE_CONSTANT
     llvm::Constant *res = llvm::ConstantStruct::get(ctxType
                     , m_builder->getInt32(context.m_first)
                     , m_builder->getInt32(context.m_last)
@@ -50,9 +57,20 @@ ComputeEngine::buildContext(const Context &context)
                                 , true
                                 , llvm::GlobalValue::InternalLinkage
                                 , res);
+#else
+    // Use external variable 
+    llvm::GlobalVariable *glob = new llvm::GlobalVariable( m_llvmModule
+                                , ctxType
+                                , false // is constant
+                                , llvm::GlobalValue::ExternalLinkage
+                                , NULL);
+    m_engine->addGlobalMapping(glob, (void *)&context);
+#endif    
     return glob;
 }
 
+
+/// Recursively build the call graph from the node graph
 llvm::Value *
 ComputeEngine::buildCallGraphRecursively(
       Plug *plug
@@ -81,9 +99,9 @@ ComputeEngine::buildCallGraphRecursively(
 
         const size_t nbArgs = NbConnectedInputs(plug);
         std::vector<llvm::Value*> ArgsV(nbArgs+1);
-        TraversalStackElement<Plug, PlugLink> it(plug);
+        GraphIterator<Plug, PlugLink> it(plug);
 
-        // First argument of all function is the context define as a constant
+        // First argument of all function is the context 
         ArgsV[0] = context;
 
         // The other arguments are built recursively
@@ -104,7 +122,7 @@ ComputeEngine::buildCallGraphRecursively(
         } else {
             // only one connection allowed
             assert(nbConnections==1);
-            TraversalStackElement<Plug, PlugLink> n(plug);
+            GraphIterator<Plug, PlugLink> n(plug);
             return buildCallGraphRecursively(n.nextVertex(), context);
         }
 
@@ -231,8 +249,9 @@ Status ComputeEngine::run(Node &node, const Context &context)
     std::cout << "result=" << FP() << std::endl;
 
     // Remove the function from the module
+#if USE_CONSTANT    
     LF->eraseFromParent();
-
+#endif
     return SUCCESS;
 }
 

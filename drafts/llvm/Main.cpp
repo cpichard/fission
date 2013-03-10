@@ -73,10 +73,6 @@ int main(int argc, char **argv)
     ctx.m_first = 0;
     engine.run(*node5, ctx);
 
-    // TODO : find a cleaner syntax ex:
-    //Value *result = engine.compute(Output0(node4)); // buildResult ?
-    //engine.compute(module, *node1, ctx); // buildResult ?
-    // Or engine.run(module, node, ctx);
 
     return EXIT_SUCCESS;
 
