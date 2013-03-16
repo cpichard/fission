@@ -1,6 +1,8 @@
 #ifndef NODEDESC_H
 #define NODEDESC_H
 
+#include <cstdlib> // size_t
+
 namespace llvm {
 class Linker;
 };
@@ -99,5 +101,73 @@ inline const NodeDesc::Output * Outputs(const NT *nodetype){return nodetype->out
 template<typename NT>
 inline const NodeDesc::Param * Parameters(const NT *nodetype){return nodetype->parameters();}
 }; // namespace fission
+
+// ============== Macros to make a new node ==================
+
+// StandardTypes is used in the macros
+#include <rtts/StandardTypes.h>
+#include <string>
+
+#define DeclareNewNode(NodeName, nbIn, nbOut, nbParam) \
+namespace fission {\
+class NodeName: public NodeDesc \
+{ \
+    template<typename T> friend const char * const TypeName(); \
+    template<typename NT> friend inline size_t NbInputs(); \
+    template<typename NT> friend inline size_t NbOutputs(); \
+    template<typename NT> friend inline size_t NbParameters(); \
+public: \
+    const char * typeName() const {return NodeName::s_typeName;} \
+    const NodeDesc::Input * inputs() const {return s_inputs;} \
+    const NodeDesc::Output * outputs() const {return s_outputs;} \
+    const NodeDesc::Param * parameters() const {return s_params;} \
+    inline size_t nbInputs() const {return NodeName::s_nbInputs;}; \
+    inline size_t nbOutputs() const {return NodeName::s_nbOutputs;}; \
+    inline size_t nbParameters() const {return NodeName::s_nbParams;}; \
+    virtual const char * getIrFile() const; \
+private: \
+    static const char * const       s_typeName; \
+    static const size_t             s_nbInputs = nbIn; \
+    static const size_t             s_nbOutputs = nbOut; \
+    static const size_t             s_nbParams = nbParam; \
+    static const NodeDesc::Input    s_inputs[]; \
+    static const NodeDesc::Output   s_outputs[]; \
+    static const NodeDesc::Param    s_params[]; \
+    static const unsigned int       s_version; \
+}; \
+};\
+
+#define NewOutput(val, typ) NodeOutput(val, Type<typ>())
+#define ImplementOutputs(NodeName, ... ) \
+namespace fission {\
+const NodeOutput NodeName::s_outputs[] = { \
+    __VA_ARGS__\
+};\
+};\
+
+#define NewInput(val, typ) NodeInput(val, Type<typ>())
+#define ImplementInputs(NodeName, ... ) \
+namespace fission {\
+const NodeInput NodeName::s_inputs[] = { \
+    __VA_ARGS__\
+};\
+};\
+
+#define NewParam(val, typ) NodeDesc::Param(val, Type<typ>(), "standard")
+#define ImplementParams(NodeName, ... ) \
+namespace fission {\
+const NodeDesc::Param NodeName::s_params[] = { \
+    __VA_ARGS__\
+};\
+};\
+
+
+#define ImplementNode(NodeName) \
+namespace fission {\
+const char * const NodeName::s_typeName = #NodeName; \
+const unsigned int NodeName::s_version = 0; \
+const char * NodeName::getIrFile() const {return "NodeName_s.s";} \
+};\
+
 
 #endif//NODEDESC_H

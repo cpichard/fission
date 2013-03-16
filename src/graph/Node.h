@@ -6,8 +6,8 @@
 #include "Parameter.h"
 #include "Graph.h"
 #include "ObjectId.h"
-#include "Type.h"
 #include "NodeDesc.h"
+#include "rtts/Type.h"
 
 namespace fission {
 

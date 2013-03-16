@@ -3,7 +3,7 @@
 
 #include <vector>
 
-#include "Status.h"
+#include "engine/Status.h"
 
 /// Graph class
 /// Template is used if we have different kinds of Vertices or Edge

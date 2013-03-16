@@ -2,7 +2,7 @@
 #define TESTVALUE
 
 #include <string>
-#include "NodeDesc.h"
+#include "fission.h"
 namespace fission {
 /// This is the first implementation of a node
 /// totally WIP

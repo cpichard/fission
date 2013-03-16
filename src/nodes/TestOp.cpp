@@ -1,36 +1,54 @@
 
-#include <iostream>
-
 #include "TestOp.h"
-#include "Parameter.h"
-#include "Status.h"
-#include "StandardTypes.h"
-#include "Value.h"
 
-namespace fission {
+ImplementNode(TestOp)
 
-/// Name of the node
-const char * const TestOp::s_typeName = "TestOp";
+ImplementOutputs(TestOp, NewOutput("OutValue", Float))
+ImplementInputs(TestOp, NewInput("InValue1", Float), NewInput("InValue2", Float))
+ImplementParams(TestOp)
 
-/// Version of the node
-const unsigned int TestOp::s_version = 0;
+#if 0
 
-// One input for this node
-const NodeDesc::Input  TestOp::s_inputs[] = {
-    NodeDesc::Input("InValue1", Type<Float>()),
-    NodeDesc::Input("InValue2", Type<Float>()),
+// Declare the structure needed to compute the data
+ComputationDataStruct(TestOp, ComputeData)
+{
+    float val;
 };
 
-// Only one output, the value of the parameter
-const NodeDesc::Output TestOp::s_outputs[] = {
-    // TEST
-    NodeDesc::Output("OutValue", Type<Float>())
-};
+ComputeDataInContextFunc(TestOp)
+{
+   data.val=getParam("InValue", context);
+   data.val*=Time(context);
+}
 
-// TODO : no parameter
-const NodeDesc::Param TestOp::s_params[] = {};
+PixelProcessFunc(TestOp)
+{
+    return in0*data.val+in1;
+}
 
-const char *TestOp::getIrFile() const {return "TestOp_s.s";}
+ComputeStruct(TestOp)
+{
+    float val;
+    float k;
+}
 
-}; // namespace fission
+//double fission::TestOP_execute(const Context &ctx, double a, double b){
+PixelProcess(TestOp)
+{
+    return in1*data.val+in2;
+}
 
+PixelProcessInPlace(TestOp)
+{}
+
+
+RegionProcess(TestOp)
+{}
+
+
+ContextChange()
+
+ROIChange()
+
+DODChange()
+#endif

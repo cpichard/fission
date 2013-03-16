@@ -2,10 +2,10 @@
 #define COMPUTEENGINE_H
 
 #include <list>
-#include "Module.h"
-#include "Node.h"
-#include "Status.h"
-#include "Context.h"
+#include "graph/Module.h"
+#include "graph/Node.h"
+#include "engine/Status.h"
+#include "engine/Context.h"
 
 // Forward llvm declarations
 namespace llvm {

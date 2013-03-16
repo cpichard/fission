@@ -58,14 +58,14 @@ ComputeEngine::buildContext(const Context &context)
                                 , llvm::GlobalValue::InternalLinkage
                                 , res);
 #else
-    // Use external variable 
+    // Use external variable
     llvm::GlobalVariable *glob = new llvm::GlobalVariable( m_llvmModule
                                 , ctxType
                                 , false // is constant
                                 , llvm::GlobalValue::ExternalLinkage
                                 , NULL);
     m_engine->addGlobalMapping(glob, (void *)&context);
-#endif    
+#endif
     return glob;
 }
 
@@ -101,7 +101,7 @@ ComputeEngine::buildCallGraphRecursively(
         std::vector<llvm::Value*> ArgsV(nbArgs+1);
         GraphIterator<Plug, PlugLink> it(plug);
 
-        // First argument of all function is the context 
+        // First argument of all function is the context
         ArgsV[0] = context;
 
         // The other arguments are built recursively

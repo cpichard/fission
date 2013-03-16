@@ -1,10 +1,8 @@
 
 #include <cstdlib> // EXIT_SUCCESS
-#include "TestSource.h"
-#include "TestOp.h"
-#include "TestSink.h"
-#include "ComputeEngine.h"
-#include "Context.h"
+#include "nodes/TestSource.h"
+#include "nodes/TestOp.h"
+#include "nodes/TestSink.h"
 
 #include "llvm/DerivedTypes.h"
 #include "llvm/ExecutionEngine/ExecutionEngine.h"
@@ -31,7 +29,7 @@
  *
  */
 
-#include "Module.h"
+#include "graph/Module.h"
 
 using namespace llvm;
 
