@@ -40,6 +40,7 @@ public:
 
     // A module can register new types of node and be able to generate them
     void registerNodeDesc(NodeDesc *newType);
+    void compileNode(const char *fileName);
     void unregisterNodeDesc(NodeDesc *type);
 
     // connect two plugs

@@ -1,7 +1,4 @@
 #include "TestSource.h"
-#include "Parameter.h"
-#include "StandardTypes.h"
-#include <iostream>
 
 
 ImplementNode(TestSource) 

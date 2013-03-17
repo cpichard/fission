@@ -1,35 +1,16 @@
 
 #include <cstdlib> // EXIT_SUCCESS
-#include "nodes/TestSource.h"
-#include "nodes/TestOp.h"
-#include "nodes/TestSink.h"
-
-#include "llvm/DerivedTypes.h"
-#include "llvm/ExecutionEngine/ExecutionEngine.h"
-#include "llvm/ExecutionEngine/JIT.h"
-#include "llvm/IRBuilder.h"
-#include "llvm/LLVMContext.h"
-#include "llvm/Module.h"
-#include "llvm/PassManager.h"
-#include "llvm/Support/IRReader.h"
-#include "llvm/Analysis/Verifier.h"
-#include "llvm/Analysis/Passes.h"
-#include "llvm/DataLayout.h"
-#include "llvm/Transforms/Scalar.h"
-#include "llvm/Support/TargetSelect.h"
-#include "llvm/LinkAllPasses.h"
-#include <iostream>
 #include <cstdio>
 #include <string>
 #include <map>
 #include <vector>
+#include <iostream>
 
 /*
  *  LLVM framework tests
  *
  */
-
-#include "graph/Module.h"
+#include "fission.h"
 
 using namespace llvm;
 
@@ -43,9 +24,13 @@ int main(int argc, char **argv)
     fission::Module module("test1");
 
     // Register a bunch of node types in this module
-    module.registerNodeDesc(new fission::TestSource());
-    module.registerNodeDesc(new fission::TestOp());
-    module.registerNodeDesc(new fission::TestSink());
+    //module.registerNodeDesc(new fission::TestSource());
+    //module.registerNodeDesc(new fission::TestOp());
+    //module.registerNodeDesc(new fission::TestSink());
+    module.compileNode("src/nodes/TestOp.cpp");
+    module.compileNode("src/nodes/TestSource.cpp");
+    module.compileNode("src/nodes/TestSink.cpp");
+
 
     // Create dynamic nodes
     fission::Node *node1 = module.createNode("TestSource", "Src1");

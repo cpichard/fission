@@ -1,7 +1,7 @@
 #ifndef TESTOP_H
 #define TESTOP_H
 
-#include "fission.h"
+#include "graph/NodeDesc.h"
 
 DeclareNewNode(TestOp, 2, 1, 0)
 

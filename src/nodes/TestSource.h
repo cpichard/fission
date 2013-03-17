@@ -1,7 +1,7 @@
 #ifndef TESTSOURCE
 #define TESTSOURCE
 
-#include "fission.h"
+#include "graph/NodeDesc.h"
 
 DeclareNewNode(TestSource, 0, 1, 1)
 
