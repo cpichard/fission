@@ -30,6 +30,8 @@ libfission_la_SOURCES = \
 ./engine/Context.h\
 ./engine/ComputeEngine.cpp\
 ./engine/ComputeEngine.h\
+./engine/NodeCompiler.h\
+./engine/NodeCompiler.cpp\
 ./graph/Name.h\
 ./engine/Status.h\
 ./rtts/Types.h\

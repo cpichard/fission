@@ -3,7 +3,6 @@
 
 #include <list>
 #include "Node.h"
-
 namespace llvm {
 class Linker;
 };
@@ -14,6 +13,9 @@ class ModuleTest;
 namespace fission {
 
 class ComputeEngine;
+class NodeCompiler;
+
+
 /// A module is a container and factory of nodes.
 /// It inherits properties of a node : inputs, outputs and parameters.
 /// It can register new types of nodes and be able to create those.
@@ -57,6 +59,8 @@ public:
     /// llvm module that contains the generated code and functions
     llvm::Linker            *m_llvmLinker;
 
+
+    NodeCompiler            *m_nodeCompiler;
 };
 
 }; // namespace fission
