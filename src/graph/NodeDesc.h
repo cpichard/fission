@@ -125,7 +125,9 @@ public: \
     inline size_t nbOutputs() const {return NodeName::s_nbOutputs;}; \
     inline size_t nbParameters() const {return NodeName::s_nbParams;}; \
     virtual const char * getIrFile() const; \
+    NodeName * getInstance();\
 private: \
+    NodeName(){}; \
     static const char * const       s_typeName; \
     static const size_t             s_nbInputs = nbIn; \
     static const size_t             s_nbOutputs = nbOut; \
@@ -134,6 +136,7 @@ private: \
     static const NodeDesc::Output   s_outputs[]; \
     static const NodeDesc::Param    s_params[]; \
     static const unsigned int       s_version; \
+    static NodeName                 *s_singleton; \
 }; \
 };\
 
@@ -166,7 +169,15 @@ const NodeDesc::Param NodeName::s_params[] = { \
 namespace fission {\
 const char * const NodeName::s_typeName = #NodeName; \
 const unsigned int NodeName::s_version = 0; \
+NodeName *NodeName::s_singleton = 0;\
 const char * NodeName::getIrFile() const {return "NodeName_s.s";} \
+NodeName * NodeName::getInstance()\
+{\
+    if(!s_singleton) {\
+        s_singleton = new NodeName();\
+    }\
+    return s_singleton;\
+}\
 };\
 
 

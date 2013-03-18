@@ -27,9 +27,12 @@ int main(int argc, char **argv)
     //module.registerNodeDesc(new fission::TestSource());
     //module.registerNodeDesc(new fission::TestOp());
     //module.registerNodeDesc(new fission::TestSink());
-    module.compileNode("src/nodes/TestOp.cpp");
-    module.compileNode("src/nodes/TestSource.cpp");
-    module.compileNode("src/nodes/TestSink.cpp");
+    //module.compileNode("src/nodes/TestOp.cpp");
+    //module.compileNode("src/nodes/TestSource.cpp");
+    //module.compileNode("src/nodes/TestSink.cpp");
+    module.registerNodeDesc("TestSource");
+    module.registerNodeDesc("TestOp");
+    module.registerNodeDesc("TestSink");
 
 
     // Create dynamic nodes

@@ -251,7 +251,7 @@ Status ComputeEngine::run(Node &node, const Context &context)
     std::cout << "result=" << FP() << std::endl;
 
     // Remove the function from the module
-#if USE_CONSTANT    
+#if USE_CONSTANT
     LF->eraseFromParent();
 #endif
     return SUCCESS;

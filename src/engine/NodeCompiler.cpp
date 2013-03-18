@@ -4,10 +4,19 @@
 
 #include <llvm/ADT/STLExtras.h>
 #include <llvm/ADT/StringRef.h>
-#include <llvm/Linker.h>
+#include <llvm/Analysis/Passes.h>
+#include <llvm/Analysis/Verifier.h>
+#include <llvm/Constants.h>
+#include <llvm/DataLayout.h>
+#include <llvm/DerivedTypes.h>
+#include <llvm/ExecutionEngine/ExecutionEngine.h>
+#include <llvm/ExecutionEngine/JIT.h>
+#include <llvm/IRBuilder.h>
+#include <llvm/LinkAllPasses.h>
 #include <llvm/Linker.h>
 #include <llvm/LLVMContext.h>
 #include <llvm/Module.h>
+#include <llvm/PassManager.h>
 #include <llvm/Support/Casting.h>
 #include <llvm/Support/FileSystem.h>
 #include <llvm/Support/Host.h>
@@ -15,6 +24,7 @@
 #include <llvm/Support/raw_ostream.h>
 #include <llvm/Support/SourceMgr.h>
 #include <llvm/Support/TargetSelect.h>
+#include <llvm/Transforms/Scalar.h>
 
 #include <clang/CodeGen/CodeGenAction.h>
 #include <clang/Driver/Compilation.h>
@@ -46,12 +56,13 @@ using llvm::sys::getDefaultTargetTriple;
 namespace fission {
 
 NodeCompiler::NodeCompiler()
-{}
-
+: m_engine(0)
+{
+}
 NodeCompiler::~NodeCompiler()
 {}
 
-void NodeCompiler::compile(const char *fileName, llvm::Linker *llvmLinker)
+NodeDesc *NodeCompiler::compile(const char *fileName, llvm::Linker *llvmLinker)
 {
     //
     std::cout << "Compiling " << fileName << "\n";
@@ -104,7 +115,7 @@ void NodeCompiler::compile(const char *fileName, llvm::Linker *llvmLinker)
     // Diagnostics
     Clang->createDiagnostics(args.size(), &args[0]);
     if (!Clang->hasDiagnostics())
-        return; 
+        return NULL; 
 
     // Emit only llvm code
     //llvm::OwningPtr<CodeGenAction> Act(new clang::EmitLLVMOnlyAction());
@@ -120,20 +131,36 @@ void NodeCompiler::compile(const char *fileName, llvm::Linker *llvmLinker)
     llvm::Module *mod = Act->takeModule();
     delete Clang;
     delete Act;
-    //llvmLinker->LinkInModule(Act->takeModule());
+
     std::string err2;
-    //if( llvmLinker->LinkModules(llvmLinker->getModule(), mod, llvm::Linker::PreserveSource, &err2))
+    llvm::Module::FunctionListType &flist = mod->getFunctionList();
+    llvm::Module::FunctionListType::iterator it=flist.begin();
+    std::string createInstanceFunc;
+    for(;it!=flist.end();++it) {
+        if(it->getName().find("getInstance")!=std::string::npos) {
+            std::cout << it->getName().data() <<"\n";
+            createInstanceFunc=it->getName().data();
+        }
+    }
+
     if( llvmLinker->LinkModules(llvmLinker->getModule(), mod, llvm::Linker::DestroySource, &err2))
     {
         std::cout << "error linking module" << std::endl;
     }
     delete mod;
-    std::cout << err2 << std::endl;
+    m_engine = llvm::EngineBuilder(llvmLinker->getModule()).create();
+    llvm::Function* LF = m_engine->FindFunctionNamed(createInstanceFunc.c_str());
+    void *FPtr = m_engine->getPointerToFunction(LF);
+    NodeDesc * (*FP)() = (NodeDesc * (*)())(intptr_t)FPtr;
+    std::cout << "FP = " << FP << "\n";
+    //delete m_engine;
+    return FP();
     // TODO : register node desc
     // Call a function that generates a new node ?
     //m_nodeDesc.push_back(newType);
-    llvmLinker->getModule()->dump();
+    //llvmLinker->getModule()->dump();
     //std::cout << Act->takeModule() << "\n";
+    return NULL;
 }
 
 };

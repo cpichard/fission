@@ -116,6 +116,20 @@ void Module::compileNode(const char *fileName)
 
     // TODO :register it
 }
+
+
+void Module::registerNodeDesc(const char *nodeTypeName)
+{
+    // Look in folders for file
+    std::string fileName;
+    fileName="src/nodes/"+std::string(nodeTypeName)+".cpp";
+    NodeDesc *newType = m_nodeCompiler->compile(fileName.c_str(), m_llvmLinker);
+
+
+    m_nodeDesc.push_back(newType);
+
+}
+
 void Module::registerNodeDesc(NodeDesc *newType) {
 
     // Take ownership of this new type
