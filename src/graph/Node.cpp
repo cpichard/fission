@@ -22,7 +22,7 @@ Node::Node(const std::string &name, size_t id, const NodeDesc *type)
     // Look for inputs and outputs of type
     // and create dynamic plugs from description
     const size_t nbInputs = NbInputs(type);
-    //std::cout << "nb inputs for " << name << " " << nbInputs << std::endl;
+    std::cout << "nb inputs for " << name << " " << nbInputs << std::endl;
     const NodeDesc::Input *inputs = Inputs(type);
     for (size_t i=0; i < nbInputs; i++) {
         // TODO Find correct plugtype from name.... 
@@ -35,7 +35,7 @@ Node::Node(const std::string &name, size_t id, const NodeDesc *type)
 
     const size_t nbOutputs = NbOutputs(type);
     const NodeDesc::Output *outputs = Outputs(type);
-    //std::cout << "nb outputs for " << name << " " << nbOutputs << std::endl;
+    std::cout << "nb outputs for " << name << " " << nbOutputs << std::endl;
     for (size_t i=0; i < nbOutputs; i++) {
         // Find correct plugtype
         const size_t id = m_outputs.size();

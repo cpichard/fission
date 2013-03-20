@@ -1,11 +1,18 @@
 
 #include "TestOp.h"
+#include "engine/Context.h"
 
 ImplementNode(TestOp)
 
 ImplementOutputs(TestOp, NewOutput("OutValue", Float))
 ImplementInputs(TestOp, NewInput("InValue1", Float), NewInput("InValue2", Float))
 ImplementParams(TestOp)
+
+extern "C"
+double TestOp_execute(const fission::Context &ctx, double a, double b) {
+    return a+b;
+}
+
 
 #if 0
 

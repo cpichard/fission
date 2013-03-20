@@ -51,12 +51,6 @@ libfission_la_SOURCES = \
 ./graph/Plug.cpp\
 ./graph/PlugLink.h\
 ./graph/Vertex.h\
-./nodes/TestSource.cpp\
-./nodes/TestSource.h\
-./nodes/TestOp.cpp\
-./nodes/TestOp.h\
-./nodes/TestSink.cpp\
-./nodes/TestSink.h\
 ./rtts/Value.h\
 ./rtts/StandardTypes.h\
 ./rtts/StandardTypes.cpp

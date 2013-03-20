@@ -2,6 +2,7 @@
 #define NODEDESC_H
 
 #include <cstdlib> // size_t
+#include <iostream>
 
 namespace llvm {
 class Linker;
@@ -68,6 +69,10 @@ public:
 
     // llvm ir file
     virtual const char * getIrFile() const=0;
+
+    //
+    virtual ~NodeDesc(){}
+
 };
 
 typedef NodeDesc::Output NodeOutput;
@@ -140,10 +145,10 @@ private: \
 }; \
 };\
 
-#define NewOutput(val, typ) NodeOutput(val, Type<typ>())
+#define NewOutput(val, typ) NodeDesc::Output(val, Type<typ>())
 #define ImplementOutputs(NodeName, ... ) \
 namespace fission {\
-const NodeOutput NodeName::s_outputs[] = { \
+const NodeDesc::Output NodeName::s_outputs[] = { \
     __VA_ARGS__\
 };\
 };\
@@ -167,9 +172,9 @@ const NodeDesc::Param NodeName::s_params[] = { \
 
 #define ImplementNode(NodeName) \
 namespace fission {\
+NodeName *NodeName::s_singleton=0; \
 const char * const NodeName::s_typeName = #NodeName; \
 const unsigned int NodeName::s_version = 0; \
-NodeName *NodeName::s_singleton = 0;\
 const char * NodeName::getIrFile() const {return "NodeName_s.s";} \
 NodeName * NodeName::getInstance()\
 {\

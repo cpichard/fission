@@ -10,8 +10,13 @@
  *  LLVM framework tests
  *
  */
-#include "fission.h"
+#include "graph/Module.h"
+#include "graph/Node.h"
+#include "engine/Context.h"
+#include "engine/ComputeEngine.h"
 
+#include <llvm/Linker.h>
+#include <llvm/Module.h>
 using namespace llvm;
 
 int main(int argc, char **argv)
@@ -33,6 +38,8 @@ int main(int argc, char **argv)
     module.registerNodeDesc("TestSource");
     module.registerNodeDesc("TestOp");
     module.registerNodeDesc("TestSink");
+
+    module.m_llvmLinker->getModule()->dump();
 
 
     // Create dynamic nodes

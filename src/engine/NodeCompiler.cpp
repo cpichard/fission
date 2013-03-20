@@ -1,4 +1,6 @@
 #include "engine/NodeCompiler.h"
+#include "graph/Name.h"
+#include "graph/NodeDesc.h"
 
 #include <iostream>
 
@@ -121,8 +123,7 @@ NodeDesc *NodeCompiler::compile(const char *fileName, llvm::Linker *llvmLinker)
     //llvm::OwningPtr<CodeGenAction> Act(new clang::EmitLLVMOnlyAction());
     clang::EmitLLVMOnlyAction *Act=new clang::EmitLLVMOnlyAction(&llvm::getGlobalContext());
     //Act->setLinkModule(llvmLinker->getModule());
-    if (!Clang->ExecuteAction(*Act))
-    {
+    if (!Clang->ExecuteAction(*Act)) {
         std::cout << "unable to link" << "\n";
     }
 
@@ -148,19 +149,57 @@ NodeDesc *NodeCompiler::compile(const char *fileName, llvm::Linker *llvmLinker)
         std::cout << "error linking module" << std::endl;
     }
     delete mod;
-    m_engine = llvm::EngineBuilder(llvmLinker->getModule()).create();
+    llvm::EngineBuilder engineBuilder(llvmLinker->getModule());
+    
+    engineBuilder.setUseMCJIT(true); // Test gdb, I suppose it will create an instance of MCJIT instead of JIT
+    
+    //engineBuilder.setOptLevel(0); // Test gdb
+    std::string engineError;
+    engineBuilder.setErrorStr(&engineError);
+    engineBuilder.setAllocateGVsWithCode(true);
+    //engine = llvm::EngineBuilder(llvmLinker->getModule()).create();
+    m_engine = engineBuilder.create();
+    m_engine->runStaticConstructorsDestructors(false); // Will allocate the static values
+
+    // Find function that create an instance of the particular type
+    // by convention this is getInstance
     llvm::Function* LF = m_engine->FindFunctionNamed(createInstanceFunc.c_str());
+    
+    // Run a graph viewer
+    //LF->viewCFG();
+
     void *FPtr = m_engine->getPointerToFunction(LF);
+
     NodeDesc * (*FP)() = (NodeDesc * (*)())(intptr_t)FPtr;
-    std::cout << "FP = " << FP << "\n";
+    NodeDesc *nodedesc = FP();
+    std::cout << "nodedesc = " << nodedesc 
+    << " " <<  nodedesc->typeName() << " " 
+    << "i" << NbInputs(nodedesc) << "  "
+    << "o" << NbOutputs(nodedesc)<< "  " 
+    << engineError
+    << std::endl;
+
+    //const size_t nbInputs = NbInputs(nodedesc);
+    //const NodeDesc::Input *inputs = Inputs(nodedesc);
+    //for (size_t i=0; i < nbInputs; i++) {
+    //    // Find correct plugtype
+    //    std::cout << i << " " << inputs[i].m_name << std::endl;
+    //}
+    //const size_t nbOutputs = NbOutputs(nodedesc);
+    //const NodeDesc::Output *outputs = Outputs(nodedesc);
+    //for (size_t i=0; i < nbOutputs; i++) {
+    //    // Find correct plugtype
+    //    std::cout << i << " " << &outputs[i] << std::endl;
+    //}
+    
     //delete m_engine;
-    return FP();
+    //
+    return nodedesc;
     // TODO : register node desc
     // Call a function that generates a new node ?
     //m_nodeDesc.push_back(newType);
     //llvmLinker->getModule()->dump();
     //std::cout << Act->takeModule() << "\n";
-    return NULL;
 }
 
 };

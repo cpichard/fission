@@ -48,7 +48,7 @@ ComputeEngine::buildContext(const Context &context)
     // 2 methods : define constant value, which can be folded
     //             define a mapping to a instance of the value
     // The constant value allows further optimization
-#define USE_CONSTANT 1
+#define USE_CONSTANT 0
 #if USE_CONSTANT
     llvm::Constant *res = llvm::ConstantStruct::get(ctxType
                     , m_builder->getInt32(context.m_first)
@@ -83,11 +83,14 @@ ComputeEngine::buildCallGraphRecursively(
     if(IsOutput(plug)) {
         // iterate on args,
         // Look up the name in the global module table.
-        std::string Callee(std::string(TypeName(Owner(plug))) + "::execute");
+        std::string Callee(std::string(TypeName(Owner(plug))) + "_execute");
         llvm::Function *CalleeF = module.getFunction(Callee);
         if (CalleeF == 0) {
+            m_llvmModule.dump();
             std::cout << "ERROR Function " << Callee << " not found" << std::endl;
-            return NULL;
+            exit(0);
+        } else {
+            std::cout << "Function " << Callee << " found" << std::endl;
         }
 
         // TODO :Optimize function
@@ -143,7 +146,7 @@ ComputeEngine::buildCallGraph(
       Plug *plug
     , const Context &context)
 {
-    std::string funcName("ComputeEngine::run");
+    std::string funcName("ComputeEngine::runonce");
 
     // Create a function and a building block
     std::vector<llvm::Type*> argsProto;
@@ -236,19 +239,20 @@ Status ComputeEngine::run(Node &node, const Context &context)
     llvm::Value *cc = buildCallGraph(Output0(node), context);
     std::cout << "result of callgraph = " << cc << std::endl;
 
-    Function* LF = m_engine->FindFunctionNamed("ComputeEngine::run");
+    Function* LF = m_engine->FindFunctionNamed("ComputeEngine::runonce");
 
     m_passManager->run(m_llvmModule);
     m_funcPassManager->run(*LF);
 
-    m_llvmModule.dump();
 
     //LF->dump();
     // Compile the function and returns a pointer to it
     void *FPtr = m_engine->getPointerToFunction(LF);
     double (*FP)() = (double (*)())(intptr_t)FPtr;
 
+    // Execute the function
     std::cout << "result=" << FP() << std::endl;
+
 
     // Remove the function from the module
 #if USE_CONSTANT
