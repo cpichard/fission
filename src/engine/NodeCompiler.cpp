@@ -59,8 +59,8 @@ namespace fission {
 
 NodeCompiler::NodeCompiler()
 : m_engine(0)
-{
-}
+{}
+
 NodeCompiler::~NodeCompiler()
 {}
 
@@ -94,7 +94,7 @@ NodeDesc *NodeCompiler::compile(const char *fileName, llvm::Linker *llvmLinker)
     args.push_back("-xc++");
     args.push_back("-I/home/cyril/Develop/fission/src");
     args.push_back(fileName);
-    const llvm::OwningPtr<Compilation> 
+    const llvm::OwningPtr<Compilation>
         Compilation(
             drv.BuildCompilation(llvm::makeArrayRef(args)));
 
@@ -117,7 +117,7 @@ NodeDesc *NodeCompiler::compile(const char *fileName, llvm::Linker *llvmLinker)
     // Diagnostics
     Clang->createDiagnostics(args.size(), &args[0]);
     if (!Clang->hasDiagnostics())
-        return NULL; 
+        return NULL;
 
     // Emit only llvm code
     //llvm::OwningPtr<CodeGenAction> Act(new clang::EmitLLVMOnlyAction());
@@ -144,17 +144,16 @@ NodeDesc *NodeCompiler::compile(const char *fileName, llvm::Linker *llvmLinker)
         }
     }
 
-    if( llvmLinker->LinkModules(llvmLinker->getModule(), mod, llvm::Linker::DestroySource, &err2))
-    {
+    if( llvmLinker->LinkModules(llvmLinker->getModule(), mod, llvm::Linker::PreserveSource, &err2)) {
         std::cout << "error linking module" << std::endl;
     }
     delete mod;
     llvm::EngineBuilder engineBuilder(llvmLinker->getModule());
-    
+
     engineBuilder.setUseMCJIT(true); // Test gdb, I suppose it will create an instance of MCJIT instead of JIT
-    
+
     //engineBuilder.setOptLevel(0); // Test gdb
-    std::string engineError;
+    std::string engineError; // TODO remove if unused
     engineBuilder.setErrorStr(&engineError);
     engineBuilder.setAllocateGVsWithCode(true);
     //engine = llvm::EngineBuilder(llvmLinker->getModule()).create();
@@ -164,7 +163,7 @@ NodeDesc *NodeCompiler::compile(const char *fileName, llvm::Linker *llvmLinker)
     // Find function that create an instance of the particular type
     // by convention this is getInstance
     llvm::Function* LF = m_engine->FindFunctionNamed(createInstanceFunc.c_str());
-    
+
     // Run a graph viewer
     //LF->viewCFG();
 
@@ -172,34 +171,8 @@ NodeDesc *NodeCompiler::compile(const char *fileName, llvm::Linker *llvmLinker)
 
     NodeDesc * (*FP)() = (NodeDesc * (*)())(intptr_t)FPtr;
     NodeDesc *nodedesc = FP();
-    std::cout << "nodedesc = " << nodedesc 
-    << " " <<  nodedesc->typeName() << " " 
-    << "i" << NbInputs(nodedesc) << "  "
-    << "o" << NbOutputs(nodedesc)<< "  " 
-    << engineError
-    << std::endl;
 
-    //const size_t nbInputs = NbInputs(nodedesc);
-    //const NodeDesc::Input *inputs = Inputs(nodedesc);
-    //for (size_t i=0; i < nbInputs; i++) {
-    //    // Find correct plugtype
-    //    std::cout << i << " " << inputs[i].m_name << std::endl;
-    //}
-    //const size_t nbOutputs = NbOutputs(nodedesc);
-    //const NodeDesc::Output *outputs = Outputs(nodedesc);
-    //for (size_t i=0; i < nbOutputs; i++) {
-    //    // Find correct plugtype
-    //    std::cout << i << " " << &outputs[i] << std::endl;
-    //}
-    
-    //delete m_engine;
-    //
     return nodedesc;
-    // TODO : register node desc
-    // Call a function that generates a new node ?
-    //m_nodeDesc.push_back(newType);
-    //llvmLinker->getModule()->dump();
-    //std::cout << Act->takeModule() << "\n";
 }
 
 };

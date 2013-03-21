@@ -187,7 +187,6 @@ ComputeEngine::ComputeEngine(Module &fissionModule)
     // Initialize optimization passes
     //
     // PassManager to optimize the whole module
-    //m_passManager->add(new llvm::TargetData(&m_llvmModule));
     m_passManager->add(llvm::createFunctionInliningPass());
 
     // Function pass manager
@@ -208,9 +207,9 @@ ComputeEngine::ComputeEngine(Module &fissionModule)
     m_funcPassManager->add(llvm::createCFGSimplificationPass());
 
     m_funcPassManager->add(llvm::createLoopUnrollPass());
-    //m_funcPassManager->add(llvm::createLoopInstSimplifyPass());
-    //m_funcPassManager->add(llvm::createLoopRotatePass());
-    //m_funcPassManager->add(llvm::createLoopIdiomPass());
+    m_funcPassManager->add(llvm::createLoopInstSimplifyPass());
+    m_funcPassManager->add(llvm::createLoopRotatePass());
+    m_funcPassManager->add(llvm::createLoopIdiomPass());
     m_funcPassManager->add(llvm::createLoopVectorizePass ());
     m_funcPassManager->doInitialization();
 }
@@ -241,7 +240,10 @@ Status ComputeEngine::run(Node &node, const Context &context)
 
     Function* LF = m_engine->FindFunctionNamed("ComputeEngine::runonce");
 
+    m_llvmModule.dump();
     m_passManager->run(m_llvmModule);
+    std::cerr << "=========================================" << std::endl;
+    m_llvmModule.dump();
     m_funcPassManager->run(*LF);
 
 
