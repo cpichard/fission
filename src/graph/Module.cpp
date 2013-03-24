@@ -10,26 +10,18 @@ namespace fission {
 using std::string;
 
 Module::Module(const std::string &name)
-: Node(name, 0, NULL) {
-
-    // Init llvm target
-    //llvm::InitializeNativeTarget();
-    // Declate a new llvm module
-    // It will store all the "execute" functions of the nodes
-    //llvm::LLVMContext &llvmContext = llvm::getGlobalContext();
-    //m_llvmLinker = new llvm::Linker("ModuleLinker", "Compositing", llvmContext, 0);
-    //m_jitEngine = new JITEngine();
-}
+: Node(name, 0, NULL) 
+{}
 
 
 /// Destructor
 /// Module is supposed to destroy everything that it owns
 Module::~Module() {
 
-    /// Delete node descriptions
     /// Destroy Plugs
     /// Destroy PlugLinks
     /// Destroy Nodes
+    /// Delete node descriptions
 }
 
 
@@ -83,50 +75,11 @@ void Module::disposeNode(Node *node) {
 
 }
 
-//void Module::compileNode(const char *fileName)
-//{
-//    m_nodeCompiler->compile(fileName, m_llvmLinker);
-//
-//    // TODO :register it
-//}
-
-
-//void Module::registerNodeDesc(const char *nodeTypeName)
-//{
-//    // Look in folders for file
-//    //std::string fileName;
-//
-//    // m_nodeCompiler.find(nodeTypeName)
-//    // Module *mod = m_nodeCompiler.compile("")
-//    // m_jitEngine.link(module);
-//
-//
-//    //fileName="src/nodes/"+std::string(nodeTypeName)+".cpp";
-//    //NodeDesc *newType = m_nodeCompiler->compile(fileName.c_str(), m_llvmLinker);
-//
-//
-//    //m_nodeDesc.push_back(newType);
-//
-//}
-
 void Module::registerNodeDesc(NodeDesc *newType) {
 
     // Take ownership of this new type
+    // TODO : check this type doesn't already exist
     m_nodeDesc.push_back(newType);
-    // Register the execute function of the node in llvm
-    //newType->registerFunctions(m_llvmLinker);
-
-    // Link IR code in the module
-    //llvm::SMDiagnostic Err;
-    //llvm::Module *mod = llvm::ParseIRFile(newType->getIrFile(), Err, llvm::getGlobalContext());
-    // Rename the first function. We test only with 1 function atm
-    //llvm::Module::FunctionListType &flist = mod->getFunctionList();
-    //llvm::Module::FunctionListType::iterator it=flist.begin();
-    //(*it).setName(string(TypeName(newType))+"::execute");
-    //std::cout << TypeName(newType) << " : " << mod << std::endl;
-
-    //m_llvmLinker->LinkInModule(mod);
-
 }
 void Module::unregisterNodeDesc(NodeDesc *type) {
 

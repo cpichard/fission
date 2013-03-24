@@ -133,9 +133,8 @@ ComputeEngine::buildCallGraph(
 ComputeEngine::ComputeEngine(Module &fissionModule, JITEngine &jite)
 : m_module(fissionModule)
 , m_engine(&jite)
-, m_builder(0)
+, m_builder(new llvm::IRBuilder<>(llvm::getGlobalContext()))
 {
-    m_builder = new llvm::IRBuilder<>(llvm::getGlobalContext());
 }
 
 
@@ -148,18 +147,12 @@ ComputeEngine::~ComputeEngine()
 Status ComputeEngine::run(Node &node, const Context &context)
 {
     std::cout << "Compute" << std::endl;
-    // List function in the current module
-    // TODO : might go in LlvmUtils ??
-    //llvm::Module::FunctionListType &flist = m_engine->getModule().getFunctionList();
-    //llvm::Module::FunctionListType::iterator it;
-    //for (it = flist.begin(); it != flist.end(); ++it) {
-    //    std::cout << (*it).getName().str() << std::endl;
-    //}
 
     // Build execution graph recursively
     llvm::Value *cc = buildCallGraph(Output0(node), context);
     std::cout << "result of callgraph = " << cc << std::endl;
 
+    // Compile and run the newly created function
     m_engine->runFunctionNamed("ComputeEngine::runonce");
     return SUCCESS;
 }

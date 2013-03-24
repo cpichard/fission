@@ -6,7 +6,6 @@
 
 // Forward declarations
 namespace llvm {
-    class Linker;
     class ExecutionEngine;
     class Module;
     class PassManager;
@@ -46,7 +45,6 @@ private:
     llvm::Module                *m_llvmModule;
     llvm::PassManager           *m_llvmPassManager;
     llvm::FunctionPassManager   *m_llvmFuncPassManager;
-    llvm::Linker                *m_llvmLinker;
     llvm::ExecutionEngine       *m_llvmEngine;
     std::string                 m_eeerror;
 };

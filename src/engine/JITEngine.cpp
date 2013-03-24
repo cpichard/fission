@@ -29,23 +29,21 @@
 #include <llvm/Support/SourceMgr.h>
 #include <llvm/Support/TargetSelect.h>
 #include <llvm/Transforms/Scalar.h>
+#include <llvm/Support/ManagedStatic.h>
 
-
+using llvm::Linker;
 
 namespace fission {
 JITEngine::JITEngine()
 : m_llvmModule(0)
 , m_llvmPassManager(0)
 , m_llvmFuncPassManager(0)
-, m_llvmLinker(0)
 , m_llvmEngine(0)
 , m_eeerror("")
 {
     // Init llvm target
     llvm::InitializeNativeTarget();
     llvm::LLVMContext &llvmContext = llvm::getGlobalContext();
-    m_llvmLinker = new llvm::Linker("ModuleLinker", "JITEngine", llvmContext, 0);
-
     m_llvmModule = new llvm::Module("JIT", llvmContext);
 
     // Create a Execution engine via the engine builder
@@ -89,12 +87,12 @@ JITEngine::JITEngine()
 
 JITEngine::~JITEngine()
 {
-    // TODO : release execution engine
-    //delete m_llvmEngine;
+    m_llvmEngine->runStaticConstructorsDestructors(true);
+    delete m_llvmEngine;
+    // m_llvmModule should be deleted by the engine
     delete m_llvmFuncPassManager;
     delete m_llvmPassManager;
-    delete m_llvmLinker;
-    delete m_llvmModule;
+    llvm::llvm_shutdown();
 }
 
 
@@ -109,7 +107,6 @@ NodeDesc * JITEngine::loadNodeDescription(const char *filename)
     }
     // Search for the function getInstance in all the functions of 
     // this module
-    std::string err2;
     llvm::Module::FunctionListType &flist = nodeModule->getFunctionList();
     llvm::Module::FunctionListType::iterator it=flist.begin();
     std::string createInstanceFunc;
@@ -121,12 +118,18 @@ NodeDesc * JITEngine::loadNodeDescription(const char *filename)
     }
 
     /// Link the new module in the current one
-    if( m_llvmLinker->LinkModules(&getModule(), nodeModule, llvm::Linker::DestroySource, &err2)) {
+    std::string err2;
+    llvm::LLVMContext &llvmContext = llvm::getGlobalContext();
+    Linker *llvmLinker = new Linker("jitengine", "newnode", llvmContext, 0);
+    if( llvmLinker->LinkModules(m_llvmModule, nodeModule, llvm::Linker::PreserveSource, &err2)) {
         std::cout << "error linking module" << std::endl;
     }
-    delete nodeModule;
+    llvmLinker->releaseModule();
 
-    m_llvmPassManager->run(getModule());
+    delete nodeModule; nodeModule=NULL;
+    delete llvmLinker; llvmLinker=NULL;
+
+    m_llvmPassManager->run(*m_llvmModule);
     m_llvmEngine->runStaticConstructorsDestructors(false); // Will allocate the static values
     llvm::Function* LF = m_llvmEngine->FindFunctionNamed(createInstanceFunc.c_str());
 
@@ -151,7 +154,7 @@ llvm::Value *
 JITEngine::mapContext(const Context &context)
 {
     // Make a constant from the context stored in a global variable
-    llvm::StructType *ctxType = getModule().getTypeByName ("class.fission::Context");
+    llvm::StructType *ctxType = m_llvmModule->getTypeByName ("class.fission::Context");
     // Note : get pointer type from a type
     //llvm::PointerType *const ctxTypePtr = llvm::PointerType::getUnqual( ctxType );
     if(ctxType==0) {
@@ -191,11 +194,11 @@ void JITEngine::runFunctionNamed(const char *functionName)
 {
     llvm::Function* LF = m_llvmEngine->FindFunctionNamed(functionName);
 
-    //getModule().dump();
-    m_llvmPassManager->run(getModule());
+    //*m_llvmModule.dump();
+    m_llvmPassManager->run(*m_llvmModule);
     // DEBUG PRRINT
     //std::cerr << "=========================================" << std::endl;
-    //getModule().dump();
+    //*m_llvmModule.dump();
     m_llvmFuncPassManager->run(*LF);
 
 
@@ -207,7 +210,8 @@ void JITEngine::runFunctionNamed(const char *functionName)
     // Execute the function
     std::cout << "result=" << FP() << std::endl;
 
-
+    // Free ?
+    //m_llvmEngine->freeMachineCodeForFunction(LF);
     // Remove the function from the module
 #if USE_CONSTANT
     LF->eraseFromParent();

@@ -50,14 +50,14 @@ NodeCompiler::NodeCompiler()
 {
     m_driver->UseStdLib = true;
     m_driver->CCCIsCXX = true;
-    //m_driverv->CCCIsCPP = true;
+    //m_driver->CCCIsCPP = true;
+
     // TODO : no path in code !!!
     // it is needed for standard headers like stddef.h
     m_driver->ResourceDir = "/home/cyril/usr/local/lib/clang/3.2";
 
     m_args.push_back("-xc++");
     m_args.push_back("-I/home/cyril/Develop/fission/src");
-    //m_args.push_back(fileName);
 
 }
 
@@ -67,6 +67,7 @@ NodeCompiler::~NodeCompiler()
     delete m_clang;
     delete m_driver;
     delete m_diagEngine;
+    // Is it deleted by the engine ?
     //delete m_diagIDs;
     //delete m_diagPrinter;
     //delete m_diagOpts;

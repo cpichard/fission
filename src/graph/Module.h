@@ -42,25 +42,17 @@ public:
 
     // A module can register new types of node and be able to generate them
     void registerNodeDesc(NodeDesc *newType);
-    //void registerNodeDesc(const char *nodeTypeName);
-    //void compileNode(const char *fileName);
     void unregisterNodeDesc(NodeDesc *type);
 
     // connect two plugs
     void connect(Plug *src, Plug *dst);
 
-//private:
-
+private:
     /// Types of nodes known by this module
     std::list<NodeDesc*>    m_nodeDesc;
 
     /// Dataflow inside the module
     Graph<Plug, PlugLink>   m_dataFlowGraph;
-
-    /// llvm module that contains the generated code and functions
-    //llvm::Linker            *m_llvmLinker;
-
-    //NodeCompiler            *m_nodeCompiler;
 };
 
 }; // namespace fission
