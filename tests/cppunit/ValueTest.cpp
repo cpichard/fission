@@ -1,11 +1,11 @@
 #include "ValueTest.h"
-#include "Value.h"
-#include "Module.h"
-#include "TestOp.h"
-#include "TestSource.h"
-#include "TestSink.h"
-#include "Name.h"
-#include "StandardTypes.h"
+#include "graph/Module.h"
+#include "graph/Name.h"
+#include "nodes/TestOp.h"
+#include "nodes/TestSink.h"
+#include "nodes/TestSource.h"
+#include "rtts/StandardTypes.h"
+#include "rtts/Value.h"
 
 using namespace fission;
 

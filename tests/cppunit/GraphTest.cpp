@@ -1,8 +1,8 @@
 #include "GraphTest.h"
-#include "GraphAlgorithms.h"
-#include "Vertex.h"
-#include "Edge.h"
-#include "Name.h"
+#include "graph/GraphAlgorithms.h"
+#include "graph/Vertex.h"
+#include "graph/Edge.h"
+#include "graph/Name.h"
 
 using namespace fission;
 // Registers the fixture into the 'registry'

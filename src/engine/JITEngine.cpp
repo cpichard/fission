@@ -112,7 +112,7 @@ NodeDesc * JITEngine::loadNodeDescription(const char *filename)
     std::string createInstanceFunc;
     for(;it!=flist.end();++it) {
         if(it->getName().find("getInstance")!=std::string::npos) {
-            std::cout << it->getName().data() <<"\n";
+            //std::cout << it->getName().data() <<"\n";
             createInstanceFunc=it->getName().data();
         }
     }

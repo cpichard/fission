@@ -1,7 +1,7 @@
 if CPPUNIT
 TESTS = $(check_PROGRAMS)
-AM_CPPFLAGS = @CPPUNIT_CFLAGS@ -I../../src/engine -I../../src/graph -I../../src/nodes -I../../src/rtts
-AM_LDFLAGS = @CPPUNIT_LIBS@ -lfission
+AM_CPPFLAGS = -g -O0 @CPPUNIT_CFLAGS@ -I../../src/
+AM_LDFLAGS = -g -O0 @CPPUNIT_LIBS@ -L../../src/ -lfission
 fission_test_SOURCES = main.cpp \
 ModuleTest.h \
 ModuleTest.cpp \

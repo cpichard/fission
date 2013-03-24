@@ -1,28 +1,43 @@
 #include "ModuleTest.h"
-#include "Module.h"
-#include "TestOp.h"
-#include "TestSource.h"
-#include "TestSink.h"
-#include "Name.h"
+#include "graph/Module.h"
+//#include "nodes/TestOp.h"
+//#include "nodes/TestSource.h"
+//#include "nodes/TestSink.h"
+#include "graph/Name.h"
+#include "engine/JITEngine.h"
 
 using namespace fission;
 
 // Registers the fixture into the 'registry'
 CPPUNIT_TEST_SUITE_REGISTRATION( ModuleTest );
 
-ModuleTest::ModuleTest(){}
+ModuleTest::ModuleTest()
+{
+    m_jit=new fission::JITEngine();
+    m_testOp = m_jit->loadNodeDescription("src/nodes/TestOp.cpp");
+    m_testSource = m_jit->loadNodeDescription("src/nodes/TestSource.cpp");
+    m_testSink = m_jit->loadNodeDescription("src/nodes/TestSink.cpp");
+}
+
+ModuleTest::~ModuleTest()
+{
+    delete m_jit;
+}
 
 void ModuleTest::setUp()
-{}
+{
+}
 
 void ModuleTest::tearDown()
-{}
+{
+}
+
 
 void ModuleTest::testCreateNode()
 {
     // Build a module of node
     Module module("test1");
-    module.registerNodeDesc(new TestSource());
+    module.registerNodeDesc(m_testSource);
 
     // Create an non typed node.
     Node *nodeUnknown = module.createNode("unknown", "");
@@ -33,7 +48,8 @@ void ModuleTest::testCreateNode()
     Node *nodeTestSource = module.createNode("TestSource", "test1");
     // This node should exist
     CPPUNIT_ASSERT(nodeTestSource != NULL);
-    CPPUNIT_ASSERT(TypeName(nodeTestSource) == TypeName<TestSource>());
+    // Not possible with the JIT
+    //CPPUNIT_ASSERT(TypeName(nodeTestSource) == TypeName<TestSource>());
 
     // Test name
     CPPUNIT_ASSERT(Name(*nodeTestSource) == "test1");
@@ -41,8 +57,8 @@ void ModuleTest::testCreateNode()
 
     CPPUNIT_ASSERT(NbInputs(nodeTestSource) == 0);
     CPPUNIT_ASSERT(NbOutputs(nodeTestSource) == 1);
-    CPPUNIT_ASSERT(NbOutputs<TestSource>() == 1);
-    CPPUNIT_ASSERT(NbInputs<TestSource>() == 0);
+    //CPPUNIT_ASSERT(NbOutputs<TestSource>() == 1);
+    //CPPUNIT_ASSERT(NbInputs<TestSource>() == 0);
 }
 
 // TODO
@@ -68,9 +84,9 @@ void ModuleTest::testConnectNodes()
 {
     // Build a new module
     Module module("test1");
-    module.registerNodeDesc(new TestSource());
-    module.registerNodeDesc(new TestSink());
-    module.registerNodeDesc(new TestOp());
+    module.registerNodeDesc(m_testSource);
+    module.registerNodeDesc(m_testSink);
+    module.registerNodeDesc(m_testOp);
 
     // Create an non typed node.
     Node *node1 = module.createNode("TestSource", "node1");
@@ -80,8 +96,8 @@ void ModuleTest::testConnectNodes()
     //module.connect( node1->output(0), node2->input(0));
     module.connect(Output0(node1), Input0(node2));
 
-    CPPUNIT_ASSERT( module.m_dataFlowGraph.vertices().size() == 2 );
-    CPPUNIT_ASSERT( module.m_dataFlowGraph.edges().size() == 1 );
+    CPPUNIT_ASSERT( module.m_dataFlowGraph.vertices().size() == 3 );
+    CPPUNIT_ASSERT( module.m_dataFlowGraph.edges().size() == 2 );
 
     CPPUNIT_ASSERT( Name(Output0(node1)) == "Value");
 
@@ -90,8 +106,8 @@ void ModuleTest::testConnectNodes()
     CPPUNIT_ASSERT( Name(Input0(node3)) == "InValue1");
     CPPUNIT_ASSERT( Name(Input1(node3)) == "InValue2");
 
-    CPPUNIT_ASSERT( module.m_dataFlowGraph.vertices().size() == 5 );
-    CPPUNIT_ASSERT( module.m_dataFlowGraph.edges().size() == 3 );
+    CPPUNIT_ASSERT( module.m_dataFlowGraph.vertices().size() == 6 );
+    CPPUNIT_ASSERT( module.m_dataFlowGraph.edges().size() == 4 );
 
 }
 
@@ -99,9 +115,9 @@ void ModuleTest::testFlowGraph()
 {
     // Build a new module
     Module module("test1");
-    module.registerNodeDesc(new TestSource());
-    module.registerNodeDesc(new TestSink());
-    module.registerNodeDesc(new TestOp());
+    module.registerNodeDesc(m_testSource);
+    module.registerNodeDesc(m_testOp);
+    module.registerNodeDesc(m_testSink);
 
     Node *source = module.createNode("TestSource", "node1");
     Node *sink = module.createNode("TestSink", "node2");
@@ -112,8 +128,8 @@ void ModuleTest::testFlowGraph()
     module.connect(Output0(op), Input0(sink));
 
     // Look in the dataflow graph directly
-    CPPUNIT_ASSERT( module.m_dataFlowGraph.vertices().size() == 5 );
-    CPPUNIT_ASSERT( module.m_dataFlowGraph.edges().size() == 4 );
+    CPPUNIT_ASSERT( module.m_dataFlowGraph.vertices().size() == 6 );
+    CPPUNIT_ASSERT( module.m_dataFlowGraph.edges().size() == 5 );
 
     // Look if all connections are correct
     Plug *outSource = Output0(source);
@@ -135,10 +151,10 @@ void ModuleTest::testGraphName()
 void ModuleTest::testSetParameter()
 {
     Module module("test1");
-    module.registerNodeDesc(new TestSource());
-    module.registerNodeDesc(new TestSink());
-    module.registerNodeDesc(new TestOp());
 
+    module.registerNodeDesc(m_testSource);
+    module.registerNodeDesc(m_testOp);
+    module.registerNodeDesc(m_testSink);
     Node *source = module.createNode("TestSource", "node1");
     // TODO Node *source = module.createNode(Type<TestSource>(), "node2")
 
