@@ -4,29 +4,9 @@
 
 #include <iostream>
 
-#include <llvm/ADT/STLExtras.h>
-#include <llvm/ADT/StringRef.h>
-#include <llvm/Analysis/Passes.h>
-#include <llvm/Analysis/Verifier.h>
-#include <llvm/Constants.h>
-#include <llvm/DataLayout.h>
-#include <llvm/DerivedTypes.h>
-#include <llvm/ExecutionEngine/ExecutionEngine.h>
-#include <llvm/ExecutionEngine/JIT.h>
-#include <llvm/IRBuilder.h>
-#include <llvm/LinkAllPasses.h>
-#include <llvm/Linker.h>
 #include <llvm/LLVMContext.h>
 #include <llvm/Module.h>
-#include <llvm/PassManager.h>
-#include <llvm/Support/Casting.h>
-#include <llvm/Support/FileSystem.h>
 #include <llvm/Support/Host.h>
-#include <llvm/Support/IRReader.h>
-#include <llvm/Support/raw_ostream.h>
-#include <llvm/Support/SourceMgr.h>
-#include <llvm/Support/TargetSelect.h>
-#include <llvm/Transforms/Scalar.h>
 
 #include <clang/CodeGen/CodeGenAction.h>
 #include <clang/Driver/Compilation.h>
@@ -53,126 +33,84 @@ using clang::driver::Compilation;
 using clang::driver::Driver;
 using clang::driver::JobList;
 using clang::TextDiagnosticPrinter;
+using clang::EmitLLVMOnlyAction;
 using llvm::sys::getDefaultTargetTriple;
 
 namespace fission {
 
 NodeCompiler::NodeCompiler()
-: m_engine(0)
-{}
-
-NodeCompiler::~NodeCompiler()
-{}
-
-NodeDesc *NodeCompiler::compile(const char *fileName, llvm::Linker *llvmLinker)
+: m_diagOpts(new DiagnosticOptions())
+, m_diagPrinter(new TextDiagnosticPrinter(llvm::errs(), m_diagOpts))
+, m_diagIDs(new DiagnosticIDs)
+, m_diagEngine(new DiagnosticsEngine(m_diagIDs, m_diagOpts, m_diagPrinter))
+, m_driver(new Driver("clang", getDefaultTargetTriple(), "a.out", false, *m_diagEngine))
+, m_clang(new CompilerInstance())
+, m_action(new EmitLLVMOnlyAction(&llvm::getGlobalContext()))
+, m_args()
 {
-    //
-    std::cout << "Compiling " << fileName << "\n";
-
-    // Diagnostics
-    DiagnosticOptions *diagOpts = new DiagnosticOptions();
-    TextDiagnosticPrinter *diagPrinter = new TextDiagnosticPrinter(llvm::errs(), diagOpts);
-   // DiagnosticIDs *diagIDs = new DiagnosticIDs();
-    llvm::IntrusiveRefCntPtr<clang::DiagnosticIDs> diagIDs(new clang::DiagnosticIDs);
-    DiagnosticsEngine Diags(diagIDs, diagOpts, diagPrinter);
-
-    // Driver that contains all clang options like header path, etc.
-    Driver drv("clang", getDefaultTargetTriple()
-                    , "a.out"
-                    , false
-                    , Diags);
-
-    drv.UseStdLib = true;
-    drv.CCCIsCXX = true;
-    //drv->CCCIsCPP = true;
+    m_driver->UseStdLib = true;
+    m_driver->CCCIsCXX = true;
+    //m_driverv->CCCIsCPP = true;
     // TODO : no path in code !!!
     // it is needed for standard headers like stddef.h
-    drv.ResourceDir = "/home/cyril/usr/local/lib/clang/3.2";
+    m_driver->ResourceDir = "/home/cyril/usr/local/lib/clang/3.2";
 
-    //// Create the compiler invocation
-    std::vector<const char *> args;
-    args.push_back("-xc++");
-    args.push_back("-I/home/cyril/Develop/fission/src");
-    args.push_back(fileName);
+    m_args.push_back("-xc++");
+    m_args.push_back("-I/home/cyril/Develop/fission/src");
+    //m_args.push_back(fileName);
+
+}
+
+NodeCompiler::~NodeCompiler()
+{
+    //delete m_action;
+    delete m_clang;
+    delete m_driver;
+    delete m_diagEngine;
+    //delete m_diagIDs;
+    //delete m_diagPrinter;
+    //delete m_diagOpts;
+}
+
+llvm::Module *NodeCompiler::compile(const char *fileName)
+{
+    // Add filename as the last argument of the compiler
+    m_args.push_back(fileName);
     const llvm::OwningPtr<Compilation>
         Compilation(
-            drv.BuildCompilation(llvm::makeArrayRef(args)));
+            m_driver->BuildCompilation(llvm::makeArrayRef(m_args)));
 
     // Compilation Job to get the correct arguments
     const JobList &Jobs = Compilation->getJobs();
     const Command *Cmd = llvm::cast<Command>(*Jobs.begin());
     const ArgStringList *const CC1Args = &Cmd->getArguments();
 
-    //Driver->PrintActions(*Compilation);
+    //DEBUG Driver->PrintActions(*Compilation);
 
     llvm::OwningPtr<CompilerInvocation>
                     CI(new CompilerInvocation);
     CompilerInvocation::CreateFromArgs(
-        *CI, CC1Args->data() + 1, CC1Args->data() + CC1Args->size(), Diags);
+        *CI, CC1Args->data() + 1, CC1Args->data() + CC1Args->size(), *m_diagEngine);
 
     // Create the compiler instance
-    CompilerInstance *Clang=new CompilerInstance();
-    Clang->setInvocation(CI.take());
+    m_clang->setInvocation(CI.take());
 
     // Diagnostics
-    Clang->createDiagnostics(args.size(), &args[0]);
-    if (!Clang->hasDiagnostics())
+    m_clang->createDiagnostics(m_args.size(), &m_args[0]);
+    m_args.pop_back(); // Remove filename for future compilation
+    if (!m_clang->hasDiagnostics())
         return NULL;
 
     // Emit only llvm code
-    //llvm::OwningPtr<CodeGenAction> Act(new clang::EmitLLVMOnlyAction());
-    clang::EmitLLVMOnlyAction *Act=new clang::EmitLLVMOnlyAction(&llvm::getGlobalContext());
-    //Act->setLinkModule(llvmLinker->getModule());
-    if (!Clang->ExecuteAction(*Act)) {
-        std::cout << "unable to link" << "\n";
+    llvm::OwningPtr<CodeGenAction> action(m_action);
+    llvm::Module *mod=NULL;
+    if (!m_clang->ExecuteAction(*action)) {
+        std::cout << "unable to generate llvm code" << "\n";
+    } else {
+        mod = action->takeModule();
     }
 
-    //llvmLinker->getModule()->dump();
-    std::cout << "====================" << "\n";
-    llvm::Module *mod = Act->takeModule();
-    delete Clang;
-    delete Act;
-
-    std::string err2;
-    llvm::Module::FunctionListType &flist = mod->getFunctionList();
-    llvm::Module::FunctionListType::iterator it=flist.begin();
-    std::string createInstanceFunc;
-    for(;it!=flist.end();++it) {
-        if(it->getName().find("getInstance")!=std::string::npos) {
-            std::cout << it->getName().data() <<"\n";
-            createInstanceFunc=it->getName().data();
-        }
-    }
-
-    if( llvmLinker->LinkModules(llvmLinker->getModule(), mod, llvm::Linker::PreserveSource, &err2)) {
-        std::cout << "error linking module" << std::endl;
-    }
-    delete mod;
-    llvm::EngineBuilder engineBuilder(llvmLinker->getModule());
-
-    engineBuilder.setUseMCJIT(true); // Test gdb, I suppose it will create an instance of MCJIT instead of JIT
-
-    //engineBuilder.setOptLevel(0); // Test gdb
-    std::string engineError; // TODO remove if unused
-    engineBuilder.setErrorStr(&engineError);
-    engineBuilder.setAllocateGVsWithCode(true);
-    //engine = llvm::EngineBuilder(llvmLinker->getModule()).create();
-    m_engine = engineBuilder.create();
-    m_engine->runStaticConstructorsDestructors(false); // Will allocate the static values
-
-    // Find function that create an instance of the particular type
-    // by convention this is getInstance
-    llvm::Function* LF = m_engine->FindFunctionNamed(createInstanceFunc.c_str());
-
-    // Run a graph viewer
-    //LF->viewCFG();
-
-    void *FPtr = m_engine->getPointerToFunction(LF);
-
-    NodeDesc * (*FP)() = (NodeDesc * (*)())(intptr_t)FPtr;
-    NodeDesc *nodedesc = FP();
-
-    return nodedesc;
+    return mod;
 }
 
 };

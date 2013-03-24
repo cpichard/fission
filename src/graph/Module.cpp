@@ -3,33 +3,6 @@
 #include "Type.h"
 #include "engine/NodeCompiler.h"
 
-#include <llvm/ADT/STLExtras.h>
-#include <llvm/ADT/StringRef.h>
-#include <llvm/Linker.h>
-#include <llvm/Linker.h>
-#include <llvm/LLVMContext.h>
-#include <llvm/Module.h>
-#include <llvm/Support/FileSystem.h>
-#include <llvm/Support/IRReader.h>
-#include <llvm/Support/SourceMgr.h>
-#include <llvm/Support/TargetSelect.h>
-#include <llvm/Support/raw_ostream.h>
-#include <llvm/Support/Host.h>
-#include <llvm/Support/Casting.h>
-
-#include <clang/CodeGen/CodeGenAction.h>
-#include <clang/Frontend/CompilerInstance.h>
-#include <clang/Frontend/CompilerInvocation.h>
-#include <clang/Frontend/TextDiagnosticPrinter.h>
-#include <clang/Driver/Driver.h>
-#include <clang/Tooling/Tooling.h>
-#include <clang/Tooling/ArgumentsAdjusters.h>
-#include "clang/Driver/Compilation.h"
-#include "clang/Tooling/CompilationDatabase.h"
-#include "clang/Driver/Tool.h"
-#include <clang/Lex/Preprocessor.h>
-#include <clang/Lex/HeaderSearch.h>
-
 #include <iostream>
 
 namespace fission {
@@ -40,12 +13,12 @@ Module::Module(const std::string &name)
 : Node(name, 0, NULL) {
 
     // Init llvm target
-    llvm::InitializeNativeTarget();
+    //llvm::InitializeNativeTarget();
     // Declate a new llvm module
     // It will store all the "execute" functions of the nodes
-    llvm::LLVMContext &llvmContext = llvm::getGlobalContext();
-    m_llvmLinker = new llvm::Linker("ModuleLinker", "Compositing", llvmContext, 0);
-    m_nodeCompiler = new NodeCompiler();
+    //llvm::LLVMContext &llvmContext = llvm::getGlobalContext();
+    //m_llvmLinker = new llvm::Linker("ModuleLinker", "Compositing", llvmContext, 0);
+    //m_jitEngine = new JITEngine();
 }
 
 
@@ -110,25 +83,31 @@ void Module::disposeNode(Node *node) {
 
 }
 
-void Module::compileNode(const char *fileName)
-{
-    m_nodeCompiler->compile(fileName, m_llvmLinker);
-
-    // TODO :register it
-}
-
-
-void Module::registerNodeDesc(const char *nodeTypeName)
-{
-    // Look in folders for file
-    std::string fileName;
-    fileName="src/nodes/"+std::string(nodeTypeName)+".cpp";
-    NodeDesc *newType = m_nodeCompiler->compile(fileName.c_str(), m_llvmLinker);
+//void Module::compileNode(const char *fileName)
+//{
+//    m_nodeCompiler->compile(fileName, m_llvmLinker);
+//
+//    // TODO :register it
+//}
 
 
-    m_nodeDesc.push_back(newType);
-
-}
+//void Module::registerNodeDesc(const char *nodeTypeName)
+//{
+//    // Look in folders for file
+//    //std::string fileName;
+//
+//    // m_nodeCompiler.find(nodeTypeName)
+//    // Module *mod = m_nodeCompiler.compile("")
+//    // m_jitEngine.link(module);
+//
+//
+//    //fileName="src/nodes/"+std::string(nodeTypeName)+".cpp";
+//    //NodeDesc *newType = m_nodeCompiler->compile(fileName.c_str(), m_llvmLinker);
+//
+//
+//    //m_nodeDesc.push_back(newType);
+//
+//}
 
 void Module::registerNodeDesc(NodeDesc *newType) {
 
@@ -138,15 +117,15 @@ void Module::registerNodeDesc(NodeDesc *newType) {
     //newType->registerFunctions(m_llvmLinker);
 
     // Link IR code in the module
-    llvm::SMDiagnostic Err;
-    llvm::Module *mod = llvm::ParseIRFile(newType->getIrFile(), Err, llvm::getGlobalContext());
+    //llvm::SMDiagnostic Err;
+    //llvm::Module *mod = llvm::ParseIRFile(newType->getIrFile(), Err, llvm::getGlobalContext());
     // Rename the first function. We test only with 1 function atm
-    llvm::Module::FunctionListType &flist = mod->getFunctionList();
-    llvm::Module::FunctionListType::iterator it=flist.begin();
-    (*it).setName(string(TypeName(newType))+"::execute");
-    std::cout << TypeName(newType) << " : " << mod << std::endl;
+    //llvm::Module::FunctionListType &flist = mod->getFunctionList();
+    //llvm::Module::FunctionListType::iterator it=flist.begin();
+    //(*it).setName(string(TypeName(newType))+"::execute");
+    //std::cout << TypeName(newType) << " : " << mod << std::endl;
 
-    m_llvmLinker->LinkInModule(mod);
+    //m_llvmLinker->LinkInModule(mod);
 
 }
 void Module::unregisterNodeDesc(NodeDesc *type) {

@@ -14,6 +14,7 @@
 #include "graph/Node.h"
 #include "engine/Context.h"
 #include "engine/ComputeEngine.h"
+#include "engine/JITEngine.h"
 
 #include <llvm/Linker.h>
 #include <llvm/Module.h>
@@ -29,18 +30,13 @@ int main(int argc, char **argv)
     fission::Module module("test1");
 
     // Register a bunch of node types in this module
-    //module.registerNodeDesc(new fission::TestSource());
-    //module.registerNodeDesc(new fission::TestOp());
-    //module.registerNodeDesc(new fission::TestSink());
-    //module.compileNode("src/nodes/TestOp.cpp");
-    //module.compileNode("src/nodes/TestSource.cpp");
-    //module.compileNode("src/nodes/TestSink.cpp");
-    module.registerNodeDesc("TestSource");
-    module.registerNodeDesc("TestOp");
-    module.registerNodeDesc("TestSink");
-
-    module.m_llvmLinker->getModule()->dump();
-
+    fission::JITEngine   jit;
+    fission::NodeDesc *testOp = jit.loadNodeDescription("src/nodes/TestOp.cpp");
+    fission::NodeDesc *testSource = jit.loadNodeDescription("src/nodes/TestSource.cpp");
+    fission::NodeDesc *testSink = jit.loadNodeDescription("src/nodes/TestSink.cpp");
+    module.registerNodeDesc(testOp);
+    module.registerNodeDesc(testSource);
+    module.registerNodeDesc(testSink);
 
     // Create dynamic nodes
     fission::Node *node1 = module.createNode("TestSource", "Src1");
@@ -57,7 +53,7 @@ int main(int argc, char **argv)
     module.connect(Output0(node4), Input0(node5));
 
     // Run the computation on the sink 
-    fission::ComputeEngine engine(module);
+    fission::ComputeEngine engine(module, jit);
     fission::Context ctx(32);
     engine.run(*node5, ctx);
 

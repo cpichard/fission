@@ -130,7 +130,7 @@ public: \
     inline size_t nbOutputs() const {return NodeName::s_nbOutputs;}; \
     inline size_t nbParameters() const {return NodeName::s_nbParams;}; \
     virtual const char * getIrFile() const; \
-    NodeName * getInstance();\
+    static NodeName * getInstance();\
 private: \
     NodeName(){}; \
     static const char * const       s_typeName; \

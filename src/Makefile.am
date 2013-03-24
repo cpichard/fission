@@ -20,37 +20,41 @@ $(LOCALLIBS)/libclangAST.a \
 $(LOCALLIBS)/libclangLex.a \
 $(LOCALLIBS)/libclangBasic.a
 
-#AM_CPPFLAGS = -g @BOOST_CFLAGS@ 
+#AM_CPPFLAGS = -g @BOOST_CFLAGS@
 AM_CPPFLAGS = -g -O0 -Wall -Iengine/ -Igraph/ -Inodes/ -Irtts/  `llvm-config --cppflags`
 
 lib_LTLIBRARIES=libfission.la
-#libfission_la_LIBADD = @BOOST_LIBS@ 
+#libfission_la_LIBADD = @BOOST_LIBS@
 libfission_la_LDFLAGS = -g -O0 -Wall -Wl,-rpath,./ -L$(LOCALLIBS)/ $(CLANGLIBS) `llvm-config --ldflags --libs `
 libfission_la_SOURCES = \
-./engine/Context.h\
 ./engine/ComputeEngine.cpp\
 ./engine/ComputeEngine.h\
-./engine/NodeCompiler.h\
+./engine/Context.h\
+./engine/JITEngine.cpp\
+./engine/JITEngine.h\
 ./engine/NodeCompiler.cpp\
-./graph/Name.h\
+./engine/NodeCompiler.h\
 ./engine/Status.h\
-./rtts/Types.h\
 ./graph/Edge.h\
 ./graph/Graph.h\
-./graph/ObjectId.h\
-./graph/Node.h\
+./graph/Module.cpp\
+./graph/Module.h\
+./graph/Name.h\
 ./graph/Node.cpp\
 ./graph/NodeDesc.h\
-./graph/Module.h\
-./graph/Module.cpp\
-./graph/Parameter.h\
+./graph/Node.h\
+./graph/ObjectId.h\
 ./graph/Parameter.cpp\
-./graph/ParameterDesc.h\
 ./graph/ParameterDesc.cpp\
-./graph/Plug.h\
+./graph/ParameterDesc.h\
+./graph/Parameter.h\
 ./graph/Plug.cpp\
+./graph/Plug.h\
 ./graph/PlugLink.h\
 ./graph/Vertex.h\
-./rtts/Value.h\
+./rtts/StandardTypes.cpp\
 ./rtts/StandardTypes.h\
-./rtts/StandardTypes.cpp
+./rtts/Types.h\
+./rtts/Value.h
+
+
