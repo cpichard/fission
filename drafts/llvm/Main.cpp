@@ -30,9 +30,9 @@ int main(int argc, char **argv)
     // At the moment we create the node description using the jit
     // which is obviously a complicated and bad idea
     fission::JITEngine   jit;
-    fission::NodeDesc *testOp = jit.loadNodeDescription("src/nodes/TestOp.cpp");
-    fission::NodeDesc *testSource = jit.loadNodeDescription("src/nodes/TestSource.cpp");
-    fission::NodeDesc *testSink = jit.loadNodeDescription("src/nodes/TestSink.cpp");
+    fission::NodeDesc *testOp = jit.loadNodeDescription("nodes/TestOp.cpp");
+    fission::NodeDesc *testSource = jit.loadNodeDescription("nodes/TestSource.cpp");
+    fission::NodeDesc *testSink = jit.loadNodeDescription("nodes/TestSink.cpp");
     module.registerNodeDesc(testOp);
     module.registerNodeDesc(testSource);
     module.registerNodeDesc(testSink);

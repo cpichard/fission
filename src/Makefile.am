@@ -1,5 +1,5 @@
 
-LOCALLIBS=/home/cyril/usr/local/lib
+LOCALLIBS=`llvm-config --libdir`
 
 CLANGLIBS = $(LOCALLIBS)/libclangFrontendTool.a \
 $(LOCALLIBS)/libclangFrontend.a \
@@ -19,14 +19,14 @@ $(LOCALLIBS)/libclangEdit.a \
 $(LOCALLIBS)/libclangAST.a \
 $(LOCALLIBS)/libclangLex.a \
 $(LOCALLIBS)/libclangBasic.a
+CLANG_RESSOURCEDIR=`llvm-config --libdir`/clang/3.2/
+SRC_DIR=`readlink -e @srcdir@`
 
-#AM_CPPFLAGS = -g @BOOST_CFLAGS@
-AM_CPPFLAGS = -g -O0 -Wall -Iengine/ -Igraph/ -Inodes/ -Irtts/  `llvm-config --cppflags`
+AM_CPPFLAGS = -g -O0 -Wall -DSRC_DIR=\"$(SRC_DIR)\" -DCLANG_RESSOURCEDIR=\"$(CLANG_RESSOURCEDIR)\" -Iengine/ -Igraph/ -Inodes/ -Irtts/  `llvm-config --cppflags`
+AM_LDFLAGS = -g -O0 -Wall -L$(LOCALLIBS)/ $(CLANGLIBS) `llvm-config --ldflags --libs ` -Wl,--export-all-symbols
 
-lib_LTLIBRARIES=libfission.la
-#libfission_la_LIBADD = @BOOST_LIBS@
-libfission_la_LDFLAGS = -g -O0 -Wall -Wl,-rpath,./ -L$(LOCALLIBS)/ $(CLANGLIBS) `llvm-config --ldflags --libs `
-libfission_la_SOURCES = \
+lib_LIBRARIES=libfission.a
+libfission_a_SOURCES = \
 ./engine/ComputeEngine.cpp\
 ./engine/ComputeEngine.h\
 ./engine/Context.h\

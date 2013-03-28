@@ -54,10 +54,10 @@ NodeCompiler::NodeCompiler()
 
     // TODO : no path in code !!!
     // it is needed for standard headers like stddef.h
-    m_driver->ResourceDir = "/home/cyril/usr/local/lib/clang/3.2";
+    m_driver->ResourceDir = CLANG_RESSOURCEDIR;
 
     m_args.push_back("-xc++");
-    m_args.push_back("-I/home/cyril/Develop/fission/src");
+    m_args.push_back("-I" SRC_DIR);
 
 }
 
@@ -76,7 +76,10 @@ NodeCompiler::~NodeCompiler()
 llvm::Module *NodeCompiler::compile(const char *fileName)
 {
     // Add filename as the last argument of the compiler
-    m_args.push_back(fileName);
+    char globfilename[512];
+    strcpy(globfilename, SRC_DIR"/");
+    strcat(globfilename, fileName);
+    m_args.push_back(globfilename);
     const llvm::OwningPtr<Compilation>
         Compilation(
             m_driver->BuildCompilation(llvm::makeArrayRef(m_args)));
