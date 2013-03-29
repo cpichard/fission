@@ -20,7 +20,7 @@ $(LOCALLIBS)/libclangAST.a \
 $(LOCALLIBS)/libclangLex.a \
 $(LOCALLIBS)/libclangBasic.a
 CLANG_RESSOURCEDIR=`llvm-config --libdir`/clang/3.2/
-SRC_DIR=`readlink -e @srcdir@`
+SRC_DIR=@abs_srcdir@
 
 AM_CPPFLAGS = -g -O0 -Wall -DSRC_DIR=\"$(SRC_DIR)\" -DCLANG_RESSOURCEDIR=\"$(CLANG_RESSOURCEDIR)\" -Iengine/ -Igraph/ -Inodes/ -Irtts/  `llvm-config --cppflags`
 AM_LDFLAGS = -g -O0 -Wall -L$(LOCALLIBS)/ $(CLANGLIBS) `llvm-config --ldflags --libs ` -Wl,--export-all-symbols
