@@ -9,6 +9,7 @@ namespace fission {
 typedef int PlugType;
 extern const PlugType PlugInputType;
 extern const PlugType PlugOutputType;
+extern const PlugType PlugParameterType;
 
 class Node;
 
@@ -37,6 +38,7 @@ protected:
 
 inline bool IsInput(Plug *p){return p ? p->m_type==&PlugInputType:false;}
 inline bool IsOutput(Plug *p){return p ? p->m_type==&PlugOutputType:false;}
+inline bool IsParameter(Plug *p){return p ? p->m_type==&PlugParameterType:false;}
 
 
 

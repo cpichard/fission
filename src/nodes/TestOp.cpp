@@ -4,7 +4,7 @@
 
 ImplementNode(TestOp)
 
-ImplementOutputs(TestOp, NewOutput("OutValue", Float))
+ImplementOutput(TestOp, NewOutput("OutValue", Float))
 ImplementInputs(TestOp, NewInput("InValue1", Float), NewInput("InValue2", Float))
 ImplementParams(TestOp)
 

@@ -26,6 +26,7 @@ int main(int argc, char **argv)
     // Ex : fission::createModule("Comp1", "Compositing", fission::ComputeEngine())
     fission::Module module("test1");
 
+    // Module.loadSetup("")
     // Register a bunch of node types in this module
     // At the moment we create the node description using the jit
     // which is obviously a complicated and bad idea
@@ -45,11 +46,11 @@ int main(int argc, char **argv)
     fission::Node *node5 = module.createNode("TestSink", "Sink1");
 
     // Connect previously created nodes
-    module.connect(Output0(node1), Input0(node3));
-    module.connect(Output0(node2), Input1(node3));
-    module.connect(Output0(node3), Input0(node4));
-    module.connect(Output0(node1), Input1(node4));
-    module.connect(Output0(node4), Input0(node5));
+    module.connect(Output(node1), Input0(node3));
+    module.connect(Output(node2), Input1(node3));
+    module.connect(Output(node3), Input0(node4));
+    module.connect(Output(node1), Input1(node4));
+    module.connect(Output(node4), Input0(node5));
 
     // Run the computation on the sink
     fission::ComputeEngine engine(module, jit);

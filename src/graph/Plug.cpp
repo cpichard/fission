@@ -4,6 +4,6 @@ using namespace fission;
 
 // These two values are used a pointers to discriminate between 
 // input and output plugs
-// In the future we might need more complex structure, or may be not
-const PlugType fission::PlugInputType=0;
-const PlugType fission::PlugOutputType=1;
+const PlugType fission::PlugInputType=10;
+const PlugType fission::PlugOutputType=11;
+const PlugType fission::PlugParameterType=12;

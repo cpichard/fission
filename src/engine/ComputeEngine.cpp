@@ -82,6 +82,7 @@ ComputeEngine::buildCallGraphRecursively(
             // Create a dummy value
             // Create a NULL Value
             assert(0); // shouldn't happen with the current setup
+            std::cout << "Error, nbConnections==0" << std::endl;
             return NULL;
         } else {
             // only one connection allowed
@@ -148,8 +149,11 @@ Status ComputeEngine::run(Node &node, const Context &context)
 {
     std::cout << "Compute" << std::endl;
 
+    // Prepare compute data
+    //buildComputeData()
+
     // Build execution graph recursively
-    llvm::Value *cc = buildCallGraph(Output0(node), context);
+    llvm::Value *cc = buildCallGraph(Output(node), context);
     std::cout << "result of callgraph = " << cc << std::endl;
 
     // Compile and run the newly created function

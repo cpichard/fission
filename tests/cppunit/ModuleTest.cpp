@@ -14,13 +14,16 @@ CPPUNIT_TEST_SUITE_REGISTRATION( ModuleTest );
 ModuleTest::ModuleTest()
 {
     m_jit=new fission::JITEngine();
-    m_testOp = m_jit->loadNodeDescription("src/nodes/TestOp.cpp");
-    m_testSource = m_jit->loadNodeDescription("src/nodes/TestSource.cpp");
-    m_testSink = m_jit->loadNodeDescription("src/nodes/TestSink.cpp");
+    m_testOp = m_jit->loadNodeDescription("nodes/TestOp.cpp");
+    m_testSource = m_jit->loadNodeDescription("nodes/TestSource.cpp");
+    m_testSink = m_jit->loadNodeDescription("nodes/TestSink.cpp");
 }
 
 ModuleTest::~ModuleTest()
 {
+    delete m_testOp;
+    delete m_testSource;
+    delete m_testSink;
     delete m_jit;
 }
 
@@ -56,9 +59,6 @@ void ModuleTest::testCreateNode()
     CPPUNIT_ASSERT(Name(nodeTestSource) == "test1");
 
     CPPUNIT_ASSERT(NbInputs(nodeTestSource) == 0);
-    CPPUNIT_ASSERT(NbOutputs(nodeTestSource) == 1);
-    //CPPUNIT_ASSERT(NbOutputs<TestSource>() == 1);
-    //CPPUNIT_ASSERT(NbInputs<TestSource>() == 0);
 }
 
 // TODO
@@ -94,20 +94,36 @@ void ModuleTest::testConnectNodes()
 
     // Connect nodes
     //module.connect( node1->output(0), node2->input(0));
-    module.connect(Output0(node1), Input0(node2));
+    module.connect(Output(node1), Input0(node2));
 
-    CPPUNIT_ASSERT( module.m_dataFlowGraph.vertices().size() == 3 );
-    CPPUNIT_ASSERT( module.m_dataFlowGraph.edges().size() == 2 );
+    int nbVertices = NbInputs(node1)+NbParameters(node1) + 1
+                   + NbInputs(node2)+NbParameters(node2) + 1;
+    CPPUNIT_ASSERT( module.m_dataFlowGraph.vertices().size() == nbVertices );
 
-    CPPUNIT_ASSERT( Name(Output0(node1)) == "Value");
 
+    int nbEdges = NbInputs(node1)+NbParameters(node1) 
+                + NbInputs(node2)+NbParameters(node2) 
+                + 1;
+    CPPUNIT_ASSERT( module.m_dataFlowGraph.edges().size() == nbEdges );
+
+    CPPUNIT_ASSERT( Name(Output(node1)) == "Value");
     Node *node3 = module.createNode("TestOp", "node3");
 
     CPPUNIT_ASSERT( Name(Input0(node3)) == "InValue1");
     CPPUNIT_ASSERT( Name(Input1(node3)) == "InValue2");
 
-    CPPUNIT_ASSERT( module.m_dataFlowGraph.vertices().size() == 6 );
-    CPPUNIT_ASSERT( module.m_dataFlowGraph.edges().size() == 4 );
+    nbVertices = NbInputs(node1) + NbParameters(node1) + 1
+               + NbInputs(node2) + NbParameters(node2) + 1
+               + NbInputs(node3) + NbParameters(node3) + 1;
+    CPPUNIT_ASSERT( module.m_dataFlowGraph.vertices().size() == nbVertices );
+
+
+    nbEdges = NbInputs(node1)+NbParameters(node1)
+            + NbInputs(node2)+NbParameters(node2)
+            + NbInputs(node3)+NbParameters(node3)
+            + 1;
+
+    CPPUNIT_ASSERT( module.m_dataFlowGraph.edges().size() == nbEdges );
 
 }
 
@@ -124,20 +140,30 @@ void ModuleTest::testFlowGraph()
     Node *op = module.createNode("TestOp", "node3");
 
     // source -> op -> sink
-    module.connect(Output0(source), Input0(op));
-    module.connect(Output0(op), Input0(sink));
+    module.connect(Output(source), Input0(op));
+    module.connect(Output(op), Input0(sink));
 
     // Look in the dataflow graph directly
-    CPPUNIT_ASSERT( module.m_dataFlowGraph.vertices().size() == 6 );
-    CPPUNIT_ASSERT( module.m_dataFlowGraph.edges().size() == 5 );
+    int nbVertices = NbInputs(source)+NbParameters(source) + 1
+                   + NbInputs(sink)+NbParameters(sink) + 1
+                   + NbInputs(op)+NbParameters(op) + 1;
+    CPPUNIT_ASSERT( module.m_dataFlowGraph.vertices().size() == nbVertices );
+
+
+    int nbEdges = NbInputs(source)+NbParameters(source) 
+                + NbInputs(sink)+NbParameters(sink) 
+                + NbInputs(op)+NbParameters(op) 
+                + 2; //nbExternalConnections
+
+    CPPUNIT_ASSERT( module.m_dataFlowGraph.edges().size() == nbEdges );
 
     // Look if all connections are correct
-    Plug *outSource = Output0(source);
+    Plug *outSource = Output(source);
 
     CPPUNIT_ASSERT(outSource->m_outgoing.size() == 1);
 
-    CPPUNIT_ASSERT( module.m_dataFlowGraph.hasEdge(Input0(op), Output0(op)) );
-    CPPUNIT_ASSERT( module.m_dataFlowGraph.hasEdge(Output0(source), Input0(op)) );
+    CPPUNIT_ASSERT( module.m_dataFlowGraph.hasEdge(Input0(op), Output(op)) );
+    CPPUNIT_ASSERT( module.m_dataFlowGraph.hasEdge(Output(source), Input0(op)) );
 }
 
 
@@ -147,7 +173,7 @@ void ModuleTest::testGraphName()
     CPPUNIT_ASSERT( Name(module) == "test1" );
 }
 
-/*
+
 void ModuleTest::testSetParameter()
 {
     Module module("test1");
@@ -156,12 +182,47 @@ void ModuleTest::testSetParameter()
     module.registerNodeDesc(m_testOp);
     module.registerNodeDesc(m_testSink);
     Node *source = module.createNode("TestSource", "node1");
-    // TODO Node *source = module.createNode(Type<TestSource>(), "node2")
 
-    //module.setParameter( source["invalue"], 4);
+
+    // Describe the modification
+    //ParameterModification pm;
+    //pm.prepare(SetFloatValue, 5.f);
+    //pm(SetFloatValue, 5.f);
+    //pm(Param0, SetFloatValue, 5.f);
+    //pm.modify(Param0(source));
+    //pm( Param0(source), SetFloat4Value, 0.f, 0.4f, 0.2f, 0.5f );
+
+    // ex:
+    //pm.modify(Param2(source));
+    //pm.modify(Param3(source));
+    //pm.modify(Param4(source));
+
+    //fission::apply(pm, Parameter0(nodeId));
+    //pm.dump();
+    // Apply the modification
+    //source->apply(Param0(source), pm);
+    //ParameterModification::apply(Parameter0(source), pm);
+    //Param0(source)->apply(pm);
+    float result;
+    Param0(source)->evalFloat(result);
+
+    //Param0(source)->apply(pm);
+    Param0(source)->setFloat(7.f);
+
+    float val=0;
+    Param0(source)->evalFloat(val);
+    CPPUNIT_ASSERT(val==7);
+
+
+    Param1(source)->setString("./myfile.png");
+    std::string strresult;
+    Param1(source)->evalString(strresult);
+
+    CPPUNIT_ASSERT(strresult == "./myfile.png");
+    CPPUNIT_ASSERT(strresult != "./myfile2.png");
 
 }
-*/
+
 
 
 

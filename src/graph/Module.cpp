@@ -48,21 +48,29 @@ Node * Module::createNode(const std::string &nodeTypeName, const std::string &no
                 m_dataFlowGraph.addVertex(node->input(i));
             }
 
-            const size_t nbOutputs = NbOutputs(node);
-            for (size_t j=0; j<nbOutputs; j++) {
+            // Add vertex
+            m_dataFlowGraph.addVertex(node->output());
+
+            // Connect all imputs to current outputs
+            for (size_t i=0; i<nbInputs; i++) {
+                // TODO !!!
+                PlugLink *pl = new PlugLink("", 0, NULL, node->input(i), node->output());
+                m_dataFlowGraph.addEdge(pl);
+            }
+
+            const size_t nbParameters = NbParameters(node);
+            for (size_t j=0; j<nbParameters; j++) {
 
                 // Add vertex
-                m_dataFlowGraph.addVertex(node->output(j));
+                m_dataFlowGraph.addVertex(node->param(j));
 
                 // Connect all imputs to current outputs
-                for (size_t i=0; i<nbInputs; i++) {
-                    // TODO !!!
-                    PlugLink *pl = new PlugLink("", 0, NULL, node->input(i), node->output(j));
-                    m_dataFlowGraph.addEdge(pl);
-                }
+                PlugLink *pl = new PlugLink("", 0, NULL, node->param(j), node->output());
+                m_dataFlowGraph.addEdge(pl);
             }
 
             // TODO : is it useful to return the node ?
+            // We should return and Id instead
             return node;
         }
     }

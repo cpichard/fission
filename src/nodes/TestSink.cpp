@@ -4,7 +4,7 @@
 
 ImplementNode(TestSink) 
 
-ImplementOutputs(TestSink, NewOutput("IO", Float))
+ImplementOutput(TestSink, NewOutput("IO", Float))
 ImplementInputs(TestSink, NewInput("value", Float))
 ImplementParams(TestSink)
 

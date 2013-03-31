@@ -23,7 +23,6 @@ class NodeDesc
 {
     // Friend functions
     template<typename NT> friend inline size_t NbInputs();
-    template<typename NT> friend inline size_t NbOutputs();
     template<typename NT> friend inline size_t NbParameters();
 
 public:
@@ -47,11 +46,11 @@ public:
         ParamDesc(const char *name, const BaseType *type, const void *prop)
         : m_name(name)
         , m_type(type)
-        , m_prop(prop)
+     //   , m_prop(prop)
         {}
         const char      *m_name;
         const BaseType  *m_type; /// Might change to a pointer to a structure
-        const void      *m_prop; /// Properties
+    //    const void      *m_prop; /// Properties
     };
     typedef struct ParamDesc Param;
 
@@ -60,11 +59,10 @@ public:
     virtual const char * typeName() const=0;
 
     virtual const NodeDesc::Input * inputs() const=0;
-    virtual const NodeDesc::Output * outputs() const=0;
+    virtual const NodeDesc::Output * output() const=0;
     virtual const NodeDesc::Param * parameters() const=0;
 
     virtual size_t nbInputs() const=0;
-    virtual size_t nbOutputs() const=0;
     virtual size_t nbParameters() const=0;
 
     // llvm ir file
@@ -86,14 +84,9 @@ template<typename NT>
 inline size_t NbInputs(){return NT::s_nbInputs;}
 
 template<typename NT>
-inline size_t NbOutputs(){return NT::s_nbOutputs;}
-
-template<typename NT>
 inline size_t NbParameters(){return NT::s_nbParameters;}
 
 inline size_t NbInputs(const NodeDesc *node){return node->nbInputs();}
-
-inline size_t NbOutputs(const NodeDesc *node){return node->nbOutputs();}
 
 inline size_t NbParameters(const NodeDesc *node){return node->nbParameters();}
 
@@ -101,7 +94,7 @@ template<typename NT>
 inline const NodeDesc::Input * Inputs(const NT *nodetype){return nodetype->inputs();}
 
 template<typename NT>
-inline const NodeDesc::Output * Outputs(const NT *nodetype){return nodetype->outputs();}
+inline const NodeDesc::Output * Output(const NT *nodetype){return nodetype->output();}
 
 template<typename NT>
 inline const NodeDesc::Param * Parameters(const NT *nodetype){return nodetype->parameters();}
@@ -119,15 +112,13 @@ class NodeName: public NodeDesc \
 { \
     template<typename T> friend const char * const TypeName(); \
     template<typename NT> friend inline size_t NbInputs(); \
-    template<typename NT> friend inline size_t NbOutputs(); \
     template<typename NT> friend inline size_t NbParameters(); \
 public: \
     const char * typeName() const {return NodeName::s_typeName;} \
     const NodeDesc::Input * inputs() const {return s_inputs;} \
-    const NodeDesc::Output * outputs() const {return s_outputs;} \
+    const NodeDesc::Output * output() const {return s_output;} \
     const NodeDesc::Param * parameters() const {return s_params;} \
     inline size_t nbInputs() const {return NodeName::s_nbInputs;}; \
-    inline size_t nbOutputs() const {return NodeName::s_nbOutputs;}; \
     inline size_t nbParameters() const {return NodeName::s_nbParams;}; \
     virtual const char * getIrFile() const; \
     static NodeName * getInstance();\
@@ -135,10 +126,9 @@ private: \
     NodeName(){}; \
     static const char * const       s_typeName; \
     static const size_t             s_nbInputs = nbIn; \
-    static const size_t             s_nbOutputs = nbOut; \
     static const size_t             s_nbParams = nbParam; \
     static const NodeDesc::Input    s_inputs[]; \
-    static const NodeDesc::Output   s_outputs[]; \
+    static const NodeDesc::Output   s_output[]; \
     static const NodeDesc::Param    s_params[]; \
     static const unsigned int       s_version; \
     static NodeName                 *s_singleton; \
@@ -146,9 +136,9 @@ private: \
 };\
 
 #define NewOutput(val, typ) NodeDesc::Output(val, Type<typ>())
-#define ImplementOutputs(NodeName, ... ) \
+#define ImplementOutput(NodeName, ... ) \
 namespace fission {\
-const NodeDesc::Output NodeName::s_outputs[] = { \
+const NodeDesc::Output NodeName::s_output[] = { \
     __VA_ARGS__\
 };\
 };\
@@ -161,7 +151,7 @@ const NodeInput NodeName::s_inputs[] = { \
 };\
 };\
 
-#define NewParam(val, typ) NodeDesc::Param(val, Type<typ>(), "standard")
+#define NewParam(val, typ) NodeDesc::Param(val, Type<fission::typ>(), "standard")
 #define ImplementParams(NodeName, ... ) \
 namespace fission {\
 const NodeDesc::Param NodeName::s_params[] = { \

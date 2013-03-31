@@ -1,11 +1,14 @@
 #include "TestSource.h"
 #include "engine/Context.h"
 
-ImplementNode(TestSource) 
+ImplementNode(TestSource)
 
-ImplementOutputs(TestSource, NewOutput("Value", Float))
+ImplementOutput(TestSource, NewOutput("Value", Float))
 ImplementInputs(TestSource)
-ImplementParams(TestSource, NewParam("val", Float))
+
+ImplementParams(TestSource,
+    NewParam("val", Float),
+    NewParam("file", String))
 
 extern "C" {
 double TestSource_execute(fission::Context ctx)

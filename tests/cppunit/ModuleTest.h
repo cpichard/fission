@@ -19,6 +19,7 @@ public:
     CPPUNIT_TEST( testGraphName );
     CPPUNIT_TEST( testConnectNodes );
     CPPUNIT_TEST( testFlowGraph );
+    CPPUNIT_TEST( testSetParameter );
     CPPUNIT_TEST_SUITE_END();
 
 public:
@@ -30,6 +31,7 @@ public:
     void testGetNode();
     void testConnectNodes();
     void testFlowGraph();
+    void testSetParameter();
 
 private:
     fission::JITEngine   *m_jit;

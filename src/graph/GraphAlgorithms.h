@@ -128,7 +128,5 @@ void DepthFirstSearch(Graph<V,E> &graph, V *v, Visitor &visitor) {
     }
 }
 
-// TODO
-void DepthFirstVisit(){}
 }; // namespace fission
 #endif//GRAPHALGORITHMS_H

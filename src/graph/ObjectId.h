@@ -17,10 +17,16 @@ struct ObjectId
     , m_type(type){}
 
     std::string m_name; // Can the name change ? should I use a const char * instead ?
+                        // and add a m_displayName that can change ?
     size_t      m_id;
     const T     *m_type;
     // TODO : does it need an owner as well ?
     // T::OwnerType *m_owner;
+
+    // static m_objectLookup[]
+    // static ObjectId * lookup(size_t id);
+    // static m_lastId;
+
 };
 
 

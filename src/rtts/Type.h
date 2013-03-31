@@ -6,6 +6,9 @@
 
 namespace fission {
 
+class ValueModification;
+class ValueTuple;
+
 /// The type class is the base class of all other types
 /// The design is more than pretty similar to the llvm one
 /// BaseType is the root of the type tree for the lib
@@ -22,9 +25,6 @@ public:
         , BoolId
         , IntegerId
         , FloatId
-        , FilenameId  // Not sure for that type, but why not as it will be used a lot !
-                    // I am now thinking of making Filename as String with properties
-                    // So this has to be removed at some point.. just I don't forget
         , StringId    // Not sure
         , StructureId // A structure contains different types
         , ArrayId     // An array of one type
@@ -35,6 +35,13 @@ public:
         // , Node ??
     } BaseTypeId;
     // TODO : ?? Add Plug and Parameter ?
+
+    // WIP ... 
+    //virtual void apply(const ValueModification &, void *data) const = 0;
+    //virtual void unpack(const void *data, ValueTuple &v) const = 0;
+    virtual size_t size() const = 0;
+    virtual void * alloc() const = 0;
+    virtual void free(void *) const = 0;
 
 
 protected:
@@ -47,6 +54,7 @@ protected:
 
     /// This class can be inherited
     virtual ~BaseType(){}
+
 
 private:
     /// The type id of this instance
@@ -65,7 +73,14 @@ const BaseType * Type() {
 
 template<typename lType, typename rType>
 inline bool isType(const rType &v) {
-    return Type<lType>()==TypeOf(v);
+    return Type<lType>()==&v;
+    ///return Type<lType>()==TypeOf(v);
+}
+
+template<typename lType, typename rType>
+inline bool isType(const rType *v) {
+    return Type<lType>()==v;
+    ///return Type<lType>()==TypeOf(v);
 }
 
 // Unknown type is associated to Void.

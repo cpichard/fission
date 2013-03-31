@@ -16,8 +16,15 @@ protected:
     Void()
     : BaseType(VoidId)
     {}
+    virtual ~Void(){};
+
 public:
     static const BaseType * getType();
+
+    void *alloc() const;
+    void free(void*) const;
+    size_t size() const {return 0; };
+
 private:
     static Void *m_instance;
 };
@@ -30,8 +37,14 @@ protected:
     Int()
     : BaseType(IntegerId)
     {}
+    virtual ~Int(){}
+
+
 public:
     static const BaseType * getType();
+    void *alloc() const;
+    void free(void*) const;
+    size_t size() const {return sizeof(int); };
 private:
     static Int *m_instance;
 };
@@ -44,8 +57,14 @@ protected:
     Float()
     : BaseType(FloatId)
     {}
+    virtual ~Float(){}
+
 public:
     static const BaseType * getType();
+    void *alloc() const;
+    void free(void*) const;
+    size_t size() const { return sizeof(float); };
+
 private:
     static Float *m_instance;
 };
@@ -55,6 +74,20 @@ private:
 ///////////////////////// String //////////////////////////////
 
 class String : public BaseType {
+protected:
+    String()
+    : BaseType(StringId)
+    {}
+    virtual ~String(){}
+
+public:
+    static const BaseType * getType();
+    void *alloc() const;
+    void free(void*) const;
+    size_t size() const { return sizeof(const char *); };
+
+private:
+    static String *m_instance;
 };
 
 /// Specialization for standard c++ types

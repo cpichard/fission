@@ -55,6 +55,8 @@ libfission_a_SOURCES = \
 ./rtts/StandardTypes.cpp\
 ./rtts/StandardTypes.h\
 ./rtts/Types.h\
-./rtts/Value.h
+./rtts/Value.h\
+./rtts/ValueModification.cpp\
+./rtts/ValueModification.h
 
 

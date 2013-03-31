@@ -11,7 +11,7 @@ const char * const TestValue::s_typeName = "TestValue";
 const NodeDesc::Input  TestValue::s_inputs[]   = {};
 
 // Only one output, the value of the parameter
-const NodeDesc::Output TestValue::s_outputs[]  =
+const NodeDesc::Output TestValue::s_output =
 {
     // TEST
     NodeDesc::Output("Value","float")
