@@ -45,8 +45,6 @@ libfission_a_SOURCES = \
 ./graph/Node.h\
 ./graph/ObjectId.h\
 ./graph/Parameter.cpp\
-./graph/ParameterDesc.cpp\
-./graph/ParameterDesc.h\
 ./graph/Parameter.h\
 ./graph/Plug.cpp\
 ./graph/Plug.h\
