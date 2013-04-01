@@ -36,12 +36,12 @@ public:
     } BaseTypeId;
     // TODO : ?? Add Plug and Parameter ?
 
-    // WIP ... 
-    //virtual void apply(const ValueModification &, void *data) const = 0;
-    //virtual void unpack(const void *data, ValueTuple &v) const = 0;
+    //
     virtual size_t size() const = 0;
     virtual void * alloc() const = 0;
     virtual void free(void *) const = 0;
+
+    // See Value !!
 
 
 protected:
@@ -90,6 +90,13 @@ template <typename ValueType>
 inline
 const BaseType * TypeOf(ValueType &v){return v.getType();}
 
+template <typename ValuedType>
+inline
+const BaseType * ValueTypeOf(const ValuedType &v){return v.m_valueType;}
+
+template <typename ValuedType>
+inline
+const BaseType * ValueTypeOf(ValuedType *v){return v->m_valueType;}
 
 // TODO remove
 typedef int TypeId;

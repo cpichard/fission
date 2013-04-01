@@ -7,6 +7,8 @@
 
 namespace fission {
 
+//class Value;
+
 /// Parameter 
 /// a parameter has :
 /// * a name
@@ -30,7 +32,7 @@ class Parameter : public Plug {
     friend class Node;
 
 public:
-    Parameter( const char *name, size_t id, const BaseType * );
+    Parameter( const char *name, const BaseType *valueType );
     virtual ~Parameter();
 
     // wip, ParameterModification allows to store the 
@@ -51,9 +53,9 @@ public:
     void evalString(std::string &val);
 
 private:
+    //Value       *m_data;
     char            *m_data; // Blind pointer to the data owned by the parameter
-    void            *m_owner;// Owner of the parameter, might be a node
-    const BaseType  *m_type; // Type of m_data
+    //const BaseType  *m_type; // Type of m_data
 
     // TODO properties of a parameter
     // Properties   m_properties;

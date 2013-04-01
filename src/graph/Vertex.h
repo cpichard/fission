@@ -21,10 +21,10 @@ struct Vertex
     }
 
     /// Outgoing edges
-    std::vector<Edge*> m_outgoing;
+    std::vector<Edge*> m_outgoing; // 12
 
     /// Incoming edges
-    std::vector<Edge*> m_incoming;
+    std::vector<Edge*> m_incoming; // 12
 
     // Type definitions for iterator on outgoing and incoming vectors
     typedef std::vector<Edge*>::iterator OutEdgeIterator;
@@ -32,7 +32,7 @@ struct Vertex
 
     /// Vertex id in the graph
     /// TODO Double check if we really need m_vid
-    size_t m_vid;
+    size_t m_vid; // 8
 };
 
 inline size_t NbConnectedInputs(const Vertex &v){return v.m_incoming.size();}

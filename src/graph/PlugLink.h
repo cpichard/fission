@@ -6,18 +6,21 @@
 #include <string>
 
 namespace fission {
-typedef int PlugLinkType; // TODO
+
+typedef int PlugLinkType; 
+extern const PlugLinkType InternalLink; // Link internal to a node
+extern const PlugLinkType ExternalLink; // Link between nodes
+extern const PlugLinkType ParameterLink;// Links between parameters
 
 struct PlugLink : public Edge, public ObjectId<PlugLinkType>
 {
 public:
     PlugLink(const std::string &name
-            , size_t id
             , PlugLinkType *typeinfo
             , Vertex *src
             , Vertex *dst)
     : Edge(src, dst)
-    , ObjectId<PlugLinkType>(name, id, typeinfo)
+    , ObjectId<PlugLinkType>(name, typeinfo)
     {}
     ~PlugLink(){}
 };

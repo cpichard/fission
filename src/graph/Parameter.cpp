@@ -23,20 +23,21 @@ inline void eval(T1 &val, char *data)
     VA_ARG_STOP(data);
 }
 
-Parameter::Parameter(const char *name, size_t id, const BaseType *typ)
-: Plug(name, id, &PlugParameterType)
+Parameter::Parameter(const char *name, const BaseType *valueType)
+: Plug(name, &PlugParameterType, valueType)
+//, m_value(valueType->newValue())
 , m_data(NULL)
-, m_owner(NULL)
-, m_type(typ)
 {
     // alloc blind data buffer
-    m_data = static_cast<char *>(m_type->alloc());
+    m_data = static_cast<char *>(m_valueType->alloc());
 }
 
 Parameter::~Parameter()
 {
-    m_type->free(static_cast<void *>(m_data));
+    m_valueType->free(static_cast<void *>(m_data));
     m_data = NULL;
+    
+    //m_valueType->freeValue(m_value);
 }
 
 //void Parameter::apply( const ParameterModification &pm )
@@ -51,36 +52,36 @@ Parameter::~Parameter()
 
 void Parameter::setFloat(float val)
 {
-    assert(isType<Float>(m_type));
+    assert(isType<Float>(m_valueType));
     set(val, m_data);
 }
 void Parameter::setInt(int val)
 {
-    assert(isType<Int>(m_type));
+    assert(isType<Int>(m_valueType));
     set(val, m_data);
 }
 
 void Parameter::setString(const char *val)
 {
-    assert(isType<String>(m_type));
+    assert(isType<String>(m_valueType));
     *(static_cast<std::string *>((void *)m_data)) = val;
 }
 
 void Parameter::evalFloat(float &val)
 {
-    assert(isType<Float>(m_type));
+    assert(isType<Float>(m_valueType));
     eval(val, m_data);
 }
 
 void Parameter::evalInt(int &val)
 {
-    assert(isType<Int>(m_type));
+    assert(isType<Int>(m_valueType));
     eval(val, m_data);
 }
 
 void Parameter::evalString(std::string &val)
 {
-    assert(isType<String>(m_type));
+    assert(isType<String>(m_valueType));
     val = *(static_cast<std::string*>((void *)m_data));
 }
 

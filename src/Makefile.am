@@ -44,11 +44,13 @@ libfission_a_SOURCES = \
 ./graph/NodeDesc.h\
 ./graph/Node.h\
 ./graph/ObjectId.h\
+./graph/ObjectId.cpp\
 ./graph/Parameter.cpp\
 ./graph/Parameter.h\
 ./graph/Plug.cpp\
 ./graph/Plug.h\
 ./graph/PlugLink.h\
+./graph/PlugLink.cpp\
 ./graph/Vertex.h\
 ./rtts/StandardTypes.cpp\
 ./rtts/StandardTypes.h\

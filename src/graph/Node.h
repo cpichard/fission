@@ -43,7 +43,7 @@ class Node : public ObjectId<NodeDesc>
 
 public:
     // NOTE : may be this function can be protected
-    Node(const std::string &name, size_t id, const NodeDesc *type);
+    Node(const std::string &name, const NodeDesc *type);
     virtual ~Node(){}
 
 
@@ -58,7 +58,6 @@ public:
     ///void setValue(size_t paramNb, Value &val, Context *c=0);
 
     // Typedefs
-    typedef size_t  NodeId;
 
 protected:
     // Note : is it still usefull as now, we don't inherit new nodes from this class?

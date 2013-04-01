@@ -30,22 +30,33 @@ using llvm::Function;
 using llvm::FunctionType;
 using llvm::BasicBlock;
 
+#define DEBUG_ARG_PASSING 0
+
+// Constructor
+ComputeEngine::ComputeEngine(Module &fissionModule, JITEngine &jit)
+: m_module(fissionModule)
+, m_jit(&jit){}
+
+// Destructor
+ComputeEngine::~ComputeEngine() {
+}
+
 /// Recursively build the call graph from the node graph
 llvm::Value *
 ComputeEngine::buildCallGraphRecursively(
       Plug *plug
     , llvm::Value *context)
 {
-    llvm::Module &module = m_engine->getModule();
-    llvm::IRBuilder<> &builder = *m_builder;
+    llvm::Module &module = m_jit->getModule();
+    llvm::IRBuilder<> &builder = *m_jit->irBuilder();
     if(IsOutput(plug)) {
         // iterate on args,
         // Look up the name in the global module table.
         std::string Callee(std::string(TypeName(Owner(plug))) + "_execute");
         llvm::Function *CalleeF = module.getFunction(Callee);
         if (CalleeF == 0) {
-            m_engine->getModule().dump();
             std::cout << "ERROR Function " << Callee << " not found" << std::endl;
+            m_jit->getModule().dump();
             exit(0);
         } else {
             std::cout << "Function " << Callee << " found" << std::endl;
@@ -54,6 +65,7 @@ ComputeEngine::buildCallGraphRecursively(
         // TODO :Optimize function
         // check clang -O3 passes
         // m_funcPassManager->run(*CalleeF);
+        m_jit->optimizeFunction(*CalleeF);
 
         // debug
         // std::cout << "====Fun: \n";
@@ -71,7 +83,20 @@ ComputeEngine::buildCallGraphRecursively(
         for (unsigned int i=1; i < nbArgs+1; ++i, ++it) {
             ArgsV[i] = buildCallGraphRecursively(it.nextVertex(), context);
         }
-        std::cout << "Create call " << Name(Owner(plug)) << "_tmp" << std::endl;
+
+        // DEBUG nb of arguments and types of arguments
+#if DEBUG_ARG_PASSING
+        std::cout << "Create call " << Name(Owner(plug)) << "_tmp, arguments are :" << std::endl;
+        llvm::Function::ArgumentListType &al = CalleeF->getArgumentList();
+        llvm::Function::ArgumentListType::iterator ait = al.begin();
+        for (; ait!=al.end(); ++ait) {
+            ait->dump();
+        }
+        std::cout << "  built arguments: " << std::endl;
+        for(unsigned int i=0; i < nbArgs+1; i++) {
+            ArgsV[i]->dump();
+        }
+#endif
         llvm::Value *ret=builder.CreateCall(CalleeF, ArgsV, Name(Owner(plug))+"_tmp");
         return ret;
 
@@ -79,10 +104,10 @@ ComputeEngine::buildCallGraphRecursively(
         const size_t nbConnections = NbConnectedInputs(plug);
         if (nbConnections==0) {
             // recursive call
-            // Create a dummy value
-            // Create a NULL Value
-            assert(0); // shouldn't happen with the current setup
+            // TODO : Create a dummy value
+            // TODO : Create a NULL Value
             std::cout << "Error, nbConnections==0" << std::endl;
+            assert(0); // shouldn't happen with the current setup
             return NULL;
         } else {
             // only one connection allowed
@@ -91,9 +116,30 @@ ComputeEngine::buildCallGraphRecursively(
             return buildCallGraphRecursively(n.nextVertex(), context);
         }
 
+    } else if(IsParameter(plug)) {
+        Parameter *param = static_cast<Parameter*>(plug);
+
+        if( ValueTypeOf(param) == Type<Float>() ) {
+            float tmp;
+            param->evalFloat(tmp);
+        // TODO return m_jit->mapValueToConstant(param->asFloat());
+            return m_jit->mapValueAsConstant(tmp);
+        } else if (ValueTypeOf(param) == Type<String>()) {
+            std::string strtmp;
+            param->evalString(strtmp);
+            return m_jit->mapValue(strtmp.c_str());
+        } else if (ValueTypeOf(param) == Type<Int>()) {
+            int tmp;
+            param->evalInt(tmp);
+        // TODO return m_jit->mapValueToConstant(param->asInt());
+            return m_jit->mapValueAsConstant(tmp);
+
+        } else {
+            assert(0 && "Type mapping not implemented");
+        }
     } else {
         // ERROR !!
-        return NULL;
+        assert(0 && "Invalid plug type");
     }
 
     return NULL;
@@ -118,32 +164,18 @@ ComputeEngine::buildCallGraph(
             FT,         // Function type
             llvm::Function::ExternalLinkage,
             funcName,
-            &m_engine->getModule());
+            &m_jit->getModule());
 
     // Insert a basic block in the function
     BasicBlock *BB = BasicBlock::Create(getGlobalContext(), "entry", F);
-    m_builder->SetInsertPoint(BB);
-    llvm::Value *ctxVal = m_engine->mapContext(context);
+    m_jit->irBuilder()->SetInsertPoint(BB);
+    llvm::Value *ctxVal = m_jit->mapValueAsConstant(context);
 
-    m_builder->CreateRet(buildCallGraphRecursively(plug, ctxVal));
+    m_jit->irBuilder()->CreateRet(buildCallGraphRecursively(plug, ctxVal));
     llvm::verifyFunction(*F);
     return 0;
 }
 
-// Constructor
-ComputeEngine::ComputeEngine(Module &fissionModule, JITEngine &jite)
-: m_module(fissionModule)
-, m_engine(&jite)
-, m_builder(new llvm::IRBuilder<>(llvm::getGlobalContext()))
-{
-}
-
-
-// Destructor
-ComputeEngine::~ComputeEngine()
-{
-    delete m_builder;
-}
 
 Status ComputeEngine::run(Node &node, const Context &context)
 {
@@ -156,8 +188,13 @@ Status ComputeEngine::run(Node &node, const Context &context)
     llvm::Value *cc = buildCallGraph(Output(node), context);
     std::cout << "result of callgraph = " << cc << std::endl;
 
+
+
     // Compile and run the newly created function
-    m_engine->runFunctionNamed("ComputeEngine::runonce");
+    m_jit->runFunctionNamed("ComputeEngine::runonce");
+    m_jit->freeFunctionNamed("ComputeEngine::runonce");
+
+
     return SUCCESS;
 }
 

@@ -5,6 +5,9 @@
 #include "JITEngine.h"
 #include "NodeDesc.h"
 #include "Module.h"
+#include "StandardTypes.h"
+#include "Type.h"
+#include "Context.h"
 
 #include <llvm/ADT/STLExtras.h>
 #include <llvm/ADT/StringRef.h>
@@ -40,15 +43,17 @@ JITEngine::JITEngine()
 , m_llvmFuncPassManager(0)
 , m_llvmEngine(0)
 , m_eeerror("")
+, m_irBuilder(new llvm::IRBuilder<>(llvm::getGlobalContext()))
 {
     // Init llvm target
     llvm::InitializeNativeTarget();
+    llvm::InitializeNativeTargetAsmPrinter();
     llvm::LLVMContext &llvmContext = llvm::getGlobalContext();
     m_llvmModule = new llvm::Module("JIT", llvmContext);
 
     // Create a Execution engine via the engine builder
     llvm::EngineBuilder engineBuilder(m_llvmModule);
-    engineBuilder.setUseMCJIT(true); // Test gdb, I suppose it will create an instance of MCJIT instead of JIT
+    engineBuilder.setUseMCJIT(true); 
     //engineBuilder.setOptLevel(0); // Test gdb
     engineBuilder.setErrorStr(&m_eeerror);
     engineBuilder.setAllocateGVsWithCode(true); // Global values
@@ -83,10 +88,9 @@ JITEngine::JITEngine()
     m_llvmFuncPassManager->doInitialization();
 }
 
-
-
 JITEngine::~JITEngine()
 {
+    delete m_irBuilder;
     m_llvmEngine->runStaticConstructorsDestructors(true);
     delete m_llvmEngine;
     // m_llvmModule should be deleted by the engine
@@ -95,7 +99,9 @@ JITEngine::~JITEngine()
     llvm::llvm_shutdown();
 }
 
-
+void JITEngine::optimizeFunction(llvm::Function &f) {
+    m_llvmFuncPassManager->run(f);
+}
 
 NodeDesc * JITEngine::loadNodeDescription(const char *filename)
 {
@@ -136,7 +142,7 @@ NodeDesc * JITEngine::loadNodeDescription(const char *filename)
     // Run a graph viewer
     //LF->viewCFG();
 
-    // Call the getInstance function 
+    // Call the getInstance function
     void *FPtr = m_llvmEngine->getPointerToFunction(LF);
     NodeDesc * (*FP)() = (NodeDesc * (*)())(intptr_t)FPtr;
     NodeDesc *nodedesc = FP();
@@ -150,9 +156,30 @@ llvm::Module & JITEngine::getModule()
     return *m_llvmModule;
 }
 
+template<>
 llvm::Value *
-JITEngine::mapContext(const Context &context)
+JITEngine::mapValue(const Context *context)
 {
+    // Make a constant from the context stored in a global variable
+    llvm::StructType *ctxType = m_llvmModule->getTypeByName ("class.fission::Context");
+    // Note : get pointer type from a type
+    if(ctxType==0) {
+        std::cout << "Context type not found" << std::endl;
+        exit(0);
+    }
+
+    llvm::GlobalVariable *glob = new llvm::GlobalVariable( *m_llvmModule
+                                , ctxType
+                                , false // is constant
+                                , llvm::GlobalValue::ExternalLinkage
+                                , NULL);
+    m_llvmEngine->addGlobalMapping(glob, (void *)context);
+    return glob;
+}
+
+template<>
+llvm::Value *
+JITEngine::mapValueAsConstant(const Context &context) {
     // Make a constant from the context stored in a global variable
     llvm::StructType *ctxType = m_llvmModule->getTypeByName ("class.fission::Context");
     // Note : get pointer type from a type
@@ -161,34 +188,36 @@ JITEngine::mapContext(const Context &context)
         std::cout << "Context type not found" << std::endl;
         exit(0);
     }
-
-    // Pass values to jitted code
-    // 2 methods : define constant value, which can be folded
-    //             define a mapping to a instance of the value
-    // The constant value allows further optimization
-#define USE_CONSTANT 0
-#if USE_CONSTANT
     llvm::Constant *res = llvm::ConstantStruct::get(ctxType
-                    , m_builder->getInt32(context.m_first)
-                    , m_builder->getInt32(context.m_last)
+                    , m_irBuilder->getInt32(context.m_first)
+                    , m_irBuilder->getInt32(context.m_last)
                     , NULL );
     llvm::GlobalVariable *glob = new llvm::GlobalVariable( *m_llvmModule
                                 , ctxType
                                 , true
                                 , llvm::GlobalValue::InternalLinkage
                                 , res);
-#else
-    // Use external variable
-    llvm::GlobalVariable *glob = new llvm::GlobalVariable( *m_llvmModule
-                                , ctxType
-                                , false // is constant
-                                , llvm::GlobalValue::ExternalLinkage
-                                , NULL);
-    m_llvmEngine->addGlobalMapping(glob, (void *)&context);
-#endif
     return glob;
 }
 
+
+template<>
+llvm::Value * JITEngine::mapValue(const char *str) {
+
+    return m_irBuilder->CreateGlobalStringPtr(str);
+}
+
+template<>
+llvm::Value * JITEngine::mapValueAsConstant(const float &value)
+{
+    return llvm::ConstantFP::get(m_irBuilder->getFloatTy(), value);
+}
+
+template<>
+llvm::Value * JITEngine::mapValueAsConstant(const int &value)
+{
+    return llvm::ConstantInt::get(m_irBuilder->getInt32Ty(), value);
+}
 
 void JITEngine::runFunctionNamed(const char *functionName)
 {
@@ -201,6 +230,7 @@ void JITEngine::runFunctionNamed(const char *functionName)
     //*m_llvmModule.dump();
     m_llvmFuncPassManager->run(*LF);
 
+    LF->viewCFG();
 
     //LF->dump();
     // Compile the function and returns a pointer to it
@@ -208,15 +238,19 @@ void JITEngine::runFunctionNamed(const char *functionName)
     double (*FP)() = (double (*)())(intptr_t)FPtr;
 
     // Execute the function
-    std::cout << "result=" << FP() << std::endl;
-
-    // Free ?
-    //m_llvmEngine->freeMachineCodeForFunction(LF);
-    // Remove the function from the module
-#if USE_CONSTANT
-    LF->eraseFromParent();
-#endif
+    FP();
+    //std::cout << "result=" << FP() << std::endl;
 }
 
+void JITEngine::freeFunctionNamed(const char *functionName) {
+
+    llvm::Function* LF = m_llvmEngine->FindFunctionNamed(functionName);
+    if (LF) {
+        // Free ?
+        m_llvmEngine->freeMachineCodeForFunction(LF);
+        // Remove the function from the module
+        LF->eraseFromParent();
+    }
+}
 
 };//namespace fission

@@ -10,7 +10,7 @@ namespace fission {
 using std::string;
 
 Module::Module(const std::string &name)
-: Node(name, 0, NULL) 
+: Node(name, NULL) 
 {}
 
 
@@ -36,8 +36,7 @@ Node * Module::createNode(const std::string &nodeTypeName, const std::string &no
         if (nodeTypeName.compare(TypeName(*it))==0) {
 
             // Last Id is equal to the size of the vector
-            size_t id = m_nodes.size(); // Hope vector doesn't count the number of values
-            Node *node = new Node(nodeName, id, *it);
+            Node *node = new Node(nodeName, *it);
             // TODO : node.m_owner =
             //node.m_module = this;
             m_nodes.push_back(node);
@@ -54,7 +53,7 @@ Node * Module::createNode(const std::string &nodeTypeName, const std::string &no
             // Connect all imputs to current outputs
             for (size_t i=0; i<nbInputs; i++) {
                 // TODO !!!
-                PlugLink *pl = new PlugLink("", 0, NULL, node->input(i), node->output());
+                PlugLink *pl = new PlugLink("", NULL, node->input(i), node->output());
                 m_dataFlowGraph.addEdge(pl);
             }
 
@@ -65,7 +64,7 @@ Node * Module::createNode(const std::string &nodeTypeName, const std::string &no
                 m_dataFlowGraph.addVertex(node->param(j));
 
                 // Connect all imputs to current outputs
-                PlugLink *pl = new PlugLink("", 0, NULL, node->param(j), node->output());
+                PlugLink *pl = new PlugLink("", NULL, node->param(j), node->output());
                 m_dataFlowGraph.addEdge(pl);
             }
 
@@ -111,7 +110,7 @@ void Module::connect(Plug *src, Plug *dst) {
 
     // Create a new pluglink
     // TODO : is it really useful to have a plug link struct ?
-    PlugLink *pl = new PlugLink("",0, NULL, src, dst);
+    PlugLink *pl = new PlugLink("", NULL, src, dst);
     m_dataFlowGraph.addEdge(pl);
 
     // TODO

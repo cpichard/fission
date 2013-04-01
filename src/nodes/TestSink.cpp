@@ -10,7 +10,7 @@ ImplementParams(TestSink)
 
 extern "C" {
 double TestSink_execute(const fission::Context ctx, double a){
-    printf("sink received: %g\n", a);
+    //printf("sink received: %g\n", a);
     // Returning a because we don't handle functions returning void atm
     return a;
 }

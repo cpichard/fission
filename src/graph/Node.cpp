@@ -7,8 +7,8 @@ namespace fission {
 template<> const char * const TypeName(Node *);
 
 /// Constructor
-Node::Node(const std::string &name, size_t id, const NodeDesc *type)
-: ObjectId<NodeDesc>(name, id, type)
+Node::Node(const std::string &name, const NodeDesc *type)
+: ObjectId<NodeDesc>(name, type)
 , m_owner(NULL)
 {
     // NOTE: May be a buildFromDescription function could
@@ -28,30 +28,24 @@ Node::Node(const std::string &name, size_t id, const NodeDesc *type)
     for (size_t i=0; i < nbInputs; i++) {
         // TODO Find correct plugtype from name.... 
         // or just use a pointer...
-        const size_t id = m_inputPlugs.size();
-        plug = new Plug(inputs[i].m_name, id, &PlugInputType); // TODO correct type
+        plug = new Plug(inputs[i].m_name, &PlugInputType, inputs[i].m_type); // TODO correct type
         plug->m_owner = this;
         m_inputPlugs.push_back(plug);
     }
 
     const NodeDesc::Output *output = Output(type);
     // Find correct plugtype
-    m_outputPlugs = new Plug(output->m_name, 0, &PlugOutputType); // TODO correct type
+    m_outputPlugs = new Plug(output->m_name, &PlugOutputType, output->m_type); // TODO correct type
     m_outputPlugs->m_owner = this;
 
     const size_t nbParams = NbParameters(type);
     const NodeDesc::Param *params = Parameters(type);
     for (size_t i=0; i < nbParams; i++) {
         // TODO : size() might count the number of values, it is not efficient
-        const size_t id = m_parameterPlugs.size();
-        //std::cout << name << "::params["<< i <<"]=" << params[i].m_type << std::endl;
-        Parameter *param = new Parameter(params[i].m_name, id, params[i].m_type);
-        param->m_owner = this; // TODO : does it need an owner ?
+        Parameter *param = new Parameter(params[i].m_name, params[i].m_type);
+        param->m_owner = this;
         m_parameterPlugs.push_back(param);
 
-        // may be factory of parameter here
-        // type.allocParameter()...
-        //
     }
 }
 
