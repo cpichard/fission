@@ -23,9 +23,6 @@ public:
     CPPUNIT_TEST_SUITE_END();
 
 public:
-    void setUp();
-    void tearDown();
-
     void testCreateNode();
     void testGraphName();
     void testGetNode();
@@ -34,10 +31,11 @@ public:
     void testSetParameter();
 
 private:
-    fission::JITEngine   *m_jit;
-    fission::NodeDesc    *m_testOp;
-    fission::NodeDesc    *m_testSource;
-    fission::NodeDesc    *m_testSink;
+    static fission::JITEngine   *m_jit;
+    static fission::NodeDesc    *m_testOp;
+    static fission::NodeDesc    *m_testSource;
+    static fission::NodeDesc    *m_testSink;
+    static fission::NodeDesc    *m_testValue;
 
 };
 #endif//MODULETEST_H

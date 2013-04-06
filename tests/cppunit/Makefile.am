@@ -23,7 +23,7 @@ $(LOCALLIBS)/libclangBasic.a
 
 
 TESTS = $(check_PROGRAMS)
-AM_CPPFLAGS = -g -O0 @CPPUNIT_CFLAGS@ -I../../src/
+AM_CPPFLAGS = -g -O0 @CPPUNIT_CFLAGS@ `llvm-config --cppflags` -I../../src/
 #AM_LDFLAGS = -g -O0 @CPPUNIT_LIBS@ -L../../src/ -lfission
 fission_test_LINK = $(CXX) -g -O0 @CPPUNIT_LIBS@ -rdynamic -Wl,--whole-archive -L../../src/ -lfission -o fission_test -Wl,-no-whole-archive $(CLANGLIBS) `llvm-config --ldflags --libs`
 fission_test_SOURCES = main.cpp \

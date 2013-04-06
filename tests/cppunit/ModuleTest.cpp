@@ -1,8 +1,5 @@
 #include "ModuleTest.h"
 #include "graph/Module.h"
-//#include "nodes/TestOp.h"
-//#include "nodes/TestSource.h"
-//#include "nodes/TestSink.h"
 #include "graph/Name.h"
 #include "engine/JITEngine.h"
 
@@ -11,30 +8,32 @@ using namespace fission;
 // Registers the fixture into the 'registry'
 CPPUNIT_TEST_SUITE_REGISTRATION( ModuleTest );
 
+
+fission::JITEngine   *ModuleTest::m_jit=0;
+fission::NodeDesc    *ModuleTest::m_testOp=0;
+fission::NodeDesc    *ModuleTest::m_testSource=0;
+fission::NodeDesc    *ModuleTest::m_testSink=0;
+fission::NodeDesc    *ModuleTest::m_testValue=0;
+
 ModuleTest::ModuleTest()
 {
-    m_jit=new fission::JITEngine();
-    m_testOp = m_jit->loadNodeDescription("nodes/TestOp.cpp");
-    m_testSource = m_jit->loadNodeDescription("nodes/TestSource.cpp");
-    m_testSink = m_jit->loadNodeDescription("nodes/TestSink.cpp");
+    std::cout << "Module test constructor" << std::endl;
+    if(m_jit==0){m_jit = new fission::JITEngine();};
+    if(m_testOp==0){m_testOp = m_jit->loadNodeDescription("nodes/TestOp.cpp");}
+    if(m_testSource==0){m_testSource = m_jit->loadNodeDescription("nodes/TestSource.cpp");}
+    if(m_testSink==0){m_testSink = m_jit->loadNodeDescription("nodes/TestSink.cpp");}
+    if(m_testValue==0){m_testValue = m_jit->loadNodeDescription("nodes/TestValue.cpp");}
 }
 
 ModuleTest::~ModuleTest()
 {
-    delete m_testOp;
-    delete m_testSource;
-    delete m_testSink;
-    delete m_jit;
+    std::cout << "Module Test destructor" << std::endl;
+    if(m_testOp){ delete m_testOp; m_testOp=NULL;}
+    if(m_testSource) { delete m_testSource; m_testSource=NULL;}
+    if(m_testSink) {delete m_testSink;m_testSink=NULL;}
+    if(m_testValue) {delete m_testValue;m_testValue=NULL;}
+    if(m_jit) {delete m_jit;m_jit=NULL;}
 }
-
-void ModuleTest::setUp()
-{
-}
-
-void ModuleTest::tearDown()
-{
-}
-
 
 void ModuleTest::testCreateNode()
 {
@@ -178,49 +177,32 @@ void ModuleTest::testSetParameter()
 {
     Module module("test1");
 
-    module.registerNodeDesc(m_testSource);
-    module.registerNodeDesc(m_testOp);
-    module.registerNodeDesc(m_testSink);
-    Node *source = module.createNode("TestSource", "node1");
-
-
-    // Describe the modification
-    //ParameterModification pm;
-    //pm.prepare(SetFloatValue, 5.f);
-    //pm(SetFloatValue, 5.f);
-    //pm(Param0, SetFloatValue, 5.f);
-    //pm.modify(Param0(source));
-    //pm( Param0(source), SetFloat4Value, 0.f, 0.4f, 0.2f, 0.5f );
-
-    // ex:
-    //pm.modify(Param2(source));
-    //pm.modify(Param3(source));
-    //pm.modify(Param4(source));
-
-    //fission::apply(pm, Parameter0(nodeId));
-    //pm.dump();
-    // Apply the modification
-    //source->apply(Param0(source), pm);
-    //ParameterModification::apply(Parameter0(source), pm);
-    //Param0(source)->apply(pm);
-    float result;
-    Param0(source)->evalFloat(result);
-
-    //Param0(source)->apply(pm);
-    Param0(source)->setFloat(7.f);
+    module.registerNodeDesc(m_testValue);
+    Node *value = module.createNode("TestValue", "node1");
+   
+    // Param0 of TestValue is float
+    float valsrc=7.f;
+    Param0(value)->setFloat(valsrc);
 
     float val=0;
-    Param0(source)->evalFloat(val);
-    CPPUNIT_ASSERT(val==7);
+    Param0(value)->evalFloat(val);
+    CPPUNIT_ASSERT(val==valsrc);
+    CPPUNIT_ASSERT(Param0(value)->asFloat() == valsrc);
 
+    // Param1 is Int
+    int valint=4534;
+    Param1(value)->setInt(valint);
+    CPPUNIT_ASSERT(valint == Param1(value)->asInt());
 
-    Param1(source)->setString("./myfile.png");
+    // Param2 is String
+    Param2(value)->setString("./myfile.png");
     std::string strresult;
-    Param1(source)->evalString(strresult);
+    Param2(value)->evalString(strresult);
 
     CPPUNIT_ASSERT(strresult == "./myfile.png");
     CPPUNIT_ASSERT(strresult != "./myfile2.png");
 
+    delete value;
 }
 
 

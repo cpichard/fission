@@ -1,30 +1,27 @@
+
+
 #include "TestValue.h"
-#include "Parameter.h"
-#include "Types.h"
+#include "engine/Context.h"
 
-namespace fission {
+ImplementNode(TestValue)
 
-// Name of the node
-const char * const TestValue::s_typeName = "TestValue";
+ImplementOutput(TestValue, NewOutput("Value", Float))
+ImplementInputs(TestValue)
 
-// No inputs for this node
-const NodeDesc::Input  TestValue::s_inputs[]   = {};
+ImplementParams(TestValue,
+    NewParam("float", Float),
+    NewParam("int", Int),
+    NewParam("string", String))
 
-// Only one output, the value of the parameter
-const NodeDesc::Output TestValue::s_output =
+extern "C" {
+double TestValue_execute(fission::Context ctx, int val, const char *file)
 {
-    // TEST
-    NodeDesc::Output("Value","float")
+    double tmp=0;
+    for(int i=0; i < ctx.m_first;i++)
+    {
+        tmp=tmp+1.0;
+    }
+    return tmp;
 };
-
-// TODO : only one parameter
-const NodeDesc::Param TestValue::s_params[]   = {};
-
-// Version of the
-const unsigned int TestValue::s_version = 0;
-
-//size_t TestValue::nbInputs() const {return sizeof(s_inputs)/sizeof(NodeDesc::Input);}
-//size_t TestValue::nbOutputs() const {return sizeof(s_outputs)/sizeof(NodeDesc::Output);}
-
-}; //namespace fission
+};
 

@@ -22,9 +22,6 @@ namespace fission {
 
 typedef int ParameterType;
 
-typedef ValueModification ParameterModification;
-
-
 /// A Parameter is a plug that contains data during the whole life of the
 /// program
 class Parameter : public Plug {
@@ -52,10 +49,15 @@ public:
     void evalInt(int &val);
     void evalString(std::string &val);
 
+    float   asFloat();
+    int     asInt();
+    const char * asString();
+
+
 private:
     //Value       *m_data;
+    //const BaseType  *m_type; // Type of m_data, should be stored in Value
     char            *m_data; // Blind pointer to the data owned by the parameter
-    //const BaseType  *m_type; // Type of m_data
 
     // TODO properties of a parameter
     // Properties   m_properties;

@@ -85,6 +85,22 @@ void Parameter::evalString(std::string &val)
     val = *(static_cast<std::string*>((void *)m_data));
 }
 
+float Parameter::asFloat()
+{
+    assert(isType<Float>(m_valueType));
+    return *(static_cast<float*>((void *)m_data));
+}
 
+int Parameter::asInt()
+{
+    assert(isType<Int>(m_valueType));
+    return *(static_cast<int*>((void *)m_data));
+}
+
+const char * Parameter::asString()
+{
+    assert(isType<String>(m_valueType));
+    return (static_cast<std::string *>((void *)m_data))->c_str();
+}
 
 }; // namespace fission

@@ -120,20 +120,11 @@ ComputeEngine::buildCallGraphRecursively(
         Parameter *param = static_cast<Parameter*>(plug);
 
         if( ValueTypeOf(param) == Type<Float>() ) {
-            float tmp;
-            param->evalFloat(tmp);
-        // TODO return m_jit->mapValueToConstant(param->asFloat());
-            return m_jit->mapValueAsConstant(tmp);
+            return m_jit->mapValueAsConstant(param->asFloat());
         } else if (ValueTypeOf(param) == Type<String>()) {
-            std::string strtmp;
-            param->evalString(strtmp);
-            return m_jit->mapValue(strtmp.c_str());
+            return m_jit->mapValue(param->asString());
         } else if (ValueTypeOf(param) == Type<Int>()) {
-            int tmp;
-            param->evalInt(tmp);
-        // TODO return m_jit->mapValueToConstant(param->asInt());
-            return m_jit->mapValueAsConstant(tmp);
-
+            return m_jit->mapValueAsConstant(param->asInt());
         } else {
             assert(0 && "Type mapping not implemented");
         }
