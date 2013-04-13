@@ -7,22 +7,23 @@
 #include "Context.h"
 #include "JITEngine.h"
 
-#include <llvm/Constants.h>
-#include <llvm/LLVMContext.h>
-#include <llvm/Module.h>
-#include <llvm/IRBuilder.h>
-#include <llvm/DerivedTypes.h>
+#include <llvm/Analysis/Passes.h>
 #include <llvm/Analysis/Verifier.h>
+#include <llvm/Analysis/Verifier.h>
+#include <llvm/Attributes.h>
+#include <llvm/Constants.h>
+#include <llvm/DataLayout.h>
+#include <llvm/DerivedTypes.h>
 #include <llvm/ExecutionEngine/ExecutionEngine.h>
 #include <llvm/ExecutionEngine/JIT.h>
-#include <llvm/PassManager.h>
-#include <llvm/Analysis/Verifier.h>
-#include <llvm/Analysis/Passes.h>
-#include <llvm/DataLayout.h>
-#include <llvm/Transforms/Scalar.h>
-#include <llvm/Support/TargetSelect.h>
+#include <llvm/IRBuilder.h>
 #include <llvm/LinkAllPasses.h>
 #include <llvm/Linker.h>
+#include <llvm/LLVMContext.h>
+#include <llvm/Module.h>
+#include <llvm/PassManager.h>
+#include <llvm/Support/TargetSelect.h>
+#include <llvm/Transforms/Scalar.h>
 
 using namespace fission;
 using llvm::getGlobalContext;
@@ -50,36 +51,35 @@ ComputeEngine::buildCallGraphRecursively(
     llvm::Module &module = m_jit->getModule();
     llvm::IRBuilder<> &builder = *m_jit->irBuilder();
     if(IsOutput(plug)) {
-        // iterate on args,
-        // Look up the name in the global module table.
+
+        // Find the function that generated output
         std::string Callee(std::string(TypeName(Owner(plug))) + "_execute");
         llvm::Function *CalleeF = module.getFunction(Callee);
         if (CalleeF == 0) {
             std::cout << "ERROR Function " << Callee << " not found" << std::endl;
             m_jit->getModule().dump();
             exit(0);
-        } else {
-            std::cout << "Function " << Callee << " found" << std::endl;
-        }
+        }         
+        // Force this function to be inlined
+        CalleeF->addFnAttr(llvm::Attributes::AlwaysInline);
 
-        // TODO :Optimize function
-        // check clang -O3 passes
-        // m_funcPassManager->run(*CalleeF);
+        // Note: the function should be already optimised
         m_jit->optimizeFunction(*CalleeF);
 
         // debug
         // std::cout << "====Fun: \n";
         //CalleeF->getFunctionType()->getParamType(0)->dump() ;
         // std::cout << "====\n";
-
+        
+        // Number of plugs connected to the output plugs
+        // equal the number of function argument - 1
+        // because we add the context as the first argument
         const size_t nbArgs = NbConnectedInputs(plug);
         std::vector<llvm::Value*> ArgsV(nbArgs+1);
-        GraphIterator<Plug, PlugLink> it(plug);
-
-        // First argument of all function is the context
         ArgsV[0] = context;
 
         // The other arguments are built recursively
+        GraphIterator<Plug, PlugLink> it(plug);
         for (unsigned int i=1; i < nbArgs+1; ++i, ++it) {
             ArgsV[i] = buildCallGraphRecursively(it.nextVertex(), context);
         }
@@ -106,7 +106,7 @@ ComputeEngine::buildCallGraphRecursively(
             // recursive call
             // TODO : Create a dummy value
             // TODO : Create a NULL Value
-            std::cout << "Error, nbConnections==0" << std::endl;
+            std::cout << "Error, all the inputs should be connected" << std::endl;
             assert(0); // shouldn't happen with the current setup
             return NULL;
         } else {
@@ -163,6 +163,8 @@ ComputeEngine::buildCallGraph(
     llvm::Value *ctxVal = m_jit->mapValueAsConstant(context);
 
     m_jit->irBuilder()->CreateRet(buildCallGraphRecursively(plug, ctxVal));
+    m_jit->optimizeModule();
+    m_jit->optimizeFunction(*F);
     llvm::verifyFunction(*F);
     return 0;
 }
@@ -178,8 +180,6 @@ Status ComputeEngine::run(Node &node, const Context &context)
     // Build execution graph recursively
     llvm::Value *cc = buildCallGraph(Output(node), context);
     std::cout << "result of callgraph = " << cc << std::endl;
-
-
 
     // Compile and run the newly created function
     m_jit->runFunctionNamed("ComputeEngine::runonce");

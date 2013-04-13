@@ -54,14 +54,29 @@ JITEngine::JITEngine()
     // Create a Execution engine via the engine builder
     llvm::EngineBuilder engineBuilder(m_llvmModule);
     engineBuilder.setUseMCJIT(true); 
-    //engineBuilder.setOptLevel(0); // Test gdb
+    engineBuilder.setOptLevel(llvm::CodeGenOpt::Aggressive); // Test gdb
     engineBuilder.setErrorStr(&m_eeerror);
     engineBuilder.setAllocateGVsWithCode(true); // Global values
     m_llvmEngine = engineBuilder.create();
 
     m_llvmPassManager = new llvm::PassManager();
+    m_llvmPassManager->add(new llvm::DataLayout(*m_llvmEngine->getDataLayout()));
+    m_llvmPassManager->add(llvm::createCFGSimplificationPass());     // Merge & remove BBs
+    m_llvmPassManager->add(llvm::createInstructionCombiningPass());  // Combine silly seq's
+    m_llvmPassManager->add(llvm::createTailCallEliminationPass());   // Eliminate tail calls
+    m_llvmPassManager->add(llvm::createCFGSimplificationPass());     // Merge & remove BBs
+    m_llvmPassManager->add(llvm::createReassociatePass());           // Reassociate expressions
+    m_llvmPassManager->add(llvm::createLoopRotatePass());            // Rotate Loop
+    m_llvmPassManager->add(llvm::createLICMPass());                  // Hoist loop invariants
+    m_llvmPassManager->add(llvm::createInstructionCombiningPass());
+    m_llvmPassManager->add(llvm::createIndVarSimplifyPass());        // Canonicalize indvars
+    m_llvmPassManager->add(llvm::createLoopIdiomPass());             // Recognize idioms like memset.
+    m_llvmPassManager->add(llvm::createLoopDeletionPass());          // Delete dead loops
+    m_llvmPassManager->add(llvm::createLoopVectorizePass());
     m_llvmPassManager->add(llvm::createFunctionInliningPass());
-
+    m_llvmPassManager->add(llvm::createBBVectorizePass());
+    m_llvmPassManager->add(llvm::createInstructionCombiningPass());
+    
     // Function pass manager
     m_llvmFuncPassManager = new llvm::FunctionPassManager(m_llvmModule);
     // Set up the optimizer pipeline.  Start with registering info about how the
@@ -80,11 +95,14 @@ JITEngine::JITEngine()
     // Simplify the control flow graph (deleting unreachable blocks, etc).
     m_llvmFuncPassManager->add(llvm::createCFGSimplificationPass());
 
-    m_llvmFuncPassManager->add(llvm::createLoopUnrollPass());
+    // Unroll small loops
     m_llvmFuncPassManager->add(llvm::createLoopInstSimplifyPass());
     m_llvmFuncPassManager->add(llvm::createLoopRotatePass());
+    // Recognize idioms like memset.
     m_llvmFuncPassManager->add(llvm::createLoopIdiomPass());
-    m_llvmFuncPassManager->add(llvm::createLoopVectorizePass ());
+    m_llvmFuncPassManager->add(llvm::createLoopVectorizePass());
+    m_llvmFuncPassManager->add(llvm::createLoopUnrollPass());
+    m_llvmFuncPassManager->add(llvm::createBBVectorizePass());
     m_llvmFuncPassManager->doInitialization();
 }
 
@@ -100,9 +118,14 @@ JITEngine::~JITEngine()
 }
 
 void JITEngine::optimizeFunction(llvm::Function &f) {
+    f.viewCFG();
     m_llvmFuncPassManager->run(f);
+    f.viewCFG();
 }
 
+void JITEngine::optimizeModule() {
+    m_llvmPassManager->run(*m_llvmModule);
+}
 NodeDesc * JITEngine::loadNodeDescription(const char *filename)
 {
     NodeCompiler    nc;
@@ -149,7 +172,6 @@ NodeDesc * JITEngine::loadNodeDescription(const char *filename)
 
     return nodedesc;
 }
-
 
 llvm::Module & JITEngine::getModule()
 {

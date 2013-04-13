@@ -46,6 +46,9 @@ public:
 
     void optimizeFunction(llvm::Function &f);
 
+    /// 
+    void optimizeModule();
+    
     /// jit compile and run functionName
     void runFunctionNamed(const char *functionName);
 

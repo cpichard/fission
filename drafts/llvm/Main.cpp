@@ -52,6 +52,12 @@ int main(int argc, char **argv)
     module.connect(Output(node1), Input1(node4));
     module.connect(Output(node4), Input0(node5));
 
+    Param1(node1)->setString("/home/cyril/Develop/tests/buf_generator/array.dat");
+    Param0(node1)->setInt(255);
+    Param1(node2)->setString("/home/cyril/Develop/tests/buf_generator/array.dat");
+    Param0(node2)->setInt(255);
+
+    
     // Run the computation on the sink
     fission::ComputeEngine engine(module, jit);
     fission::Context ctx(32);
