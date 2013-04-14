@@ -23,10 +23,10 @@ CLANG_RESSOURCEDIR=`llvm-config --libdir`/clang/3.2/
 SRC_DIR=@abs_srcdir@
 
 AM_CPPFLAGS = -g -O0 -Wall -DSRC_DIR=\"$(SRC_DIR)\" -DCLANG_RESSOURCEDIR=\"$(CLANG_RESSOURCEDIR)\" -Iengine/ -Igraph/ -Inodes/ -Irtts/  `llvm-config --cppflags`
-AM_LDFLAGS = -g -O0 -Wall -L$(LOCALLIBS)/ $(CLANGLIBS) `llvm-config --ldflags --libs ` -Wl,--export-all-symbols
 
-lib_LIBRARIES=libfission.a
-libfission_a_SOURCES = \
+lib_LTLIBRARIES=libfission.la
+libfission_la_LDFLAGS = -g -O0 -Wall --export-all-symbols -Wl,--export-dynamic -Wl,-rpath=. -L$(LOCALLIBS)/ $(CLANGLIBS) `llvm-config --libfiles` -ldl -lpthread
+libfission_la_SOURCES = \
 ./engine/ComputeEngine.cpp\
 ./engine/ComputeEngine.h\
 ./engine/Context.h\

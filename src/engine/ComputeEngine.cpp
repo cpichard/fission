@@ -30,6 +30,22 @@ using llvm::Function;
 using llvm::FunctionType;
 using llvm::BasicBlock;
 
+
+// NOTE : this structure is used to avoid
+// including llvm libraries in the header file
+namespace fission {
+
+struct IRBuilderWrapper {
+    /// Construct with a llvm builder
+    IRBuilderWrapper()
+    : m_ptr(new llvm::IRBuilder<>(llvm::getGlobalContext())){}
+    llvm::IRBuilder<>   *m_ptr;
+
+    llvm::IRBuilder<> * operator ->() {return m_ptr;}
+
+};
+
+};
 /// Recursively build the call graph from the node graph
 llvm::Value *
 ComputeEngine::buildCallGraphRecursively(
@@ -37,7 +53,6 @@ ComputeEngine::buildCallGraphRecursively(
     , llvm::Value *context)
 {
     llvm::Module &module = m_engine->getModule();
-    llvm::IRBuilder<> &builder = *m_builder;
     if(IsOutput(plug)) {
         // iterate on args,
         // Look up the name in the global module table.
@@ -72,7 +87,7 @@ ComputeEngine::buildCallGraphRecursively(
             ArgsV[i] = buildCallGraphRecursively(it.nextVertex(), context);
         }
         std::cout << "Create call " << Name(Owner(plug)) << "_tmp" << std::endl;
-        llvm::Value *ret=builder.CreateCall(CalleeF, ArgsV, Name(Owner(plug))+"_tmp");
+        llvm::Value *ret=(*m_builder)->CreateCall(CalleeF, ArgsV, Name(Owner(plug))+"_tmp");
         return ret;
 
     } else if(IsInput(plug)) {
@@ -121,10 +136,10 @@ ComputeEngine::buildCallGraph(
 
     // Insert a basic block in the function
     BasicBlock *BB = BasicBlock::Create(getGlobalContext(), "entry", F);
-    m_builder->SetInsertPoint(BB);
+    (*m_builder)->SetInsertPoint(BB);
     llvm::Value *ctxVal = m_engine->mapContext(context);
 
-    m_builder->CreateRet(buildCallGraphRecursively(plug, ctxVal));
+    (*m_builder)->CreateRet(buildCallGraphRecursively(plug, ctxVal));
     llvm::verifyFunction(*F);
     return 0;
 }
@@ -133,7 +148,7 @@ ComputeEngine::buildCallGraph(
 ComputeEngine::ComputeEngine(Module &fissionModule, JITEngine &jite)
 : m_module(fissionModule)
 , m_engine(&jite)
-, m_builder(new llvm::IRBuilder<>(llvm::getGlobalContext()))
+, m_builder(new IRBuilderWrapper())
 {
 }
 

@@ -1,23 +1,28 @@
 
 %{
-#include "Node.h"
+#include "graph/Node.h"
+#include "graph/Name.h"
+#include "graph/NodeDesc.h"
 %}
 
 %include "std_string.i"
+%include "std_vector.i"
+%include "graph/NodeDesc.i"
 
-// Name concept
-%include "Name.i"
+// TODO : check why template Name is not recognized 
+//%include "graph/Name.i"
+//%template(NodeName) fission::Name<fission::Node>;
 
+
+%template(NodeVector) std::vector<fission::Node*>;
 
 namespace fission {
 
-%template(nodename) fission::Name<fission::Node>;
 
 class Node
 {
 public:
-    Node(const std::string &name)
-    : m_name(name){};
+    Node(const std::string &name, size_t id, const NodeDesc *type);
     virtual ~Node(){};
 
     // Extend with function name
@@ -25,9 +30,7 @@ public:
         inline std::string name(){return fission::Name(*$self);}
     }
 
-protected:
-    virtual void * getResult()=0;
-    virtual Status execute(Context &)=0;
+    const std::vector<Node*> & getNodes() const;
 };
 
 };

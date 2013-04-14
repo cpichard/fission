@@ -16,11 +16,11 @@ class Module;
 class Value;
 };
 
-#include <llvm/IRBuilder.h>
-
 
 namespace fission {
 
+// Forward declarations
+struct IRBuilderWrapper;
 class JITEngine;
 
 class ComputeEngine
@@ -37,7 +37,7 @@ private:
 
     // llvm jit stuff
     JITEngine                   *m_engine;
-    llvm::IRBuilder<>           *m_builder;
+    IRBuilderWrapper            *m_builder;
 
     // Function to build the call graph from the node graph
     llvm::Value *buildCallGraph( Plug *plug, const Context &context);

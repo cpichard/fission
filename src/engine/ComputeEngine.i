@@ -1,6 +1,6 @@
 %{
-#define SWIG_FILE_WITH_INIT
-#include "ComputeEngine.h"
+#include "engine/ComputeEngine.h"
+#include "graph/Module.h"
 %}
 
 
@@ -8,9 +8,9 @@ namespace fission {
 class ComputeEngine 
 {
 public:
-    ComputeEngine();
+    ComputeEngine(fission::Module &, fission::JITEngine &);
     ~ComputeEngine();
-    // Test
-    Status compute(fission::Node &, fission::Context &);
+
+    Status run(fission::Node &, const fission::Context &);
 };
 };
