@@ -4,11 +4,14 @@
 #include "graph/Plug.h"
 %}
 
+typedef int fission::PlugType;
+
 namespace fission {
+
 class Plug
 {
 public:
-    Plug(const std::string &name, size_t id, const fission::PlugType *info);
+    Plug(const std::string &name, const fission::PlugType *info, const BaseType *valueType);
 };
 
 };

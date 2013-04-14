@@ -16,7 +16,7 @@ SWIG_PYTHON_OPT = -python -c++
 pkgpython_PYTHON = fission.py
 pkgpyexec_LTLIBRARIES = _fission.la
 _fission_la_SOURCES = fission_wrap.cpp $(SWIG_SOURCES)
-_fission_la_CPPFLAGS = $(SWIG_PYTHON_CPPFLAGS) -I$(top_srcdir)/src/
+_fission_la_CPPFLAGS = $(SWIG_PYTHON_CPPFLAGS) -I$(top_srcdir)/src/ `llvm-config --cppflags`
 _fission_la_LDFLAGS = -module
 _fission_la_LIBADD = -lfission 
 

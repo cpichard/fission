@@ -22,7 +22,7 @@ namespace fission {
 class Node
 {
 public:
-    Node(const std::string &name, size_t id, const NodeDesc *type);
+    Node(const std::string &name, const NodeDesc *type);
     virtual ~Node(){};
 
     // Extend with function name
