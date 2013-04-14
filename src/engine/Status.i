@@ -1,7 +1,7 @@
 
 %{
-#include "Status.h"
+#include "engine/Status.h"
 %}
 
 
-%include "Status.h"
+%include "engine/Status.h"

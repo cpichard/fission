@@ -59,6 +59,9 @@ public:
 
     // Typedefs
 
+    /// Get contained nodes
+    const std::vector<Node*> & getNodes() const {return m_nodes;}
+
 protected:
     // Note : is it still usefull as now, we don't inherit new nodes from this class?
     //void addInput(const char *name, const PlugType *);

@@ -1,2 +1,2 @@
 ACLOCAL_AMFLAGS = -I m4
-SUBDIRS=src tests drafts 
+SUBDIRS=src tests drafts bindings 
