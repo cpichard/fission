@@ -25,7 +25,7 @@ SRC_DIR=@abs_srcdir@
 AM_CPPFLAGS = -g -O0 -Wall -DSRC_DIR=\"$(SRC_DIR)\" -DCLANG_RESSOURCEDIR=\"$(CLANG_RESSOURCEDIR)\" -Iengine/ -Igraph/ -Inodes/ -Irtts/  `llvm-config --cppflags`
 
 lib_LTLIBRARIES=libfission.la
-libfission_la_LDFLAGS = -g -O0 -Wall --export-all-symbols -Wl,--export-dynamic -Wl,-rpath=. -L$(LOCALLIBS)/ $(CLANGLIBS) `llvm-config --libfiles` -ldl -lpthread
+libfission_la_LDFLAGS = -g -O0 -Wall --export-all-symbols -L$(LOCALLIBS)/ $(CLANGLIBS) `llvm-config --libfiles` -ldl -lpthread
 libfission_la_SOURCES = \
 ./engine/ComputeEngine.cpp\
 ./engine/ComputeEngine.h\
