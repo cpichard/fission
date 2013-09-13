@@ -10,17 +10,17 @@
 #include <llvm/Analysis/Passes.h>
 #include <llvm/Analysis/Verifier.h>
 #include <llvm/Analysis/Verifier.h>
-#include <llvm/Attributes.h>
-#include <llvm/Constants.h>
-#include <llvm/DataLayout.h>
-#include <llvm/DerivedTypes.h>
+#include <llvm/IR/Attributes.h>
+#include <llvm/IR/Constants.h>
+#include <llvm/IR/DataLayout.h>
+#include <llvm/IR/DerivedTypes.h>
 #include <llvm/ExecutionEngine/ExecutionEngine.h>
 #include <llvm/ExecutionEngine/JIT.h>
-#include <llvm/IRBuilder.h>
+#include <llvm/IR/IRBuilder.h>
 #include <llvm/LinkAllPasses.h>
 #include <llvm/Linker.h>
-#include <llvm/LLVMContext.h>
-#include <llvm/Module.h>
+#include <llvm/IR/LLVMContext.h>
+#include <llvm/IR/Module.h>
 #include <llvm/PassManager.h>
 #include <llvm/Support/TargetSelect.h>
 #include <llvm/Transforms/Scalar.h>
@@ -61,7 +61,7 @@ ComputeEngine::buildCallGraphRecursively(
             exit(0);
         }         
         // Force this function to be inlined
-        CalleeF->addFnAttr(llvm::Attributes::AlwaysInline);
+        CalleeF->addFnAttr(llvm::Attribute::AlwaysInline);
 
         // Note: the function should be already optimised
         m_jit->optimizeFunction(*CalleeF);

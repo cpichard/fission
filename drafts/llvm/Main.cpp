@@ -17,7 +17,7 @@
 #include "engine/JITEngine.h"
 
 #include <llvm/Linker.h>
-#include <llvm/Module.h>
+#include <llvm/IR/Module.h>
 using namespace llvm;
 
 int main(int argc, char **argv)

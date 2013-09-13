@@ -4,8 +4,8 @@
 
 #include <iostream>
 
-#include <llvm/LLVMContext.h>
-#include <llvm/Module.h>
+#include <llvm/IR/LLVMContext.h>
+#include <llvm/IR/Module.h>
 #include <llvm/Support/Host.h>
 
 #include <clang/CodeGen/CodeGenAction.h>
@@ -43,7 +43,7 @@ NodeCompiler::NodeCompiler()
 , m_diagPrinter(new TextDiagnosticPrinter(llvm::errs(), m_diagOpts))
 , m_diagIDs(new DiagnosticIDs)
 , m_diagEngine(new DiagnosticsEngine(m_diagIDs, m_diagOpts, m_diagPrinter))
-, m_driver(new Driver("clang", getDefaultTargetTriple(), "a.out", false, *m_diagEngine))
+, m_driver(new Driver("clang", getDefaultTargetTriple(), "a.out", *m_diagEngine))
 , m_clang(new CompilerInstance())
 , m_action(new EmitLLVMOnlyAction(&llvm::getGlobalContext()))
 , m_args()
@@ -100,7 +100,7 @@ llvm::Module *NodeCompiler::compile(const char *fileName)
     m_clang->setInvocation(CI.take());
 
     // Diagnostics
-    m_clang->createDiagnostics(m_args.size(), &m_args[0]);
+    m_clang->createDiagnostics();
     m_args.pop_back(); // Remove filename for future compilation
     if (!m_clang->hasDiagnostics())
         return NULL;

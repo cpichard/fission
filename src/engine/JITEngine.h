@@ -2,7 +2,7 @@
 #define JITENGINE_H
 
 #include <string>
-#include <llvm/IRBuilder.h>
+#include <llvm/IR/IRBuilder.h>
 
 // Forward declarations
 namespace llvm {

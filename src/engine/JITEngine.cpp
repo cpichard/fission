@@ -13,21 +13,21 @@
 #include <llvm/ADT/StringRef.h>
 #include <llvm/Analysis/Passes.h>
 #include <llvm/Analysis/Verifier.h>
-#include <llvm/Constants.h>
-#include <llvm/DataLayout.h>
-#include <llvm/DerivedTypes.h>
+#include <llvm/IR/Constants.h>
+#include <llvm/IR/DataLayout.h>
+#include <llvm/IR/DerivedTypes.h>
 #include <llvm/ExecutionEngine/ExecutionEngine.h>
 #include <llvm/ExecutionEngine/JIT.h>
-#include <llvm/IRBuilder.h>
+#include <llvm/IR/IRBuilder.h>
 #include <llvm/LinkAllPasses.h>
 #include <llvm/Linker.h>
-#include <llvm/LLVMContext.h>
-#include <llvm/Module.h>
+#include <llvm/IR/LLVMContext.h>
+#include <llvm/IR/Module.h>
 #include <llvm/PassManager.h>
 #include <llvm/Support/Casting.h>
 #include <llvm/Support/FileSystem.h>
 #include <llvm/Support/Host.h>
-#include <llvm/Support/IRReader.h>
+#include <llvm/IRReader/IRReader.h>
 #include <llvm/Support/raw_ostream.h>
 #include <llvm/Support/SourceMgr.h>
 #include <llvm/Support/TargetSelect.h>
@@ -148,15 +148,16 @@ NodeDesc * JITEngine::loadNodeDescription(const char *filename)
 
     /// Link the new module in the current one
     std::string err2;
-    llvm::LLVMContext &llvmContext = llvm::getGlobalContext();
-    Linker *llvmLinker = new Linker("jitengine", "newnode", llvmContext, 0);
-    if( llvmLinker->LinkModules(m_llvmModule, nodeModule, llvm::Linker::PreserveSource, &err2)) {
+    //llvm::LLVMContext &llvmContext = llvm::getGlobalContext();
+    //Linker *llvmLinker = new Linker("jitengine", "newnode", llvmContext, 0);
+
+    if(Linker::LinkModules(m_llvmModule, nodeModule, llvm::Linker::PreserveSource, &err2)) {
         std::cout << "error linking module" << std::endl;
     }
-    llvmLinker->releaseModule();
+    //llvmLinker->releaseModule();
 
     delete nodeModule; nodeModule=NULL;
-    delete llvmLinker; llvmLinker=NULL;
+    //delete llvmLinker; llvmLinker=NULL;
 
     m_llvmPassManager->run(*m_llvmModule);
     m_llvmEngine->runStaticConstructorsDestructors(false); // Will allocate the static values
