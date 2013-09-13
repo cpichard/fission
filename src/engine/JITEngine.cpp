@@ -72,7 +72,7 @@ JITEngine::JITEngine()
     m_llvmPassManager->add(llvm::createIndVarSimplifyPass());        // Canonicalize indvars
     m_llvmPassManager->add(llvm::createLoopIdiomPass());             // Recognize idioms like memset.
     m_llvmPassManager->add(llvm::createLoopDeletionPass());          // Delete dead loops
-    m_llvmPassManager->add(llvm::createLoopVectorizePass());
+    //m_llvmPassManager->add(llvm::createLoopVectorizePass());
     m_llvmPassManager->add(llvm::createFunctionInliningPass());
     m_llvmPassManager->add(llvm::createBBVectorizePass());
     m_llvmPassManager->add(llvm::createInstructionCombiningPass());

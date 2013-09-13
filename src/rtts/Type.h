@@ -6,7 +6,7 @@
 
 namespace fission {
 
-class ValueModification;
+struct ValueModification;
 class ValueTuple;
 
 /// The type class is the base class of all other types
@@ -49,7 +49,7 @@ protected:
     /// each type in the application to make type comparison as easy as pointer comparison
     /// Therefore it's implemented as a singleton with the get function.
     BaseType(BaseTypeId id)
-    : m_typeId(id)
+    //: m_typeId(id)
     {}
 
     /// This class can be inherited
@@ -58,7 +58,7 @@ protected:
 
 private:
     /// The type id of this instance
-    BaseTypeId  m_typeId;
+    //BaseTypeId  m_typeId;
 };
 
 

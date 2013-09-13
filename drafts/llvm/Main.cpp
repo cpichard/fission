@@ -59,7 +59,7 @@ int main(int argc, char **argv)
 
     
     // Run the computation on the sink
-    fission::ComputeEngine engine(module, jit);
+    fission::ComputeEngine engine(jit);
     fission::Context ctx(32);
     engine.run(*node5, ctx);
 

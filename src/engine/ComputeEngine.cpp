@@ -34,9 +34,8 @@ using llvm::BasicBlock;
 #define DEBUG_ARG_PASSING 0
 
 // Constructor
-ComputeEngine::ComputeEngine(Module &fissionModule, JITEngine &jit)
-: m_module(fissionModule)
-, m_jit(&jit){}
+ComputeEngine::ComputeEngine(JITEngine &jit)
+: m_jit(&jit){}
 
 // Destructor
 ComputeEngine::~ComputeEngine() {
