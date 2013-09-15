@@ -2,6 +2,7 @@
 #define VERTEX_H
 
 #include <vector>
+#include <cstddef>
 #include "Edge.h"
 
 /// Basic implementation of a vertex

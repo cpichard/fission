@@ -16,7 +16,6 @@ double TestSource_execute(fission::Context ctx, const int val, const char *file)
 {
     const size_t array_size = val;
     // Open a file and read the values in it
-    //double *buffer = NULL;
     FILE *fp = fopen(file, "rb");
     if(fp) {
         double *buffer = (double*)malloc(array_size*sizeof(double));
@@ -27,12 +26,11 @@ double TestSource_execute(fission::Context ctx, const int val, const char *file)
             toto[i] = buffer[i];
         }
     } 
-    //else {
-    //    printf("unable to open file %s\n", file);
-    //    exit(1);
-    //}
-    
+    else {
+        printf("unable to open file %s, returning 100\n", file);
+        return 100;
+    }
 
-    return ((double)ctx.m_first);
+    return (double)ctx.m_first;
 };
 };

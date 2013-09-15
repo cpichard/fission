@@ -34,9 +34,21 @@ AC_PROG_MAKE_SET
 AC_DISABLE_STATIC
 AC_PROG_LIBTOOL
 AM_PATH_PYTHON(2.3)
-AC_PROG_SWIG(1.3.21)
-SWIG_ENABLE_CXX
-SWIG_PYTHON
+
+AC_CONFIG_MACRO_DIR([m4])
+
+# SWIG 
+AC_PATH_PROGS([SWIG],[swig swig2.0])
+if test -z "$SWIG" ; then
+        enable_swig=no
+else
+        enable_swig=yes
+        AX_PKG_SWIG(1.3.36,[] ,[AC_MSG_ERROR("Swig is required.")])
+        AX_SWIG_ENABLE_CXX
+        AX_SWIG_MULTI_MODULE_SUPPORT
+        AX_SWIG_PYTHON
+fi
+
 
 AC_CONFIG_FILES([
 	Makefile
@@ -45,8 +57,6 @@ AC_CONFIG_FILES([
     tests/cppunit/Makefile
     drafts/Makefile
     drafts/llvm/Makefile
-	bindings/Makefile
-	bindings/python/Makefile
 	])
 
 AC_OUTPUT

@@ -34,7 +34,7 @@ using clang::driver::Driver;
 using clang::driver::JobList;
 using clang::TextDiagnosticPrinter;
 using clang::EmitLLVMOnlyAction;
-using llvm::sys::getDefaultTargetTriple;
+using llvm::sys::getProcessTriple;
 
 namespace fission {
 
@@ -43,7 +43,7 @@ NodeCompiler::NodeCompiler()
 , m_diagPrinter(new TextDiagnosticPrinter(llvm::errs(), m_diagOpts))
 , m_diagIDs(new DiagnosticIDs)
 , m_diagEngine(new DiagnosticsEngine(m_diagIDs, m_diagOpts, m_diagPrinter))
-, m_driver(new Driver("clang", getDefaultTargetTriple(), "a.out", *m_diagEngine))
+, m_driver(new Driver("clang", getProcessTriple(), "a.out", *m_diagEngine))
 , m_clang(new CompilerInstance())
 , m_action(new EmitLLVMOnlyAction(&llvm::getGlobalContext()))
 , m_args()
@@ -52,25 +52,26 @@ NodeCompiler::NodeCompiler()
     m_driver->CCCIsCXX = true;
     //m_driver->CCCIsCPP = true;
 
-    // TODO : no path in code !!!
     // it is needed for standard headers like stddef.h
     m_driver->ResourceDir = CLANG_RESSOURCEDIR;
 
     m_args.push_back("-xc++");
     m_args.push_back("-I" SRC_DIR);
-
+    m_args.push_back("-fno-vectorize");
+    std::cout << "Building NodeCompiler" << std::endl;
 }
 
 NodeCompiler::~NodeCompiler()
 {
-    //delete m_action;
     delete m_clang;
     delete m_driver;
     delete m_diagEngine;
+    delete m_action;
     // Is it deleted by the engine ?
     //delete m_diagIDs;
     //delete m_diagPrinter;
     //delete m_diagOpts;
+    std::cout << "Deleting NodeCompiler" << std::endl;
 }
 
 llvm::Module *NodeCompiler::compile(const char *fileName)
@@ -82,38 +83,46 @@ llvm::Module *NodeCompiler::compile(const char *fileName)
     m_args.push_back(globfilename);
     const llvm::OwningPtr<Compilation>
         Compilation(
-            m_driver->BuildCompilation(llvm::makeArrayRef(m_args)));
+            //m_driver->BuildCompilation(llvm::makeArrayRef(m_args)));
+            m_driver->BuildCompilation(m_args));
 
     // Compilation Job to get the correct arguments
     const JobList &Jobs = Compilation->getJobs();
     const Command *Cmd = llvm::cast<Command>(*Jobs.begin());
     const ArgStringList *const CC1Args = &Cmd->getArguments();
 
-    //DEBUG Driver->PrintActions(*Compilation);
+    //m_driver->PrintActions(*Compilation);
 
-    llvm::OwningPtr<CompilerInvocation>
-                    CI(new CompilerInvocation);
+    llvm::OwningPtr<CompilerInvocation> CI(new CompilerInvocation);
     CompilerInvocation::CreateFromArgs(
         *CI, CC1Args->data() + 1, CC1Args->data() + CC1Args->size(), *m_diagEngine);
+
+    // Show the invocation, with -v.
+    // TO debug the -fvectorize issue
+    //if (CI->getHeaderSearchOpts().Verbose) {
+    //    llvm::errs() << "clang invocation:\n";
+    //    Compilation->PrintJob(llvm::errs(), Jobs, "\n", true);
+    //    llvm::errs() << "\n";
+    //}
 
     // Create the compiler instance
     m_clang->setInvocation(CI.take());
 
     // Diagnostics
     m_clang->createDiagnostics();
-    m_args.pop_back(); // Remove filename for future compilation
+    //m_args.pop_back(); // Remove filename for future compilation
     if (!m_clang->hasDiagnostics())
         return NULL;
 
     // Emit only llvm code
-    llvm::OwningPtr<CodeGenAction> action(m_action);
     llvm::Module *mod=NULL;
-    if (!m_clang->ExecuteAction(*action)) {
+    std::cout << "emitting llvm code" << "\n";
+    if (!m_clang->ExecuteAction(*m_action)) {
         std::cout << "unable to generate llvm code" << "\n";
     } else {
-        mod = action->takeModule();
+        mod = m_action->takeModule();
     }
-
+    std::cout << "code generated\n";
     return mod;
 }
 

@@ -23,8 +23,8 @@ public:
     ~Context(){}
 
 //private:
-    size_t m_first;
-    size_t m_last;
+    int m_first;
+    int m_last;
 };
 }; // namespace fission
 #endif//CONTEXT_H

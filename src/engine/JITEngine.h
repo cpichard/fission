@@ -59,7 +59,7 @@ public:
     llvm::Module & getModule();
 
 private:
-    NodeCompiler                *m_nodeCompiler;
+    //NodeCompiler                *m_nodeCompiler;
     llvm::Module                *m_llvmModule;
     llvm::PassManager           *m_llvmPassManager;
     llvm::FunctionPassManager   *m_llvmFuncPassManager;

@@ -9,7 +9,7 @@ Compilation
 ===========
 It currently uses clang and clang++ and llvm framework for the drafts subproject
 At the moment, the project can be built using :
-autoreconf
+autoreconf -i
 ./configure
 make
 

@@ -32,13 +32,14 @@ int main(int argc, char **argv)
     // which is obviously a complicated and bad idea
     fission::JITEngine   jit;
     fission::NodeDesc *testOp = jit.loadNodeDescription("nodes/TestOp.cpp");
-    fission::NodeDesc *testSource = jit.loadNodeDescription("nodes/TestSource.cpp");
     fission::NodeDesc *testSink = jit.loadNodeDescription("nodes/TestSink.cpp");
+    fission::NodeDesc *testSource = jit.loadNodeDescription("nodes/TestSource.cpp");
     module.registerNodeDesc(testOp);
     module.registerNodeDesc(testSource);
     module.registerNodeDesc(testSink);
 
     // Create nodes
+    // Should return an id instead ?
     fission::Node *node1 = module.createNode("TestSource", "Src1");
     fission::Node *node2 = module.createNode("TestSource", "Src2");
     fission::Node *node3 = module.createNode("TestOp", "Op1");
@@ -52,15 +53,15 @@ int main(int argc, char **argv)
     module.connect(Output(node1), Input1(node4));
     module.connect(Output(node4), Input0(node5));
 
-    Param1(node1)->setString("/home/cyril/Develop/tests/buf_generator/array.dat");
+    Param1(node1)->setString("");
     Param0(node1)->setInt(255);
-    Param1(node2)->setString("/home/cyril/Develop/tests/buf_generator/array.dat");
+    Param1(node2)->setString("");
     Param0(node2)->setInt(255);
 
-    
     // Run the computation on the sink
     fission::ComputeEngine engine(jit);
-    fission::Context ctx(32);
+    fission::Context ctx(12);
+    std::cout << "About to run\n";
     engine.run(*node5, ctx);
 
     // Change context value and see what happens

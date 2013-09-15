@@ -49,7 +49,7 @@ ComputeEngine::buildCallGraphRecursively(
 {
     llvm::Module &module = m_jit->getModule();
     llvm::IRBuilder<> &builder = *m_jit->irBuilder();
-    if(IsOutput(plug)) {
+    if (IsOutput(plug)) {
 
         // Find the function that generated output
         std::string Callee(std::string(TypeName(Owner(plug))) + "_execute");
@@ -63,7 +63,7 @@ ComputeEngine::buildCallGraphRecursively(
         CalleeF->addFnAttr(llvm::Attribute::AlwaysInline);
 
         // Note: the function should be already optimised
-        m_jit->optimizeFunction(*CalleeF);
+        //m_jit->optimizeFunction(*CalleeF);
 
         // debug
         // std::cout << "====Fun: \n";
@@ -162,8 +162,8 @@ ComputeEngine::buildCallGraph(
     llvm::Value *ctxVal = m_jit->mapValueAsConstant(context);
 
     m_jit->irBuilder()->CreateRet(buildCallGraphRecursively(plug, ctxVal));
-    m_jit->optimizeModule();
-    m_jit->optimizeFunction(*F);
+    //m_jit->optimizeModule();
+    //m_jit->optimizeFunction(*F);
     llvm::verifyFunction(*F);
     return 0;
 }

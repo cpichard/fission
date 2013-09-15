@@ -54,28 +54,28 @@ JITEngine::JITEngine()
     // Create a Execution engine via the engine builder
     llvm::EngineBuilder engineBuilder(m_llvmModule);
     engineBuilder.setUseMCJIT(true); 
-    engineBuilder.setOptLevel(llvm::CodeGenOpt::Aggressive); // Test gdb
+    //engineBuilder.setOptLevel(llvm::CodeGenOpt::Aggressive); // Test gdb
     engineBuilder.setErrorStr(&m_eeerror);
     engineBuilder.setAllocateGVsWithCode(true); // Global values
     m_llvmEngine = engineBuilder.create();
 
     m_llvmPassManager = new llvm::PassManager();
     m_llvmPassManager->add(new llvm::DataLayout(*m_llvmEngine->getDataLayout()));
-    m_llvmPassManager->add(llvm::createCFGSimplificationPass());     // Merge & remove BBs
-    m_llvmPassManager->add(llvm::createInstructionCombiningPass());  // Combine silly seq's
-    m_llvmPassManager->add(llvm::createTailCallEliminationPass());   // Eliminate tail calls
-    m_llvmPassManager->add(llvm::createCFGSimplificationPass());     // Merge & remove BBs
-    m_llvmPassManager->add(llvm::createReassociatePass());           // Reassociate expressions
-    m_llvmPassManager->add(llvm::createLoopRotatePass());            // Rotate Loop
-    m_llvmPassManager->add(llvm::createLICMPass());                  // Hoist loop invariants
-    m_llvmPassManager->add(llvm::createInstructionCombiningPass());
-    m_llvmPassManager->add(llvm::createIndVarSimplifyPass());        // Canonicalize indvars
-    m_llvmPassManager->add(llvm::createLoopIdiomPass());             // Recognize idioms like memset.
-    m_llvmPassManager->add(llvm::createLoopDeletionPass());          // Delete dead loops
-    //m_llvmPassManager->add(llvm::createLoopVectorizePass());
-    m_llvmPassManager->add(llvm::createFunctionInliningPass());
-    m_llvmPassManager->add(llvm::createBBVectorizePass());
-    m_llvmPassManager->add(llvm::createInstructionCombiningPass());
+    //m_llvmPassManager->add(llvm::createCFGSimplificationPass());     // Merge & remove BBs
+    //m_llvmPassManager->add(llvm::createInstructionCombiningPass());  // Combine silly seq's
+    //m_llvmPassManager->add(llvm::createTailCallEliminationPass());   // Eliminate tail calls
+    //m_llvmPassManager->add(llvm::createCFGSimplificationPass());     // Merge & remove BBs
+    //m_llvmPassManager->add(llvm::createReassociatePass());           // Reassociate expressions
+    //m_llvmPassManager->add(llvm::createLoopRotatePass());            // Rotate Loop
+    //m_llvmPassManager->add(llvm::createLICMPass());                  // Hoist loop invariants
+    //m_llvmPassManager->add(llvm::createInstructionCombiningPass());
+    //m_llvmPassManager->add(llvm::createIndVarSimplifyPass());        // Canonicalize indvars
+    //m_llvmPassManager->add(llvm::createLoopIdiomPass());             // Recognize idioms like memset.
+    //m_llvmPassManager->add(llvm::createLoopDeletionPass());          // Delete dead loops
+    ////m_llvmPassManager->add(llvm::createLoopVectorizePass());
+    //m_llvmPassManager->add(llvm::createFunctionInliningPass());
+    ////m_llvmPassManager->add(llvm::createBBVectorizePass());
+    //m_llvmPassManager->add(llvm::createInstructionCombiningPass());
     
     // Function pass manager
     m_llvmFuncPassManager = new llvm::FunctionPassManager(m_llvmModule);
@@ -83,27 +83,28 @@ JITEngine::JITEngine()
     // target lays out data structures.
     m_llvmFuncPassManager->add(new llvm::DataLayout(*m_llvmEngine->getDataLayout()));
     // Promote allocas to registers.
-    m_llvmFuncPassManager->add(llvm::createPromoteMemoryToRegisterPass());
-    // Provide basic AliasAnalysis support for GVN.
-    m_llvmFuncPassManager->add(llvm::createBasicAliasAnalysisPass());
-    // Do simple "peephole" optimizations and bit-twiddling optzns.
-    m_llvmFuncPassManager->add(llvm::createInstructionCombiningPass());
-    // Reassociate expressions.
-    m_llvmFuncPassManager->add(llvm::createReassociatePass());
-    // Eliminate Common SubExpressions.
-    m_llvmFuncPassManager->add(llvm::createGVNPass());
-    // Simplify the control flow graph (deleting unreachable blocks, etc).
-    m_llvmFuncPassManager->add(llvm::createCFGSimplificationPass());
+    //m_llvmFuncPassManager->add(llvm::createPromoteMemoryToRegisterPass());
+    //// Provide basic AliasAnalysis support for GVN.
+    //m_llvmFuncPassManager->add(llvm::createBasicAliasAnalysisPass());
+    //// Do simple "peephole" optimizations and bit-twiddling optzns.
+    //m_llvmFuncPassManager->add(llvm::createInstructionCombiningPass());
+    //// Reassociate expressions.
+    //m_llvmFuncPassManager->add(llvm::createReassociatePass());
+    //// Eliminate Common SubExpressions.
+    //m_llvmFuncPassManager->add(llvm::createGVNPass());
+    //// Simplify the control flow graph (deleting unreachable blocks, etc).
+    //m_llvmFuncPassManager->add(llvm::createCFGSimplificationPass());
 
-    // Unroll small loops
-    m_llvmFuncPassManager->add(llvm::createLoopInstSimplifyPass());
-    m_llvmFuncPassManager->add(llvm::createLoopRotatePass());
-    // Recognize idioms like memset.
-    m_llvmFuncPassManager->add(llvm::createLoopIdiomPass());
-    m_llvmFuncPassManager->add(llvm::createLoopVectorizePass());
-    m_llvmFuncPassManager->add(llvm::createLoopUnrollPass());
-    m_llvmFuncPassManager->add(llvm::createBBVectorizePass());
-    m_llvmFuncPassManager->doInitialization();
+    //// Unroll small loops
+    //m_llvmFuncPassManager->add(llvm::createLoopInstSimplifyPass());
+    //m_llvmFuncPassManager->add(llvm::createLoopRotatePass());
+    //// Recognize idioms like memset.
+    //m_llvmFuncPassManager->add(llvm::createLoopIdiomPass());
+    ////m_llvmFuncPassManager->add(llvm::createLoopVectorizePass());
+    //m_llvmFuncPassManager->add(llvm::createLoopUnrollPass());
+    ////m_llvmFuncPassManager->add(llvm::createBBVectorizePass());
+    //m_llvmFuncPassManager->doInitialization();
+    //m_nodeCompiler = new NodeCompiler();
 }
 
 JITEngine::~JITEngine()
@@ -128,12 +129,16 @@ void JITEngine::optimizeModule() {
 }
 NodeDesc * JITEngine::loadNodeDescription(const char *filename)
 {
-    NodeCompiler    nc;
+    NodeCompiler nodeCompiler;
     // TODO add nc.addIncludeDir();
-    llvm::Module *nodeModule = nc.compile(filename);
+    llvm::Module *nodeModule = nodeCompiler.compile(filename);
     if (!nodeModule) {
+        std::cout << "Unable to compile " << std::string(filename) << std::endl;
         return NULL;
+    } else {
+        std::cout << "Compiled " << std::string(filename) << std::endl;
     }
+
     // Search for the function getInstance in all the functions of 
     // this module
     llvm::Module::FunctionListType &flist = nodeModule->getFunctionList();
@@ -148,18 +153,13 @@ NodeDesc * JITEngine::loadNodeDescription(const char *filename)
 
     /// Link the new module in the current one
     std::string err2;
-    //llvm::LLVMContext &llvmContext = llvm::getGlobalContext();
-    //Linker *llvmLinker = new Linker("jitengine", "newnode", llvmContext, 0);
-
     if(Linker::LinkModules(m_llvmModule, nodeModule, llvm::Linker::PreserveSource, &err2)) {
-        std::cout << "error linking module" << std::endl;
+        std::cout << "error linking module :" << err2 << std::endl;
     }
-    //llvmLinker->releaseModule();
 
     delete nodeModule; nodeModule=NULL;
-    //delete llvmLinker; llvmLinker=NULL;
 
-    m_llvmPassManager->run(*m_llvmModule);
+    //m_llvmPassManager->run(*m_llvmModule);
     m_llvmEngine->runStaticConstructorsDestructors(false); // Will allocate the static values
     llvm::Function* LF = m_llvmEngine->FindFunctionNamed(createInstanceFunc.c_str());
 
@@ -209,7 +209,7 @@ JITEngine::mapValueAsConstant(const Context &context) {
     //llvm::PointerType *const ctxTypePtr = llvm::PointerType::getUnqual( ctxType );
     if(ctxType==0) {
         std::cout << "Context type not found" << std::endl;
-        exit(0);
+        exit(0); //todo throw
     }
     llvm::Constant *res = llvm::ConstantStruct::get(ctxType
                     , m_irBuilder->getInt32(context.m_first)
@@ -247,11 +247,11 @@ void JITEngine::runFunctionNamed(const char *functionName)
     llvm::Function* LF = m_llvmEngine->FindFunctionNamed(functionName);
 
     //*m_llvmModule.dump();
-    m_llvmPassManager->run(*m_llvmModule);
+    //m_llvmPassManager->run(*m_llvmModule);
     // DEBUG PRRINT
     //std::cerr << "=========================================" << std::endl;
     //*m_llvmModule.dump();
-    m_llvmFuncPassManager->run(*LF);
+    //m_llvmFuncPassManager->run(*LF);
 
     LF->viewCFG();
 
@@ -276,4 +276,4 @@ void JITEngine::freeFunctionNamed(const char *functionName) {
     }
 }
 
-};//namespace fission
+}//namespace fission
