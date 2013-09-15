@@ -1,24 +1,24 @@
 
 LOCALLIBS=`llvm-config --libdir`
 
-#CLANGLIBS = $(LOCALLIBS)/libclangFrontendTool.a \
-#$(LOCALLIBS)/libclangFrontend.a \
-#$(LOCALLIBS)/libclangDriver.a \
-#$(LOCALLIBS)/libclangSerialization.a \
-#$(LOCALLIBS)/libclangCodeGen.a \
-#$(LOCALLIBS)/libclangParse.a \
-#$(LOCALLIBS)/libclangSema.a \
-#$(LOCALLIBS)/libclangStaticAnalyzerFrontend.a \
-#$(LOCALLIBS)/libclangStaticAnalyzerCheckers.a \
-#$(LOCALLIBS)/libclangStaticAnalyzerCore.a \
-#$(LOCALLIBS)/libclangAnalysis.a \
-#$(LOCALLIBS)/libclangARCMigrate.a \
-#$(LOCALLIBS)/libclangRewriteFrontend.a \
-#$(LOCALLIBS)/libclangRewriteCore.a \
-#$(LOCALLIBS)/libclangEdit.a \
-#$(LOCALLIBS)/libclangAST.a \
-#$(LOCALLIBS)/libclangLex.a \
-#$(LOCALLIBS)/libclangBasic.a
+CLANGLIBS = $(LOCALLIBS)/libclangFrontendTool.a \
+$(LOCALLIBS)/libclangFrontend.a \
+$(LOCALLIBS)/libclangDriver.a \
+$(LOCALLIBS)/libclangSerialization.a \
+$(LOCALLIBS)/libclangCodeGen.a \
+$(LOCALLIBS)/libclangParse.a \
+$(LOCALLIBS)/libclangSema.a \
+$(LOCALLIBS)/libclangStaticAnalyzerFrontend.a \
+$(LOCALLIBS)/libclangStaticAnalyzerCheckers.a \
+$(LOCALLIBS)/libclangStaticAnalyzerCore.a \
+$(LOCALLIBS)/libclangAnalysis.a \
+$(LOCALLIBS)/libclangARCMigrate.a \
+$(LOCALLIBS)/libclangRewriteFrontend.a \
+$(LOCALLIBS)/libclangRewriteCore.a \
+$(LOCALLIBS)/libclangEdit.a \
+$(LOCALLIBS)/libclangAST.a \
+$(LOCALLIBS)/libclangLex.a \
+$(LOCALLIBS)/libclangBasic.a
 CLANG_RESSOURCEDIR=`llvm-config --libdir`/clang/3.3/
 SRC_DIR=@abs_srcdir@
 
@@ -26,8 +26,8 @@ AM_CPPFLAGS = -g -O0 -Wall -DSRC_DIR=\"$(SRC_DIR)\" -DCLANG_RESSOURCEDIR=\"$(CLA
 
 
 lib_LTLIBRARIES=libfission.la
-#libfission_la_LDFLAGS = -g -O0 -Wall --export-all-symbols -L$(LOCALLIBS)/ $(CLANGLIBS) `llvm-config --libfiles` -ldl -lpthread
-libfission_la_LDFLAGS = -g -O0 -Wall -ldl -lpthread
+libfission_la_LDFLAGS = -g -O0 -Wall --export-all-symbols -L$(LOCALLIBS)/ $(CLANGLIBS) `llvm-config --libfiles` -ldl -lpthread
+#libfission_la_LDFLAGS = -g -O0 -Wall --export-all-symbols -ldl -lpthread
 libfission_la_SOURCES = \
 ./engine/ComputeEngine.cpp\
 ./engine/ComputeEngine.h\
