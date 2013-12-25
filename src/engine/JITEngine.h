@@ -8,8 +8,10 @@
 namespace llvm {
     class ExecutionEngine;
     class Module;
-    class PassManager;
-    class FunctionPassManager;
+    namespace legacy {
+    struct PassManager;
+    struct FunctionPassManager;
+    };
     class Value;
     class Function;
 };
@@ -58,14 +60,14 @@ public:
     /// Return the jit llvm module
     llvm::Module & getModule();
 
-private:
-    //NodeCompiler                *m_nodeCompiler;
-    llvm::Module                *m_llvmModule;
-    llvm::PassManager           *m_llvmPassManager;
-    llvm::FunctionPassManager   *m_llvmFuncPassManager;
-    llvm::ExecutionEngine       *m_llvmEngine;
-    std::string                 m_eeerror;
-    llvm::IRBuilder<>           *m_irBuilder;
+  private:
+    // NodeCompiler                *m_nodeCompiler;
+    llvm::Module *m_llvmModule;
+    llvm::legacy::PassManager *m_llvmPassManager;
+    llvm::legacy::FunctionPassManager *m_llvmFuncPassManager;
+    llvm::ExecutionEngine *m_llvmEngine;
+    std::string m_eeerror;
+    llvm::IRBuilder<> *m_irBuilder;
 };
 
 };//namespace fission

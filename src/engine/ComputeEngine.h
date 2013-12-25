@@ -9,10 +9,6 @@
 
 // Forward llvm declarations
 namespace llvm {
-class PassManager;
-class FunctionPassManager;
-class ExecutionEngine;
-class Module;
 class Value;
 };
 

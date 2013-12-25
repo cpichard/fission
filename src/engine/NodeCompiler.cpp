@@ -49,7 +49,7 @@ NodeCompiler::NodeCompiler()
 , m_args()
 {
     m_driver->UseStdLib = true;
-    m_driver->CCCIsCXX = true;
+    //m_driver->CCCIsCXX = true;
     //m_driver->CCCIsCPP = true;
 
     // it is needed for standard headers like stddef.h

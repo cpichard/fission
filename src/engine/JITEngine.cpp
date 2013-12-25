@@ -13,26 +13,26 @@
 #include <llvm/ADT/StringRef.h>
 #include <llvm/Analysis/Passes.h>
 #include <llvm/Analysis/Verifier.h>
+#include <llvm/ExecutionEngine/ExecutionEngine.h>
+#include <llvm/ExecutionEngine/JIT.h>
 #include <llvm/IR/Constants.h>
 #include <llvm/IR/DataLayout.h>
 #include <llvm/IR/DerivedTypes.h>
-#include <llvm/ExecutionEngine/ExecutionEngine.h>
-#include <llvm/ExecutionEngine/JIT.h>
 #include <llvm/IR/IRBuilder.h>
-#include <llvm/LinkAllPasses.h>
-#include <llvm/Linker.h>
 #include <llvm/IR/LLVMContext.h>
 #include <llvm/IR/Module.h>
-#include <llvm/PassManager.h>
+#include <llvm/IR/LegacyPassManager.h>
+#include <llvm/IRReader/IRReader.h>
+#include <llvm/LinkAllPasses.h>
+#include <llvm/Linker.h>
 #include <llvm/Support/Casting.h>
 #include <llvm/Support/FileSystem.h>
 #include <llvm/Support/Host.h>
-#include <llvm/IRReader/IRReader.h>
-#include <llvm/Support/raw_ostream.h>
+#include <llvm/Support/ManagedStatic.h>
 #include <llvm/Support/SourceMgr.h>
 #include <llvm/Support/TargetSelect.h>
+#include <llvm/Support/raw_ostream.h>
 #include <llvm/Transforms/Scalar.h>
-#include <llvm/Support/ManagedStatic.h>
 
 using llvm::Linker;
 
@@ -59,7 +59,7 @@ JITEngine::JITEngine()
     engineBuilder.setAllocateGVsWithCode(true); // Global values
     m_llvmEngine = engineBuilder.create();
 
-    m_llvmPassManager = new llvm::PassManager();
+    m_llvmPassManager = new llvm::legacy::PassManager();
     m_llvmPassManager->add(new llvm::DataLayout(*m_llvmEngine->getDataLayout()));
     //m_llvmPassManager->add(llvm::createCFGSimplificationPass());     // Merge & remove BBs
     //m_llvmPassManager->add(llvm::createInstructionCombiningPass());  // Combine silly seq's
@@ -78,7 +78,7 @@ JITEngine::JITEngine()
     //m_llvmPassManager->add(llvm::createInstructionCombiningPass());
     
     // Function pass manager
-    m_llvmFuncPassManager = new llvm::FunctionPassManager(m_llvmModule);
+    m_llvmFuncPassManager = new llvm::legacy::FunctionPassManager(m_llvmModule);
     // Set up the optimizer pipeline.  Start with registering info about how the
     // target lays out data structures.
     m_llvmFuncPassManager->add(new llvm::DataLayout(*m_llvmEngine->getDataLayout()));
