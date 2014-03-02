@@ -1,6 +1,6 @@
-#include "Module.h"
-#include "Name.h"
-#include "Type.h"
+#include "graph/Module.h"
+#include "graph/Name.h"
+#include "rtts/Type.h"
 #include "engine/NodeCompiler.h"
 
 #include <iostream>
@@ -9,10 +9,7 @@ namespace fission {
 
 using std::string;
 
-Module::Module(const std::string &name)
-: Node(name, NULL) 
-{}
-
+Module::Module(const std::string &name) : Node(name, NULL) {}
 
 /// Destructor
 /// Module is supposed to destroy everything that it owns
@@ -24,26 +21,26 @@ Module::~Module() {
     /// Delete node descriptions
 }
 
-
-
 /// Creates a node from a known type
-Node * Module::createNode(const std::string &nodeTypeName, const std::string &nodeName)
-{
-    std::list<NodeDesc*>::iterator it;
-    for (it=m_nodeDesc.begin(); it != m_nodeDesc.end(); ++it) {
+Node *Module::createNode(const std::string &nodeTypeName,
+                         const std::string &nodeName) {
+    std::list<NodeDesc *>::iterator it;
+    // Looking for node type using brute force ype name comparison. 
+    // There surely is a faster way of finding types, but for now we
+    // have < 10 types so it does not matter.
+    for (it = m_nodeDesc.begin(); it != m_nodeDesc.end(); ++it) {
 
-        // Type name comparison. There surely is a better way of testing types
-        if (nodeTypeName.compare(TypeName(*it))==0) {
+        if (nodeTypeName.compare(TypeName(*it)) == 0) {
 
             // Last Id is equal to the size of the vector
             Node *node = new Node(nodeName, *it);
             // TODO : node.m_owner =
-            //node.m_module = this;
+            // node.m_module = this;
             m_nodes.push_back(node);
 
             // Add all the plugs of this new node to the graph
             const size_t nbInputs = NbInputs(node);
-            for (size_t i=0; i<nbInputs; i++) {
+            for (size_t i = 0; i < nbInputs; i++) {
                 m_dataFlowGraph.addVertex(node->input(i));
             }
 
@@ -51,20 +48,22 @@ Node * Module::createNode(const std::string &nodeTypeName, const std::string &no
             m_dataFlowGraph.addVertex(node->output());
 
             // Connect all imputs to current outputs
-            for (size_t i=0; i<nbInputs; i++) {
+            for (size_t i = 0; i < nbInputs; i++) {
                 // TODO !!!
-                PlugLink *pl = new PlugLink("", NULL, node->input(i), node->output());
+                PlugLink *pl =
+                    new PlugLink("", NULL, node->input(i), node->output());
                 m_dataFlowGraph.addEdge(pl);
             }
 
             const size_t nbParameters = NbParameters(node);
-            for (size_t j=0; j<nbParameters; j++) {
+            for (size_t j = 0; j < nbParameters; j++) {
 
                 // Add vertex
                 m_dataFlowGraph.addVertex(node->param(j));
 
                 // Connect all imputs to current outputs
-                PlugLink *pl = new PlugLink("", NULL, node->param(j), node->output());
+                PlugLink *pl =
+                    new PlugLink("", NULL, node->param(j), node->output());
                 m_dataFlowGraph.addEdge(pl);
             }
 
@@ -78,9 +77,7 @@ Node * Module::createNode(const std::string &nodeTypeName, const std::string &no
 
 /// Remove the node from the module ?? the graph ??
 /// Actually deletes the node ?
-void Module::disposeNode(Node *node) {
-
-}
+void Module::disposeNode(Node *node) {}
 
 void Module::registerNodeDesc(NodeDesc *newType) {
 
@@ -99,13 +96,13 @@ void Module::unregisterNodeDesc(NodeDesc *type) {
 void Module::connect(Plug *src, Plug *dst) {
 
     // Double check we have the plugs here
-    if (src==NULL || dst==NULL) {
-        return;
+    if (src == NULL || dst == NULL) {
+        return; // Raise !!
     }
 
     // TODO : Look if this connection already exists
-    if(m_dataFlowGraph.hasEdge(src, dst)) {
-        return;
+    if (m_dataFlowGraph.hasEdge(src, dst)) {
+        return; // raise !!
     }
 
     // Create a new pluglink
@@ -115,8 +112,10 @@ void Module::connect(Plug *src, Plug *dst) {
 
     // TODO
     // Test for cycles
-
-
 }
-
+void Module::serialize() {
+    // First serialize the node description of the module.
+    //
+    // Do a topological sort and serialize each node
+}
 }; // namespace fission
