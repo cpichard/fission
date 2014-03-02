@@ -61,7 +61,6 @@ public:
     llvm::Module & getModule();
 
   private:
-    // NodeCompiler                *m_nodeCompiler;
     llvm::Module *m_llvmModule;
     llvm::legacy::PassManager *m_llvmPassManager;
     llvm::legacy::FunctionPassManager *m_llvmFuncPassManager;
