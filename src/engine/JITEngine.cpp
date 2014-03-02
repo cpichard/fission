@@ -1,13 +1,13 @@
 #include <iostream>
 #include "JITEngine.h"
 
-#include "NodeCompiler.h"
-#include "JITEngine.h"
-#include "NodeDesc.h"
-#include "Module.h"
-#include "StandardTypes.h"
-#include "Type.h"
-#include "Context.h"
+#include "engine/NodeCompiler.h"
+#include "engine/JITEngine.h"
+#include "graph/NodeDesc.h"
+#include "graph/Module.h"
+#include "rtts/StandardTypes.h"
+#include "rtts/Type.h"
+#include "engine/Context.h"
 
 #include <llvm/ADT/STLExtras.h>
 #include <llvm/ADT/StringRef.h>
@@ -53,7 +53,10 @@ JITEngine::JITEngine()
 
     // Create a Execution engine via the engine builder
     llvm::EngineBuilder engineBuilder(m_llvmModule);
-    engineBuilder.setUseMCJIT(true); 
+    // FIXME: MCJIT will crash when allocating statics in the jitted code
+    // Why ?? 
+    //engineBuilder.setUseMCJIT(true); 
+    //
     //engineBuilder.setOptLevel(llvm::CodeGenOpt::Aggressive); // Test gdb
     engineBuilder.setErrorStr(&m_eeerror);
     engineBuilder.setAllocateGVsWithCode(true); // Global values
@@ -104,7 +107,6 @@ JITEngine::JITEngine()
     //m_llvmFuncPassManager->add(llvm::createLoopUnrollPass());
     ////m_llvmFuncPassManager->add(llvm::createBBVectorizePass());
     //m_llvmFuncPassManager->doInitialization();
-    //m_nodeCompiler = new NodeCompiler();
 }
 
 JITEngine::~JITEngine()
@@ -168,6 +170,8 @@ NodeDesc * JITEngine::loadNodeDescription(const char *filename)
 
     // Call the getInstance function
     void *FPtr = m_llvmEngine->getPointerToFunction(LF);
+    
+
     NodeDesc * (*FP)() = (NodeDesc * (*)())(intptr_t)FPtr;
     NodeDesc *nodedesc = FP();
 
