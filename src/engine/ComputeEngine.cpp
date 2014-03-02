@@ -1,11 +1,11 @@
 #include <iostream>
-#include "ComputeEngine.h"
-#include "GraphAlgorithms.h"
-#include "Name.h"
-#include "Plug.h"
-#include "Edge.h"
-#include "Context.h"
-#include "JITEngine.h"
+#include "engine/ComputeEngine.h"
+#include "graph/GraphAlgorithms.h"
+#include "graph/Name.h"
+#include "graph/Plug.h"
+#include "graph/Edge.h"
+#include "engine/Context.h"
+#include "engine/JITEngine.h"
 
 #include <llvm/Analysis/Passes.h>
 #include <llvm/Analysis/Verifier.h>
