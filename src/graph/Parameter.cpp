@@ -1,7 +1,7 @@
 #include <iostream>
 #include <cstdlib>  // malloc
-#include "Parameter.h"
-#include "StandardTypes.h"
+#include "graph/Parameter.h"
+#include "rtts/StandardTypes.h"
 
 #include <cassert>
 
