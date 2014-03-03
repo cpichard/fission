@@ -75,9 +75,7 @@ clangSerialization
 clangStaticAnalyzerCheckers
 clangStaticAnalyzerCore
 clangStaticAnalyzerFrontend
-clangTooling
-clang.3.4
-clang )
+clangTooling)
 
 set( REQ_LLVM_LIBRARIES 
 LLVMInstrumentation

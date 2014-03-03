@@ -10,10 +10,16 @@
 # CPPUNIT_LIBRARY, where to find the CppUnit library.
 # CPPUNIT_DEBUG_LIBRARY, where to find the CppUnit library in debug mode.
 
+EXECUTE_PROCESS(COMMAND cppunit-config --prefix
+    OUTPUT_VARIABLE CPPUNIT_DIR
+    OUTPUT_STRIP_TRAILING_WHITESPACE)
+
 FIND_PATH(CPPUNIT_INCLUDE_DIR cppunit/TestCase.h
   /usr/local/include
   /usr/include
+  ${CPPUNIT_DIR}/include
 )
+
 
 # With Win32, important to have both
 IF(WIN32)
@@ -26,6 +32,7 @@ IF(WIN32)
                /usr/local/lib
                /usr/lib)
 ELSE(WIN32)
+
   # On unix system, debug and release have the same name
   FIND_LIBRARY(CPPUNIT_LIBRARY cppunit
                ${CPPUNIT_INCLUDE_DIR}/../lib
