@@ -58,6 +58,7 @@ NodeCompiler::NodeCompiler()
     m_args.push_back("-xc++");
     m_args.push_back("-I" SRC_DIR);
     m_args.push_back("-fno-vectorize");
+    m_args.push_back("-fno-use-cxa-atexit");
     std::cout << "Building NodeCompiler" << std::endl;
 }
 
