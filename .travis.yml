@@ -5,6 +5,7 @@ compiler:
 branches:
   only:
     - development
+    - coverity_scan
 before_script:
   - wget -O - http://llvm.org/apt/llvm-snapshot.gpg.key|sudo apt-key add -
   - echo "deb http://llvm.org/apt/precise/ llvm-toolchain-precise main" | sudo tee -a /etc/apt/sources.list
@@ -18,3 +19,20 @@ before_script:
   - sudo ln -s /usr/include/llvm-3.4 /usr/include/llvm
 script:
   autoreconf && ./configure --enable-cppunit && make && make tests
+
+
+env:
+  global:
+   # The next declaration is the encrypted COVERITY_SCAN_TOKEN, created
+   #   via the "travis encrypt" command using the project repo's public key
+   - secure: "SUt+ULcl/cjlD38ZzAc7EdQ8cm0DADhyDmukH4F6is+36u/eeYA7bdYS8RAEKFdk2/8A/yNKhl4Q8wmgMKwIpMT8HEDu69eXh7YjW7vy/V+AoL5XhFDuxeR9XuwoYdgBC2rbGhGTF8ygXbrkNtiUkI9VhmI2hYWStMXLYW6hsT0="
+
+addons:
+  coverity_scan:
+    project:
+      name: "cpichard/fission"
+      description: "submitted via travis"
+    notification_email: pichard.cyril@laposte.net
+    build_command_prepend: "autoreconf; ./configure --enable-cppunit"
+    build_command: "make; make tests"
+    branch_pattern: coverity_scan
