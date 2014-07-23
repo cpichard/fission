@@ -5,3 +5,5 @@ compiler:
 branches:
   only:
     - development
+script:
+  autoreconf && ./configure --enable-cppunit && make && make tests
