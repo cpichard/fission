@@ -13,7 +13,6 @@ autoreconf -i
 ./configure
 make
 
-It might not compile at all !
 
 
 
