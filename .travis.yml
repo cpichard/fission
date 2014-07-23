@@ -10,5 +10,11 @@ before_script:
   - echo "deb http://llvm.org/apt/precise/ llvm-toolchain-precise main" | sudo tee -a /etc/apt/sources.list
   - sudo apt-get update -qq
   - sudo apt-get install clang-3.4 clang-3.4-doc libclang-common-3.4-dev libclang-3.4-dev libclang1-3.4 libclang1-3.4-dbg libllvm-3.4-ocaml-dev libllvm3.4 libllvm3.4-dbg llvm-3.4 llvm-3.4-dev llvm-3.4-doc llvm-3.4-examples llvm-3.4-runtime clang-modernize-3.4 clang-format-3.4 python-clang-3.4 
+  - sudo ln -s /usr/bin/llvm-config-$LLVM_VERSION /usr/bin/llvm-config
+  - sudo ln -s /usr/bin/llvm-mc-$LLVM_VERSION /usr/bin/llvm-mc
+  - sudo ln -s /usr/bin/llvm-as-$LLVM_VERSION /usr/bin/llvm-as
+  - sudo ln -s /usr/bin/llvm-dis-$LLVM_VERSION /usr/bin/llvm-dis
+  - sudo ln -s /usr/bin/llc-$LLVM_VERSION /usr/bin/llc
+  - sudo ln -s /usr/include/llvm-$LLVM_VERSION /usr/include/llvm
 script:
   autoreconf && ./configure --enable-cppunit && make && make tests
