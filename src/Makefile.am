@@ -27,7 +27,7 @@ AM_CPPFLAGS = -g -O0 -Wall -DSRC_DIR=\"$(SRC_DIR)\" -DCLANG_RESSOURCEDIR=\"$(CLA
 
 
 lib_LTLIBRARIES=libfission.la
-libfission_la_LDFLAGS = -g -O0 -Wall --export-all-symbols -L$(LOCALLIBS)/ $(CLANGLIBS) `llvm-config --libs` -ldl -lpthread
+libfission_la_LDFLAGS = -g -O0 -Wall --export-all-symbols -L$(LOCALLIBS)/ $(CLANGLIBS) `llvm-config --libs` -ldl -lpthread -ltinfo
 libfission_la_SOURCES = \
 ./engine/ComputeEngine.cpp\
 ./engine/ComputeEngine.h\
