@@ -10,7 +10,7 @@ Why ? I worked on a in-house compositing software for several years. Back then w
 * Using efficiently machine ressources, cpu cores, gpu, ...
 * Optimizing compositing graphs, 
 * Changing scheduling and graph computation
-* Provide fast development cycles.
+* Providing fast development cycles.
 
 Using a just in time compiler can help tackling these challenges. For instance it's not unreasonable to think that we could target cpu or gpu with the same processing code using a just in time compiler. We could also recompile with a different rendering algorithm, scanline or full buffer, depending on the machine capabilities or the complexity of the graph. With the help of a compiler, we could optimize the computation graph at the code level without adding extra cases like node concatenation for color operators. After all, a compositing software can be seen as a high level compiler with specialized optimization. 
 How great would it be for a developper prototype its plugins directly inside the sofware without restarting it ?
