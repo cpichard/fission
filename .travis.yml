@@ -18,7 +18,7 @@ before_script:
   - sudo ln -s /usr/bin/llc-3.4 /usr/bin/llc
   - sudo ln -s /usr/include/llvm-3.4 /usr/include/llvm
 script:
-  autoreconf && ./configure --enable-cppunit && make && make tests
+  autoreconf -i && ./configure --enable-cppunit && make && make tests
 
 
 env:
@@ -33,6 +33,6 @@ addons:
       name: "cpichard/fission"
       description: "submitted via travis"
     notification_email: pichard.cyril@laposte.net
-    build_command_prepend: "autoreconf; ./configure --enable-cppunit"
+    build_command_prepend: "autoreconf -i; ./configure --enable-cppunit"
     build_command: "make; make tests"
     branch_pattern: coverity_scan
