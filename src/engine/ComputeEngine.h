@@ -7,6 +7,7 @@
 #include "engine/Status.h"
 #include "engine/Context.h"
 
+
 // Forward llvm declarations
 namespace llvm {
 class Value;
@@ -30,8 +31,6 @@ private:
     // llvm jit stuff
     JITEngine                   *m_jit;
     //llvm::IRBuilder<>           *m_builder;
-
-    // craft
 
     // Function to build the call graph from the node graph
     llvm::Value *buildCallGraph(Plug *plug, const Context &context);

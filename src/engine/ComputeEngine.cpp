@@ -8,24 +8,23 @@
 #include "engine/JITEngine.h"
 
 #include <llvm/Analysis/Passes.h>
-#include <llvm/Analysis/Verifier.h>
-#include <llvm/Analysis/Verifier.h>
+//#include <llvm/Analysis/Verifier.h>
+//#include <llvm/Analysis/Verifier.h>
 #include <llvm/IR/Attributes.h>
 #include <llvm/IR/Constants.h>
 #include <llvm/IR/DataLayout.h>
 #include <llvm/IR/DerivedTypes.h>
 #include <llvm/ExecutionEngine/ExecutionEngine.h>
-#include <llvm/ExecutionEngine/JIT.h>
+//#include <llvm/ExecutionEngine/JIT.h>
 #include <llvm/IR/IRBuilder.h>
 #include <llvm/LinkAllPasses.h>
-#include <llvm/Linker.h>
+//#include <llvm/Linker.h>
 #include <llvm/IR/LLVMContext.h>
 #include <llvm/IR/Module.h>
 #include <llvm/Support/TargetSelect.h>
 #include <llvm/Transforms/Scalar.h>
 
 using namespace fission;
-using llvm::getGlobalContext;
 using llvm::Function;
 using llvm::FunctionType;
 using llvm::BasicBlock;
@@ -146,7 +145,7 @@ ComputeEngine::buildCallGraph(
     // Create a function and a building block
     std::vector<llvm::Type*> argsProto;
     FunctionType *FT = FunctionType::get(
-            llvm::Type::getDoubleTy(getGlobalContext()), // Return type
+            llvm::Type::getDoubleTy(m_jit->llvmContext()), // Return type
             argsProto,                                   // Arguments type
             false);
     Function *F = Function::Create(
@@ -156,14 +155,14 @@ ComputeEngine::buildCallGraph(
             &m_jit->getModule());
 
     // Insert a basic block in the function
-    BasicBlock *BB = BasicBlock::Create(getGlobalContext(), "entry", F);
+    BasicBlock *BB = BasicBlock::Create(m_jit->llvmContext(), "entry", F);
     m_jit->irBuilder()->SetInsertPoint(BB);
     llvm::Value *ctxVal = m_jit->mapValueAsConstant(context);
 
     m_jit->irBuilder()->CreateRet(buildCallGraphRecursively(plug, ctxVal));
     //m_jit->optimizeModule();
     //m_jit->optimizeFunction(*F);
-    llvm::verifyFunction(*F);
+    // TODO find alternative to llvm::verifyFunction(*F);
     return 0;
 }
 

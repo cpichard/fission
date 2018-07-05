@@ -2,7 +2,9 @@
 #define JITENGINE_H
 
 #include <string>
+#include <memory>
 #include <llvm/IR/IRBuilder.h>
+#include <llvm/IR/LLVMContext.h>
 
 // Forward declarations
 namespace llvm {
@@ -40,6 +42,9 @@ public:
 
     llvm::IRBuilder<>   *irBuilder(){return m_irBuilder;}
 
+    ///
+    llvm::LLVMContext   & llvmContext(){return m_llvmContext;}
+
     template<typename ValueType>
     llvm::Value * mapValue(const ValueType *);
 
@@ -61,12 +66,14 @@ public:
     llvm::Module & getModule();
 
   private:
-    llvm::Module *m_llvmModule;
+    std::unique_ptr<llvm::Module> m_llvmModule;
     llvm::legacy::PassManager *m_llvmPassManager;
     llvm::legacy::FunctionPassManager *m_llvmFuncPassManager;
     llvm::ExecutionEngine *m_llvmEngine;
     std::string m_eeerror;
     llvm::IRBuilder<> *m_irBuilder;
+    /// Owns and manage core global LLVM datas
+    llvm::LLVMContext &m_llvmContext;
 };
 
 };//namespace fission

@@ -1,4 +1,5 @@
 #include <iostream>
+#include <memory>
 #include "JITEngine.h"
 
 #include "engine/NodeCompiler.h"
@@ -12,9 +13,9 @@
 #include <llvm/ADT/STLExtras.h>
 #include <llvm/ADT/StringRef.h>
 #include <llvm/Analysis/Passes.h>
-#include <llvm/Analysis/Verifier.h>
+#include <llvm/IR/Verifier.h>
 #include <llvm/ExecutionEngine/ExecutionEngine.h>
-#include <llvm/ExecutionEngine/JIT.h>
+#include <llvm/ExecutionEngine/MCJIT.h>
 #include <llvm/IR/Constants.h>
 #include <llvm/IR/DataLayout.h>
 #include <llvm/IR/DerivedTypes.h>
@@ -24,7 +25,7 @@
 #include <llvm/IR/LegacyPassManager.h>
 #include <llvm/IRReader/IRReader.h>
 #include <llvm/LinkAllPasses.h>
-#include <llvm/Linker.h>
+#include <llvm/Linker/Linker.h>
 #include <llvm/Support/Casting.h>
 #include <llvm/Support/FileSystem.h>
 #include <llvm/Support/Host.h>
@@ -36,34 +37,39 @@
 
 using llvm::Linker;
 
+static llvm::LLVMContext TheContext;
+
 namespace fission {
 JITEngine::JITEngine()
-: m_llvmModule(0)
+: m_llvmModule()
 , m_llvmPassManager(0)
 , m_llvmFuncPassManager(0)
 , m_llvmEngine(0)
 , m_eeerror("")
-, m_irBuilder(new llvm::IRBuilder<>(llvm::getGlobalContext()))
+, m_irBuilder(new llvm::IRBuilder<>(TheContext))
+, m_llvmContext(TheContext)
 {
     // Init llvm target
     llvm::InitializeNativeTarget();
     llvm::InitializeNativeTargetAsmPrinter();
-    llvm::LLVMContext &llvmContext = llvm::getGlobalContext();
-    m_llvmModule = new llvm::Module("JIT", llvmContext);
+    //llvm::LLVMContext &llvmContext = TheContext; // TODO this is useless, replace by TheContext ?
+    m_llvmModule.reset(new llvm::Module("JIT", m_llvmContext)); // TODO get rid of this variable as it is created and saved in engineBuilder
 
     // Create a Execution engine via the engine builder
-    llvm::EngineBuilder engineBuilder(m_llvmModule);
+    llvm::EngineBuilder engineBuilder(std::unique_ptr<llvm::Module>(m_llvmModule.get()));
+    //llvm::EngineBuilder engineBuilder(std::make_unique(m_llvmModule.get());
+    //llvm::EngineBuilder engineBuilder(m_llvmModule.get());
     // FIXME: MCJIT will crash when allocating statics in the jitted code
     // Why ?? 
     //engineBuilder.setUseMCJIT(true); 
     //
     //engineBuilder.setOptLevel(llvm::CodeGenOpt::Aggressive); // Test gdb
     engineBuilder.setErrorStr(&m_eeerror);
-    engineBuilder.setAllocateGVsWithCode(true); // Global values
+    // TODO : what changed ?? engineBuilder.setAllocateGVsWithCode(true); // Global values
     m_llvmEngine = engineBuilder.create();
 
     m_llvmPassManager = new llvm::legacy::PassManager();
-    m_llvmPassManager->add(new llvm::DataLayout(*m_llvmEngine->getDataLayout()));
+    // TODO: do we need a data layout ?? m_llvmPassManager->add(new llvm::DataLayout());
     //m_llvmPassManager->add(llvm::createCFGSimplificationPass());     // Merge & remove BBs
     //m_llvmPassManager->add(llvm::createInstructionCombiningPass());  // Combine silly seq's
     //m_llvmPassManager->add(llvm::createTailCallEliminationPass());   // Eliminate tail calls
@@ -81,7 +87,8 @@ JITEngine::JITEngine()
     //m_llvmPassManager->add(llvm::createInstructionCombiningPass());
     
     // Function pass manager
-    m_llvmFuncPassManager = new llvm::legacy::FunctionPassManager(m_llvmModule);
+    m_llvmFuncPassManager = new llvm::legacy::FunctionPassManager(m_llvmModule.get());
+
     // Set up the optimizer pipeline.  Start with registering info about how the
     // target lays out data structures.
     m_llvmFuncPassManager->add(new llvm::DataLayout(*m_llvmEngine->getDataLayout()));
